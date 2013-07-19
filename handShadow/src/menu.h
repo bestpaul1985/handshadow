@@ -48,13 +48,19 @@ public:
     
     ofPoint touch;
     ofPoint preTouch;
+    ofPoint orgTouch;
+
     particle mParticle;
     float preParticleX;
 
     float frc;
     bool bHidenLogo;
+    bool bShowHidenLogo;
     bool bDrag;
+    int timer;
+    bool bStartTime;
     
+    vector<float> tempRectPos;
     //-------sub menu----------------
     int subMenuNum;
     int subStep;
