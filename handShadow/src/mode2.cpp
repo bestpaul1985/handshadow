@@ -155,8 +155,6 @@ void mode2::touchUp(int x, int y, int touchID){
         }
     }
 
-
-
 }
 
 
