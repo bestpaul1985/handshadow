@@ -9,6 +9,12 @@
 #ifndef __handShadow__xmlPointer__
 #define __handShadow__xmlPointer__
 
-#include <iostream>
+#include "ofMain.h"
+
+class xmlPointer{
+
+public:
+    vector<ofPoint>pos;
+};
 
 #endif /* defined(__handShadow__xmlPointer__) */

@@ -447,12 +447,12 @@ void menu::dragMove(int x, int y, int touchID){
         
         touch.set(x, y);
         int diff =  touch.x - preTouch.x;
-        float speed = 10;
-        if (diff>1&&diff<30) {
+        float speed = 13;
+        if (diff>1&&diff<20) {
                 mParticle.pos.x+=speed;
             
         }
-        else if (diff<-1&&diff>-30) {
+        else if (diff<-1&&diff>-20) {
                 mParticle.pos.x-=speed;
                 if (mParticle.pos.x<36) {
                     bHidenLogo = true;
@@ -461,12 +461,12 @@ void menu::dragMove(int x, int y, int touchID){
         
         
         speed = 3;
-        if (diff >30) {
+        if (diff >20) {
             mParticle.frc.set(0,0);
             mParticle.vel.set(0,0);
             frc.x = speed;
         }
-        else if (diff < -30){
+        else if (diff < -20){
             mParticle.frc.set(0,0);
             mParticle.vel.set(0,0);
             frc.x = -speed;
@@ -568,7 +568,7 @@ void menu::levelReset(){
     levelTouch.set(0, 0);
     levelPreTouch.set(0, 0);
     axisX = 5;
-    axisY = 5;
+    axisY = 4;
     int counter = -1;
     int j = 0;
     
@@ -589,7 +589,7 @@ void menu::levelReset(){
         temp.rectW = 100;
         temp.rectH = 100;
         temp.bTouchOver = false;
-        temp.pos.set(372+50+120*counter, 100+120*j);
+        temp.pos.set(372+50+120*counter, 140+120*j);
         levelRect1.push_back(temp);
         
         float pct =0;
@@ -612,7 +612,7 @@ void menu::levelReset(){
         temp.rectW = 100;
         temp.rectH = 100;
         temp.bTouchOver = false;
-        temp.pos.set(372+50+120*counter, 768-100+120*u);
+        temp.pos.set(372+50+120*counter, 650-100+120*u);
         levelRect2.push_back(temp);
         
         float pct =0;
@@ -661,21 +661,21 @@ void menu::levelMove(int x, int y, int touchID){
         float diff = levelTouch.y - levelPreTouch.y;
         float speed = 10;
         
-        if (diff>1&&diff<30) {
+        if (diff>1&&diff<10) {
             
             mParticle.pos.y+=speed;
         }
-        else if (diff<-1&&diff>-30) {
+        else if (diff<-1&&diff>-10) {
             
             mParticle.pos.y-=speed;
 
         }
         
         speed = 2;
-        if (diff >30) {
+        if (diff >10) {
             frc.y = speed;
         }
-        else if (diff < -30){
+        else if (diff < -10){
             frc.y = -speed;
         }
         

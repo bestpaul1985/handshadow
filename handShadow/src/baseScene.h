@@ -10,6 +10,7 @@
 #define __handShadow__baseScene__
 
 #include "ofMain.h"
+
 class baseScene{
 public:
     virtual void setup(){};

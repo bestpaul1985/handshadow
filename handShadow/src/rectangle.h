@@ -18,6 +18,7 @@ public:
     rectangle();
 	
     void draw();
+    void drawLevel();
     void update();
     void interpolateByPct(float myPct);
     void interpolateByPct2(float myPct);

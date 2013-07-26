@@ -17,8 +17,8 @@
 			<key>CFBundleIconFiles</key>
 			<array>
 				<string></string>
-				<string>iconSmall.png</string>
-				<string>icon.png</string>
+				<string>appicn_72.png</string>
+				<string>appicn144.png</string>
 			</array>
 			<key>UIPrerenderedIcon</key>
 			<true/>

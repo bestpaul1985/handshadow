@@ -21,15 +21,31 @@ class menu : public baseScene{
 public:
     void setup();
     void update();
-    void snapIn();
-    void drag();
-    void reset();
     void draw();
+
+    void reset();
+    void snapIn();
+
+    void drag();
+    void dragDown(int x, int y, int touchID);
+    void dragMove(int x, int y, int touchID);
+    void dragUp(int x, int y, int touchID);
+    
+    void levelSetup();
+    void levelUpdate();
+    void levelDraw();
+    void levelDown(int x, int y, int touchID);
+    void levelMove(int x, int y, int touchID);
+    void levelUp(int x, int y, int touchID);
+    void levelReset();
+
     void hiden();
     void touchDown(int x, int y, int touchID);
     void touchMove(int x, int y, int touchID);
     void touchUp(int x, int y, int touchID);
+    
     void subMenu(int num);
+    void subMenuUp(int x, int y, int touchID);
     
     rectangle mainMenuRect[MAIN_MENU_BUTTON];
     float pct[MAIN_MENU_BUTTON];    
@@ -48,12 +64,11 @@ public:
     
     ofPoint touch;
     ofPoint preTouch;
-    ofPoint orgTouch;
 
     particle mParticle;
-    float preParticleX;
+    ofPoint preParticlePos;
 
-    float frc;
+    ofPoint frc;
     bool bHidenLogo;
     bool bShowHidenLogo;
     bool bDrag;
@@ -65,7 +80,20 @@ public:
     int subMenuNum;
     int subStep;
     bool bSubMenu;
-   
+    //--------levels-----------------
+
+    vector<rectangle> levelRect1;
+    vector<rectangle> levelRect2;
+    vector<float> levelPct1;
+    vector<float> levelPct2;
+
+    int levelCounter;
+    int levelTimer;
+    ofPoint levelTouch;
+    ofPoint levelPreTouch;
+    int axisX;
+    int axisY;
+    bool bLevelSnapIn;
 };
 
 #endif /* defined(__handShadow__menu__) */

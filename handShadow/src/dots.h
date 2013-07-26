@@ -14,36 +14,27 @@
 class dots{
 
 public:
-    void setup(float x, float y);
+    void setup(float x, float y,ofImage *A, ofImage *B);
     void update();
     void InAndOut();
-
-    void resetModeOne();
-    void resetModeTwo();
+    void touchDown(int x, int y, int touchID);
+    void touchUp(int x, int y, int touchID);
+    void touchMove(int x, int y, int touchID);
+    
+    void reset();
     void draw();
     
     ofPoint pos;
-    bool    bCovered;
-    int     touchID;
+    vector<int> myId;
+    vector<int> notMyId;
+    float angle;
     ofColor color;
-    
-    float radius0;
-    float radius1;
-
-    //-------effect--------------
-    bool effect;
-    bool zoomIn;
-    bool zoomOut;
-    
-    float pct;
-    float speed;
-    
-    float zoomPct;
-    float zoomSpeed;
-    
+    float radius;
+    bool    bCovered;
+    bool    bFixed;
     //-----button image---------
-    ofImage button;
-    float size;
+    ofImage *dot_normal;
+    ofImage *dot_pressed;
 };
 
 

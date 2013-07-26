@@ -17,9 +17,16 @@ rectangle::rectangle(){
 }
 
 //------------------------------------------------------------------
-void rectangle::update(){
-
+void rectangle::drawLevel(){
     
+    buttonRect.setFromCenter(pos, rectW, rectH);
+    if (bTouchOver) {
+        ofSetColor(125);
+    }else{
+        ofSetColor(255);
+    }
+    
+    ofRect(buttonRect);
 
 }
 
@@ -28,16 +35,16 @@ void rectangle::draw() {
     
     bgRect.set(pos.x,pos.y, 300, ofGetHeight());
     buttonRect.setFromCenter(bgRect.getCenter(), rectW, rectH);
-    ofSetRectMode(OF_RECTMODE_CENTER);
     
-    background->draw(bgRect.getCenter());
+    ofSetRectMode(OF_RECTMODE_CENTER);
+    ofRect(bgRect.getCenter(),300,ofGetHeight());
     if (bTouchOver) {
-       buttonTouchOver->draw(bgRect.getCenter()); 
+        buttonTouchOver->draw(bgRect.getCenter()); 
     }else{
         button->draw(bgRect.getCenter());
     }
-    
     ofSetRectMode(OF_RECTMODE_CORNER);
+
     
 }
 

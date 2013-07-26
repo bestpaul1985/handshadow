@@ -4,8 +4,12 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 #include "menu.h"
-#include "level01.h"
-#include "mode2.h"
+
+#include "baseScene.h"
+#include "Mode01.h"
+#include "ofxXmlSettings.h"
+#include "xmlPointer.h"
+
 class testApp : public ofxiPhoneApp{
 	
     public:
@@ -29,8 +33,18 @@ class testApp : public ofxiPhoneApp{
         ofTrueTypeFont font;
         baseScene * scenes[5];
         int currentScene;
-    
         ofImage pattern;
+    
+    //-----XML-----------------------------------
+    ofxXmlSettings XML;
+    string xmlStructure;
+    string message;
+    vector<xmlPointer> points;
+    int CurrentLive;
+    int CurrentLevel;
+    int CureentUnLackedLevel;
+    string systemTime;
 };
+
 
 
