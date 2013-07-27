@@ -8,11 +8,10 @@
 #include "inGameMenu.h"
 #include "item.h"
 
-#define TIMESPEED 3
 class Mode01 : public baseScene{
 public:
     void setup();
-    void xmlReader(vector<xmlPointer> pointer, int *CurrentLive, int *CurrentLevel, int *CurrentScene);
+    void xmlReader(vector<xmlPointer> pointer, int *CurrentLevel, int *CurrentScene);
     void update();
     void draw();
     void checkWin();
@@ -40,8 +39,10 @@ public:
     vector<ofImage> dotImgB;
     int *scene;
     int *level;
-    int *live;
+    int live;
     bool bSave;
+    float bgWidth;
+    float bgHight;
     //*****game start******
     bool bGameStart;
     int gameStartTimer;
@@ -55,10 +56,9 @@ public:
     //*****check win*****
     int winTimer;
     bool bWinTimerStart;
-    
+    float winEffectSpeed;
     //******check lose*****
     bool bLoseTimerStart;
-    bool bNoLive;
     int loseTimer;
     int PreCoverNum;
     ofPoint translate;
@@ -69,8 +69,13 @@ public:
     int *dotExtenderChance;
     int *dotFreezerChance;
     int *coinChance;
+
     int *coin;
+    float timeSpeed;
     
+    //*******subGame********
+    float timeSlowerTimer;
+    float timeSlowerDuration;
 };
 
 

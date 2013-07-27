@@ -24,7 +24,7 @@ class item
 
 public:
     item();
-    void setup(ofPoint Pos);
+    void setup(float x, float y);
     void typeDefinder();
     void reset();
     void update();
@@ -37,17 +37,19 @@ public:
     float raduis;
     bool bCovered;
     bool bFixed;
+    ofPoint org;
     //type
     effect_type myType;
+    
     int timeSlowerChance;
     int dotExtenderChance;
     int dotFreezerChance;
     int coinChance;
     
-    bool bTimeSlowerChance;
-    bool bDotExtenderChance;
-    bool bDotFreezerChance;
-    bool bCoinChance;
+    bool bTimeSlower;
+    bool bDotExtender;
+    bool bDotFreezer;
+    bool bCoin;
     
     //timer
     int timer;

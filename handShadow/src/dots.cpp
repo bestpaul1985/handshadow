@@ -41,7 +41,7 @@ void dots::draw(){
         ofPushMatrix();
         ofSetColor(color);
         ofTranslate(pos.x, pos.y);
-        ofRotateZ(angle);
+//        ofRotateZ(angle);
         if (bCovered) dot_pressed->draw(-dot_pressed->getWidth()/2, -dot_pressed->getHeight()/2);
         else dot_normal->draw(-dot_normal->getWidth()/2, -dot_normal->getHeight()/2);
         ofPopMatrix();

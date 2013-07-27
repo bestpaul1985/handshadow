@@ -45,56 +45,67 @@ void testApp::setup(){
         }
     }
 
-    CurrentLive             = XML.getValue("SETTING:CURRENTLIVE", 5);
     CurrentLevel            = XML.getValue("SETTING:CURRENTLEVEL", 0);
-    CureentUnLackedLevel	= XML.getValue("SETTING:CURRENTUNLACKEDLEVEL", 0);
-    CurrentLive = 5;
+    unLackedLevel	= XML.getValue("SETTING:CURRENTUNLACKEDLEVEL", 0);
+    coinChance = XML.getValue("SETTING:COINCHANCE", 2);
+    timeSlowerChance = XML.getValue("SETTING:TIMESLOWER", 2);
+    dotExtenderChance  = XML.getValue("SETTING:DOTEXTENDER", 2);
+    dotFreezerChance = XML.getValue("SETTING:FREEZERCHANCE", 2);
+    
     //******Scenes*************************************
     scenes[0] = new menu();
     ((menu*)scenes[0])->font = &font;
     ((menu*)scenes[0])->currentScene = &currentScene;
+    ((menu*)scenes[0])->coinChance = &coinChance;
+    ((menu*)scenes[0])->timeSlowerChance = &timeSlowerChance;
+    ((menu*)scenes[0])->dotExtenderChance = &dotExtenderChance;
+    ((menu*)scenes[0])->dotFreezerChance = &dotFreezerChance;
     scenes[0]->setup();
     
     scenes[1] = new Mode01();
-    ((Mode01*)scenes[1])->xmlReader(points,&CurrentLive,&CurrentLevel,&currentScene);
+    ((Mode01*)scenes[1])->xmlReader(points,&CurrentLevel,&currentScene);
     ((Mode01*)scenes[1])->pattern = &pattern;
+    ((Mode01*)scenes[1])->coinChance = &coinChance;
+    ((Mode01*)scenes[1])->timeSlowerChance = &timeSlowerChance;
+    ((Mode01*)scenes[1])->dotExtenderChance = &dotExtenderChance;
+    ((Mode01*)scenes[1])->dotFreezerChance = &dotFreezerChance;
     scenes[1]->setup();
 
+    //feedback
+     cout<<"coinChance: "<<coinChance<<" timeSlowerChance: "<<timeSlowerChance<<" dotExtenderChance: "<<dotExtenderChance<<" dotFreezerChance"<<dotFreezerChance<<endl;
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
     
-    
     scenes[currentScene]->update();
     
-    if (((Mode01*)scenes[1])->bSave) {
+    if (((Mode01*)scenes[1])->bSave || ((menu*)scenes[0])->bSave) {
         XML.setValue("SETTING:CURRENTLEVEL", CurrentLevel);
-        XML.setValue("SETTING:CURRENTLIVE", CurrentLive);
-        XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", CureentUnLackedLevel);
+        XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", unLackedLevel);
+        
+        XML.setValue("SETTING:COINCHANCE", coinChance);
+        XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
+        XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
+        XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
+        
         XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
-        message = "mySettings.xml saved to app documents folder";
         ((Mode01*)scenes[1])->bSave = false;
+        ((menu*)scenes[0])->bSave =false;
+        
+        message = "mySettings.xml saved to app documents folder";
         cout<<message<<endl;
     }
     
+   
+
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
     
     scenes[currentScene]->draw();
-    
-    if (CurrentLive ==0) {
-        ofSetColor(255, 240);
-        ofRect(0, 0, ofGetWidth(), ofGetHeight());
-        ofSetColor(30);
-        font.drawString("Buy Lives", 512- font.stringWidth("Purchase")/2,384+font.stringHeight("Purchase")/2);
-    }
 
-
-
-//    cout<<"CurrentLevel: "<<CurrentLevel<<endl;
 }
 
 //--------------------------------------------------------------
@@ -123,9 +134,12 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 void testApp::exit(){
     
 	XML.setValue("SETTING:CURRENTLEVEL", CurrentLevel);
-	XML.setValue("SETTING:CURRENTLIVE", CurrentLive);
-	XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", CureentUnLackedLevel);
-//    XML.setValue("SETTING:LASTTIME", systemTime);
+	XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", unLackedLevel);
+    XML.setValue("SETTING:COINCHANCE", coinChance);
+    XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
+    XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
+    XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
+    
 	XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
 	message = "mySettings.xml saved to app documents folder";
     cout<<message<<endl;

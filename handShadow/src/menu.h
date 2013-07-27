@@ -47,6 +47,14 @@ public:
     void subMenu(int num);
     void subMenuUp(int x, int y, int touchID);
     
+    void purchaseSetup();
+    void purchaseUpdate();
+    void purchaseDraw();
+    void purchaseTouchDown(int x, int y);
+    void purchaseTouchMove(int x, int y);
+    void purchaseTouchUp(int x, int y);
+    
+    
     rectangle mainMenuRect[MAIN_MENU_BUTTON];
     float pct[MAIN_MENU_BUTTON];    
     float speed;
@@ -74,7 +82,7 @@ public:
     bool bDrag;
     int timer;
     bool bStartTime;
-    
+    bool bSave;
     vector<float> tempRectPos;
     //-------sub menu----------------
     int subMenuNum;
@@ -94,6 +102,23 @@ public:
     int axisX;
     int axisY;
     bool bLevelSnapIn;
+    
+    //-------Purchase-------------
+    int *timeSlowerChance;
+    int *dotExtenderChance;
+    int *dotFreezerChance;
+    int *coinChance;
+   
+    vector<rectangle> coinRects;
+    vector<rectangle> timeSlowerRects;
+    vector<rectangle> dotExtenderRects;
+    vector<rectangle> dotFreezerRects;
+    vector<rectangle> purchaseButtons;
+    
+    int timeSlowerCounter;
+    int coinCounter;
+    int dotExtenderCounter;
+    int dotFreezerCounter;
 };
 
 #endif /* defined(__handShadow__menu__) */

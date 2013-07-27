@@ -8,13 +8,13 @@
 
 #include "Mode01.h"
 
-void Mode01::xmlReader(vector<xmlPointer> pointer, int *CurrentLive, int *CurrentLevel, int *CurrentScene){
+void Mode01::xmlReader(vector<xmlPointer> pointer, int *CurrentLevel, int *CurrentScene){
     
+    live =5;
     xmlPos = pointer;
-    live = CurrentLive;
     level = CurrentLevel;
     scene = CurrentScene;
-    myInGameMenu.live = live;
+    myInGameMenu.live = &live;
     
 }
 
@@ -44,8 +44,10 @@ void Mode01::setup(){
 
 //----------------------------------------------------------
 void Mode01::reset(){
-    
-    //defult info
+    //defult
+    bgWidth = ofGetWidth();
+    bgHight = ofGetHeight();
+
     dotPos.clear();
     myDot.clear();
     items.clear();
@@ -59,11 +61,12 @@ void Mode01::reset(){
         myDot.push_back(tempDos);
     
         item tempItem;
-        tempItem.setup(dotPos[i]);
         tempItem.coinChance = *coinChance;
         tempItem.timeSlowerChance = *timeSlowerChance;
-        tempItem.dotFreezerChance = *dotFreezerChance;
         tempItem.dotExtenderChance = *dotExtenderChance;
+        tempItem.dotFreezerChance = *dotFreezerChance;
+
+        tempItem.setup(myDot[i].pos.x,myDot[i].pos.y);
         items.push_back(tempItem);
     }
     
@@ -80,17 +83,23 @@ void Mode01::reset(){
     
     //game timer
     gameTimer = 60;
-    gameTimerStart = 0;
+    gameTimerStart = ofGetElapsedTimeMillis();
     //check Win
     winTimer = 0;
     bWinTimerStart = false;
     myInGameMenu.bwellDone = false;
-
+    winEffectSpeed = 1;
     //check lose
     bLoseTimerStart = false;
     loseTimer = 0;
     translate.set(0, 0);
     PreCoverNum = 0;
+    
+    //subTime
+    timeSlowerDuration = 0;
+    timeSlowerTimer = ofGetElapsedTimeMillis();
+    timeSpeed = 1;
+    
 }
 
 
@@ -107,7 +116,7 @@ void Mode01::update(){
         }
         
         if (gameStartNumber <0) { 
-            gameTimerStart = ofGetElapsedTimef();
+            gameTimerStart = ofGetElapsedTimeMillis();
             bGameStart = false;
         }
         
@@ -123,7 +132,9 @@ void Mode01::update(){
             }
         }
         
-    //items
+    //subGame
+        
+       
         
         for (int i=0; i<items.size(); i++) {
             if (!items[i].bFixed) {
@@ -131,11 +142,17 @@ void Mode01::update(){
             }
         }
         
+        subGame();
+        
     //timer
-        if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart && !bNoLive) {
-            gameTimer = 60 - (ofGetElapsedTimef() - gameTimerStart)*TIMESPEED;
-        }
+        if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart) {
             
+            if (ofGetElapsedTimeMillis() - gameTimerStart >= 100*timeSpeed) {
+                gameTimer = gameTimer - 0.1;
+                gameTimerStart = ofGetElapsedTimeMillis();
+            }
+        }
+        
     //check winning situation
         checkLose(0, 0, 2);
         checkWin();
@@ -159,8 +176,10 @@ void Mode01::draw(){
     
     //background
     ofSetColor(255);
-    pattern->draw(0,0);
-    
+    ofPushMatrix();
+    ofTranslate(512, 384);
+    pattern->draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
+    ofPopMatrix();
     //draw counter
     if (bGameStart) {
 
@@ -199,18 +218,29 @@ void Mode01::draw(){
     ofSetColor(230);
     fontSmaill.drawString("LEVEL: "+ofToString(*level), 400, 80);
     
-    cout<<items[0].myType<<endl;
-    
 }
 
 //-------------------------------------------------------
 void Mode01::subGame(){
     
     for (int i=0; i<dotPos.size(); i++) {
-        if (items[i].bCoinChance) {
-            
-            items[i].bCoinChance =false;
+        if (items[i].bTimeSlower) {
+            items[i].bTimeSlower = false;
+            timeSlowerDuration = 5;
+            timeSlowerTimer = ofGetElapsedTimeMillis();
         }
+    }
+    
+    
+    //time slower
+    if (timeSlowerDuration>0) {
+        if (ofGetElapsedTimeMillis() - timeSlowerTimer >= 100) {
+            timeSlowerDuration -= 0.1;
+            timeSlowerTimer = ofGetElapsedTimeMillis();
+        }
+        timeSpeed = 3;
+    }else{
+        timeSpeed = 1;
     }
 
 }
@@ -232,11 +262,29 @@ void Mode01::checkWin(){
         if(bWinTimerStart)  winTimer ++;
         
         
-        if (winTimer>0&&winTimer<100) ;//add dot effect bool here
+        if (winTimer>0&&winTimer<100){
+            
+            winEffectSpeed +=0.05;
+            bgWidth+=winEffectSpeed;
+            
+            
+        }
         
-        else if(winTimer>=100 && winTimer<=200) myInGameMenu.bwellDone = true;
+        else if(winTimer>=100 && winTimer<=200) {
+            
+            if(bgWidth>ofGetWidth()){
+                winEffectSpeed+=0.2;
+                bgWidth -=winEffectSpeed;
+            }else{
+                bgWidth = ofGetWidth();
+            }
+            
+            myInGameMenu.bwellDone = true;
+            
+        }
         
         else if(winTimer>=200){
+            live = 5;
             *level += 1;
             bSave = true;
             if (*level>=xmlPos.size()) {
@@ -296,17 +344,18 @@ void Mode01::checkLose(int x, int y, int situation){
             if(loseTimer<50&&loseTimer>0){
                 translate.set(ofRandom(-10,10), ofRandom(-10,10));
             }else if(loseTimer>50){
-                *live -= 1;                
-                if (*live <0) {
-                    *live = 0;
-                    bNoLive = true;
-                    bSave = true;
-
-                }else{
-                    bLoseTimerStart = false;
+               
+                live --;
+                if (live == 0) {
+                    live = 5;
                     reset();
-                    bSave = true;
+                }else{
+                    reset();
                 }
+                
+                
+                bSave = true;
+                bLoseTimerStart = false;
             }
         }break;
             
@@ -319,7 +368,7 @@ void Mode01::checkLose(int x, int y, int situation){
 //----------------------------------------------------------
 void Mode01::touchDown(int x, int y, int touchID){
    
-    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart && !bNoLive) {
+    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchDown(x, y, touchID);
             items[i].touchDown(x, y, touchID);
@@ -338,7 +387,7 @@ void Mode01::touchDown(int x, int y, int touchID){
 void Mode01::touchMove(int x, int y, int touchID){
  
 
-    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart&& !bGameStart && !bNoLive) {
+    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart&& !bGameStart) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchMove(x, y, touchID);
             items[i].touchMove(x, y, touchID);
@@ -359,7 +408,7 @@ void Mode01::touchUp(int x, int y, int touchID){
             PreCoverNum ++;
         }
     }
-    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart && !bNoLive) {
+    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchUp(x, y, touchID);
         }

@@ -29,6 +29,18 @@ void rectangle::drawLevel(){
     ofRect(buttonRect);
 
 }
+//------------------------------------------------------------------
+void rectangle::drawPurchase(){
+
+    buttonRect.setFromCenter(pos, rectW, rectH);
+    if (bTouchOver) {
+        ofSetColor(125);
+    }else{
+        ofSetColor(255);
+    }
+    ofRect(buttonRect);
+
+}
 
 //------------------------------------------------------------------
 void rectangle::draw() {

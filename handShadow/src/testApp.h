@@ -42,8 +42,15 @@ class testApp : public ofxiPhoneApp{
     vector<xmlPointer> points;
     int CurrentLive;
     int CurrentLevel;
-    int CureentUnLackedLevel;
+    int unLackedLevel;
     string systemTime;
+    
+    //-----subGame------------------------------
+    int timeSlowerChance;
+    int dotExtenderChance;
+    int dotFreezerChance;
+    int coinChance;
+
 };
 
 
