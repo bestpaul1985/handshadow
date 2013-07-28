@@ -50,6 +50,8 @@ class testApp : public ofxiPhoneApp{
     int dotExtenderChance;
     int dotFreezerChance;
     int coinChance;
+    
+    int coin;
 
 };
 

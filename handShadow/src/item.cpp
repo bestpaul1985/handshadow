@@ -32,8 +32,8 @@ void item::setup(float x, float y){
     
     typeDefinder();
     
-    cout<<myType<<endl;
-    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;
+//    cout<<myType<<endl;
+//    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;
 }
 
 //---------------------------------------------------

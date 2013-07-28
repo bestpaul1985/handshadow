@@ -252,12 +252,15 @@
 		4C91392717970C4900537CFB /* utility */ = {
 			isa = PBXGroup;
 			children = (
-				4C3417FF179462870038BE64 /* dots.cpp */,
-				4CC8465417933F7100237FE4 /* dots.h */,
+				4CC846421793083800237FE4 /* menu.cpp */,
+				4CC846431793083800237FE4 /* menu.h */,
+				4C2EBE15179DA321001A510E /* xmlPointer.h */,
 				4C1F7C031794ACC60012196A /* particle.cpp */,
 				4C1F7C041794ACC60012196A /* particle.h */,
 				4C91392417970C1800537CFB /* rectangle.cpp */,
 				4C91392517970C1800537CFB /* rectangle.h */,
+				4C3417FF179462870038BE64 /* dots.cpp */,
+				4CC8465417933F7100237FE4 /* dots.h */,
 				4C5D81F417A1AC6900075DBC /* item.cpp */,
 				4C5D81F517A1AC6900075DBC /* item.h */,
 			);
@@ -326,9 +329,6 @@
 				E4D8936B11527B74007E1F53 /* main.mm */,
 				E4D8936D11527B74007E1F53 /* testApp.mm */,
 				E4D8936C11527B74007E1F53 /* testApp.h */,
-				4C2EBE15179DA321001A510E /* xmlPointer.h */,
-				4CC846421793083800237FE4 /* menu.cpp */,
-				4CC846431793083800237FE4 /* menu.h */,
 				4CC8464A179317FF00237FE4 /* baseScene.h */,
 				4C91392717970C4900537CFB /* utility */,
 				4CC8464F17931F5A00237FE4 /* gamePlay */,

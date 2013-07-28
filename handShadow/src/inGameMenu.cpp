@@ -8,7 +8,11 @@
 
 #include "inGameMenu.h"
 
-void inGameMenu::setup(){
+void inGameMenu::setup(int *Coin){
+    
+    coin = Coin;
+    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30);
+    
     
     wellDown.loadImage("assets/images/inGameMenu/welldone.png");
     fingerBG.loadImage("assets/images/liveSystem/background_small.png");
@@ -64,6 +68,8 @@ void inGameMenu::draw(){
         
     }else{
         liveSystemDraw();
+        ofSetColor(30);
+        font.drawString("COIN: "+ ofToString(*coin), 10, 180);
     }
 
 }

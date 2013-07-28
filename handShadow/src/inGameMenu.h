@@ -22,7 +22,7 @@ struct basicSprite {
 
 class inGameMenu{
 public:
-    void setup();
+    void setup(int *Coin);
     void update();
     void draw();
     void touchDown(int x, int y, int touchID);
@@ -34,7 +34,13 @@ public:
     void liveSystemTouchDown(int x, int y, int touchID);
     void liveSystemTouchMove(int x, int y, int touchID);
     void liveSystemTouchUp(int x, int y, int touchID);
-        
+    
+    
+    int *live;
+    int *coin;
+    
+    ofTrueTypeFont font;
+    
     ofImage wellDown;
     ofRectangle imgRect;
     bool bwellDone;
@@ -51,11 +57,11 @@ public:
     ofxSpriteSheetRenderer *spriteRenderer;
     vector <basicSprite * > sprites;
     ofImage fingerBG;
-    int *live;
+   
     bool bliveTouchOver;
     bool bPause;
     bool bBackToMainMenu;
-
+    
 };
 
 #endif /* defined(__handShadow__inGameMenu__) */

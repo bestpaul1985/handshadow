@@ -37,7 +37,7 @@ void Mode01::setup(){
     temImg.loadImage("assets/images/dots/B/Dot_Pressed.png");
     dotImgB.push_back(temImg);
 
-    myInGameMenu.setup();
+    myInGameMenu.setup(coin);
     reset();
 
 }
@@ -124,6 +124,11 @@ void Mode01::update(){
     
     //real game play
     else{
+        
+        for (int i=0; i<myDot.size(); i++) {
+            myDot[i].update();
+        }
+        
         
         for (int i=0; i<(myDot.size()-1); i++) {
             if (myDot[i].bCovered && myDot[i+1].bFixed) {
@@ -223,16 +228,39 @@ void Mode01::draw(){
 //-------------------------------------------------------
 void Mode01::subGame(){
     
-    for (int i=0; i<dotPos.size(); i++) {
-        if (items[i].bTimeSlower) {
+    for (int i=0; i<items.size(); i++) {
+        //Coin
+        if (items[i].bCoin) {
+            *coin +=50;
+            bSave = true;
+            items[i].bCoin = false;
+        }
+        //time slower
+        else if (items[i].bTimeSlower) {
             items[i].bTimeSlower = false;
             timeSlowerDuration = 5;
             timeSlowerTimer = ofGetElapsedTimeMillis();
         }
+        //dot extender
+        else if (items[i].bDotExtender) {
+            for (int i=0; i<myDot.size(); i++) {
+                myDot[i].radiusExtendReset();
+                myDot[i].goalRaduis +=10;
+                myDot[i].bRadiusExtend = true;
+            }
+            items[i].bDotExtender = false;
+        }
+        //dot freezer
+        else if (items[i].bDotFreezer) {
+            myDot[i].bFreezed = true;
+            
+            items[i].bDotFreezer = false;
+        }
+
+    
     }
     
-    
-    //time slower
+    //time slower update
     if (timeSlowerDuration>0) {
         if (ofGetElapsedTimeMillis() - timeSlowerTimer >= 100) {
             timeSlowerDuration -= 0.1;
@@ -264,19 +292,18 @@ void Mode01::checkWin(){
         
         if (winTimer>0&&winTimer<100){
             
-            winEffectSpeed +=0.05;
-            bgWidth+=winEffectSpeed;
-            
-            
+            winEffectSpeed = 500;
+            bgWidth+= winEffectSpeed;
         }
         
         else if(winTimer>=100 && winTimer<=200) {
             
             if(bgWidth>ofGetWidth()){
-                winEffectSpeed+=0.2;
+                winEffectSpeed+=500;
                 bgWidth -=winEffectSpeed;
             }else{
                 bgWidth = ofGetWidth();
+                bgHight+=ofGetHeight();
             }
             
             myInGameMenu.bwellDone = true;
@@ -319,6 +346,7 @@ void Mode01::checkLose(int x, int y, int situation){
                 
                     bLoseTimerStart = true;
             }
+            
         }break;
             
         case 1:{
@@ -332,7 +360,8 @@ void Mode01::checkLose(int x, int y, int situation){
             if (PreCoverNum>coveredNum) {
                 bLoseTimerStart = true;
             }
-                        
+            
+            PreCoverNum = 0;
         }break;
     
         case 2:{

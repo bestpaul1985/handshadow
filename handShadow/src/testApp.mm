@@ -45,12 +45,13 @@ void testApp::setup(){
         }
     }
 
-    CurrentLevel            = XML.getValue("SETTING:CURRENTLEVEL", 0);
-    unLackedLevel	= XML.getValue("SETTING:CURRENTUNLACKEDLEVEL", 0);
-    coinChance = XML.getValue("SETTING:COINCHANCE", 2);
-    timeSlowerChance = XML.getValue("SETTING:TIMESLOWER", 2);
-    dotExtenderChance  = XML.getValue("SETTING:DOTEXTENDER", 2);
-    dotFreezerChance = XML.getValue("SETTING:FREEZERCHANCE", 2);
+    coin                = XML.getValue("SETTING:COIN",1000);
+    CurrentLevel        = XML.getValue("SETTING:CURRENTLEVEL", 0);
+    unLackedLevel       = XML.getValue("SETTING:CURRENTUNLACKEDLEVEL", 0);
+    coinChance          = XML.getValue("SETTING:COINCHANCE", 2);
+    timeSlowerChance    = XML.getValue("SETTING:TIMESLOWER", 2);
+    dotExtenderChance   = XML.getValue("SETTING:DOTEXTENDER", 2);
+    dotFreezerChance    = XML.getValue("SETTING:FREEZERCHANCE", 2);
     
     //******Scenes*************************************
     scenes[0] = new menu();
@@ -64,6 +65,7 @@ void testApp::setup(){
     
     scenes[1] = new Mode01();
     ((Mode01*)scenes[1])->xmlReader(points,&CurrentLevel,&currentScene);
+    ((Mode01*)scenes[1])->coin = &coin;
     ((Mode01*)scenes[1])->pattern = &pattern;
     ((Mode01*)scenes[1])->coinChance = &coinChance;
     ((Mode01*)scenes[1])->timeSlowerChance = &timeSlowerChance;
@@ -81,6 +83,8 @@ void testApp::update(){
     scenes[currentScene]->update();
     
     if (((Mode01*)scenes[1])->bSave || ((menu*)scenes[0])->bSave) {
+        
+        XML.setValue("SETTING:COIN", coin);
         XML.setValue("SETTING:CURRENTLEVEL", CurrentLevel);
         XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", unLackedLevel);
         
@@ -133,6 +137,7 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 //--------------------------------------------------------------
 void testApp::exit(){
     
+    XML.setValue("SETTING:COIN", coin);
 	XML.setValue("SETTING:CURRENTLEVEL", CurrentLevel);
 	XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", unLackedLevel);
     XML.setValue("SETTING:COINCHANCE", coinChance);
@@ -151,5 +156,15 @@ void testApp::touchCancelled(ofTouchEventArgs & touch){}
 void testApp::lostFocus(){}
 void testApp::gotFocus(){}
 void testApp::gotMemoryWarning(){}
-void testApp::deviceOrientationChanged(int newOrientation){}
+
+//--------------------------------------------------------------
+void testApp::deviceOrientationChanged(int newOrientation){
+
+    if (newOrientation == 4) {
+        iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+    }else if(newOrientation ==3){
+        iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
+    }
+
+}
 

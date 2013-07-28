@@ -17,13 +17,38 @@ void dots::setup(float x, float y,ofImage *A, ofImage *B){
     dot_pressed = B;
     reset();
     angle = 0;
+    bRadiusExtend = false;
+    bFreezed = false;
+    radiusPct = 0;
+    radiusPctOrg = 0;
+    goalRaduis = 83;
 }
 
 //-------------------------------------------------------
 void dots::update(){
     
-
+    radiusExtend();
   
+}
+//-------------------------------------------------------
+void dots::radiusExtendReset(){
+    radiusPct = 0;
+    radiusPctOrg = 0;
+    bRadiusExtend = false;
+}
+//-------------------------------------------------------
+void dots::radiusExtend(){
+
+    if (bRadiusExtend) {
+        float speed = 0.001f;
+        radiusPctOrg += speed;
+        if (radiusPctOrg >=1) {
+            radiusPctOrg = 1;
+            bRadiusExtend = false;
+        }
+        radiusPct = powf(radiusPctOrg, 0.6);
+        radius = (1-radiusPct)*radius + radiusPct*goalRaduis;
+    }
 }
 
 //-------------------------------------------------------
@@ -39,11 +64,16 @@ void dots::draw(){
     
     if (!bFixed) {
         ofPushMatrix();
+        if (!bFreezed) {
+            color.set(255);
+        }else{
+            color.set(30);
+        }
         ofSetColor(color);
         ofTranslate(pos.x, pos.y);
 //        ofRotateZ(angle);
-        if (bCovered) dot_pressed->draw(-dot_pressed->getWidth()/2, -dot_pressed->getHeight()/2);
-        else dot_normal->draw(-dot_normal->getWidth()/2, -dot_normal->getHeight()/2);
+        if (bCovered) dot_pressed->draw(-radius, -radius,radius*2,radius*2);
+        else dot_normal->draw(-radius, -radius,radius*2,radius*2);
         ofPopMatrix();
     }
 }
@@ -52,13 +82,17 @@ void dots::draw(){
 void dots::touchDown(int x, int y, int touchID){
     
       
-    if (!bFixed) {
+    if (!bFixed&& !bFreezed) {
         ofPoint touchPos(x,y);
         if (pos.distance(touchPos) < radius) {
             myId.push_back(touchID);
         }
         
         if (myId.size()>0) {
+            bCovered = true;
+        }
+        
+        if (bFreezed) {
             bCovered = true;
         }
     }
@@ -80,10 +114,12 @@ void dots::touchMove(int x, int y, int touchID){
             }
         }
         
-        
-        
         if (myId.size()==0) {
             bCovered = false;
+        }
+        
+        if (bFreezed) {
+            bCovered = true;
         }
     }
         
@@ -106,6 +142,10 @@ void dots::touchUp(int x, int y, int touchID){
         
         if (myId.size()==0) {
             bCovered = false;
+        }
+        
+        if (bFreezed) {
+            bCovered = true;
         }
     }
     

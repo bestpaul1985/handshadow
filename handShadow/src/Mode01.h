@@ -31,6 +31,9 @@ public:
     inGameMenu myInGameMenu;
     
     //defult setting
+    int *coin;
+    int live;
+    
     ofImage *pattern;
     vector<dots> myDot;
     vector<xmlPointer>  xmlPos;
@@ -39,7 +42,7 @@ public:
     vector<ofImage> dotImgB;
     int *scene;
     int *level;
-    int live;
+    
     bool bSave;
     float bgWidth;
     float bgHight;
@@ -70,12 +73,13 @@ public:
     int *dotFreezerChance;
     int *coinChance;
 
-    int *coin;
+    
     float timeSpeed;
     
     //*******subGame********
     float timeSlowerTimer;
     float timeSlowerDuration;
+    
 };
 
 

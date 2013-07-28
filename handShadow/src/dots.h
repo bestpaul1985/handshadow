@@ -16,7 +16,8 @@ class dots{
 public:
     void setup(float x, float y,ofImage *A, ofImage *B);
     void update();
-    void InAndOut();
+    void radiusExtend();
+    void radiusExtendReset();
     void touchDown(int x, int y, int touchID);
     void touchUp(int x, int y, int touchID);
     void touchMove(int x, int y, int touchID);
@@ -35,6 +36,14 @@ public:
     //-----button image---------
     ofImage *dot_normal;
     ofImage *dot_pressed;
+    
+    //-----Effect --------------
+    bool bRadiusExtend;
+    bool bFreezed;
+    float goalRaduis;
+    float radiusPct;
+    float radiusPctOrg;
+    
 };
 
 
