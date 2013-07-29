@@ -10,7 +10,6 @@ void testApp::setup(){
 	ofBackground(255);
     
     currentScene  = 0;
-    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 80);
     pattern.loadImage("assets/images/gamePlay/pattern02.png");
     
     
@@ -55,26 +54,30 @@ void testApp::setup(){
     
     //******Scenes*************************************
     scenes[0] = new menu();
-    ((menu*)scenes[0])->font = &font;
     ((menu*)scenes[0])->currentScene = &currentScene;
+    ((menu*)scenes[0])->coin = &coin;
     ((menu*)scenes[0])->coinChance = &coinChance;
     ((menu*)scenes[0])->timeSlowerChance = &timeSlowerChance;
     ((menu*)scenes[0])->dotExtenderChance = &dotExtenderChance;
     ((menu*)scenes[0])->dotFreezerChance = &dotFreezerChance;
     scenes[0]->setup();
     
-    scenes[1] = new Mode01();
-    ((Mode01*)scenes[1])->xmlReader(points,&CurrentLevel,&currentScene);
-    ((Mode01*)scenes[1])->coin = &coin;
-    ((Mode01*)scenes[1])->pattern = &pattern;
-    ((Mode01*)scenes[1])->coinChance = &coinChance;
-    ((Mode01*)scenes[1])->timeSlowerChance = &timeSlowerChance;
-    ((Mode01*)scenes[1])->dotExtenderChance = &dotExtenderChance;
-    ((Mode01*)scenes[1])->dotFreezerChance = &dotFreezerChance;
+    scenes[1] = new handDetector();
+    ((handDetector*)scenes[1])->scene = &currentScene;
     scenes[1]->setup();
+    
+    scenes[2] = new Mode01();
+    ((Mode01*)scenes[2])->xmlReader(points,&CurrentLevel,&currentScene);
+    ((Mode01*)scenes[2])->coin = &coin;
+    ((Mode01*)scenes[2])->pattern = &pattern;
+    ((Mode01*)scenes[2])->coinChance = &coinChance;
+    ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
+    ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
+    ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
+    scenes[2]->setup();
 
     //feedback
-     cout<<"coinChance: "<<coinChance<<" timeSlowerChance: "<<timeSlowerChance<<" dotExtenderChance: "<<dotExtenderChance<<" dotFreezerChance"<<dotFreezerChance<<endl;
+//     cout<<"coinChance: "<<coinChance<<" timeSlowerChance: "<<timeSlowerChance<<" dotExtenderChance: "<<dotExtenderChance<<" dotFreezerChance"<<dotFreezerChance<<endl;
 }
 
 //--------------------------------------------------------------

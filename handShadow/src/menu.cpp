@@ -11,6 +11,8 @@
 //-------------------------------------------------------
 void menu::setup(){
 
+    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 40);
+    
     button[0].loadImage("assets/images/mainMenu/Tutorial.png");
     buttonOver[0].loadImage("assets/images/mainMenu/Tutorial_b.png");
     background[0].loadImage("assets/images/mainMenu/mainMenuBg.png");
@@ -48,7 +50,8 @@ void menu::setup(){
     bSave = false;
     levelReset();
     purchaseSetup();
- }
+
+}
 
 //-------------------------------------------------------
 void menu::update(){
@@ -58,10 +61,9 @@ void menu::update(){
     }
     else if (bSubMenu) {
         subMenu(subMenuNum);
+        levelUpdate();
+        purchaseUpdate();
         
-        if (subMenuNum == 2) {
-            levelUpdate();
-        }
     }
     else{
         drag();
@@ -452,29 +454,23 @@ void menu::dragMove(int x, int y, int touchID){
         
         touch.set(x, y);
         int diff =  touch.x - preTouch.x;
+        
         float speed = 13;
-        if (diff>1&&diff<20) {
-                mParticle.pos.x+=speed;
-            
-        }
-        else if (diff<-1&&diff>-20) {
-                mParticle.pos.x-=speed;
-                if (mParticle.pos.x<36) {
-                    bHidenLogo = true;
-                }
-        }
+    
         
-        
-        speed = 3;
-        if (diff >20) {
-            mParticle.frc.set(0,0);
-            mParticle.vel.set(0,0);
+        if (diff >1 ) {
+            speed = ofMap(diff, 5, 50, 8, 12,true);
             frc.x = speed;
         }
-        else if (diff < -20){
-            mParticle.frc.set(0,0);
+        else if (diff < -1){
+            speed = ofMap(diff, -50, -5, -12, -8,true);
+            frc.x = speed;
+            if (mParticle.pos.x<=36) {
+                bHidenLogo = true;
+            }
+        }else{
             mParticle.vel.set(0,0);
-            frc.x = -speed;
+            frc.x = 0;
         }
         
         preTouch.x = touch.x;
@@ -518,46 +514,51 @@ void menu::snapIn(){
 //********-----------------------------------------------
 void menu::levelDraw(){
    
-    if (subStep ==2&& subMenuNum == 2) {
- 
-        for (int i =0 ; i<levelRect2.size(); i++) {
-            levelRect1[i].drawLevel();
-            levelRect2[i].drawLevel();
+    if (subStep ==1 || subStep ==2) {
+        if (subMenuNum == 2) {
+            for (int i =0 ; i<levelRect2.size(); i++) {
+                levelRect1[i].drawLevel();
+                levelRect2[i].drawLevel();
+            }
         }
     }
     
+
+
 }
 
 //-------------------------------------------------------
 void menu::levelUpdate(){
     
-    if (subStep ==2&& subMenuNum == 2) {
-
-        mParticle.resetForce();
-        mParticle.addForce(0, frc.y);
-        mParticle.addDampingForce();
-        mParticle.update();
-        
-        if (mParticle.pos.y>384) {
-            mParticle.pos.y = 384;
-        }
-        
-        else if (mParticle.pos.y< -800) {
-            mParticle.pos.y = -800;
-        }
-        
-        float diff = mParticle.pos.y - preParticlePos.y;
-        
-        
-        for (int i=0; i<levelRect1.size(); i++) {
-            levelRect1[i].pos.y += diff;
-        }
-        
-        for (int i=0; i<levelRect2.size(); i++) {
-            levelRect2[i].pos.y += diff;
-        }
-        
+    if (subStep ==1 || subStep ==2) {
+        if (subMenuNum == 2) {
+    
+            mParticle.resetForce();
+            mParticle.addForce(0, frc.y);
+            mParticle.addDampingForce();
+            mParticle.update();
+            
+            if (mParticle.pos.y>384) {
+                mParticle.pos.y = 384;
+            }
+            
+            else if (mParticle.pos.y< -800) {
+                mParticle.pos.y = -800;
+            }
+            
+            float diff = mParticle.pos.y - preParticlePos.y;
+            
+            
+            for (int i=0; i<levelRect1.size(); i++) {
+                levelRect1[i].pos.y += diff;
+            }
+            
+            for (int i=0; i<levelRect2.size(); i++) {
+                levelRect2[i].pos.y += diff;
+            }
+            
             preParticlePos.y = mParticle.pos.y;
+        }
     }
 }
 
@@ -634,25 +635,27 @@ void menu::levelReset(){
 //-------------------------------------------------------
 void menu::levelDown(int x, int y, int touchID){
 
-    if (subStep ==2&& subMenuNum == 2) {
-        levelTouch.set(x, y);
-        levelPreTouch.set(x, y);
-        frc.y = 0;
-        mParticle.frc.set(0,0);
-        mParticle.vel.set(0,0);
+    if (subStep ==1 || subStep ==2) {
+        if (subMenuNum == 2) {
         
-        for (int i=0; i<levelRect1.size(); i++) {
-            if (levelRect1[i].buttonRect.inside(x, y)) {
-                levelRect1[i].bTouchOver = true;
+            levelTouch.set(x, y);
+            levelPreTouch.set(x, y);
+            frc.y = 0;
+            mParticle.frc.set(0,0);
+            mParticle.vel.set(0,0);
+            
+            for (int i=0; i<levelRect1.size(); i++) {
+                if (levelRect1[i].buttonRect.inside(x, y)) {
+                    levelRect1[i].bTouchOver = true;
+                }
+            }
+            
+            for (int i=0; i<levelRect2.size(); i++) {
+                if (levelRect2[i].buttonRect.inside(x, y)) {
+                    levelRect2[i].bTouchOver = true;
+                }
             }
         }
-        
-        for (int i=0; i<levelRect2.size(); i++) {
-            if (levelRect2[i].buttonRect.inside(x, y)) {
-                levelRect2[i].bTouchOver = true;
-            }
-        }
-
     }
   
     
@@ -661,68 +664,74 @@ void menu::levelDown(int x, int y, int touchID){
 //-------------------------------------------------------
 void menu::levelMove(int x, int y, int touchID){
 
-    if (subStep ==2&& subMenuNum == 2) {
-        levelTouch.set(x, y);
-        frc.y = 0;
-        mParticle.frc.set(0,0);
-        mParticle.vel.set(0,0);
+    if (subStep ==1 || subStep ==2) {
         
-        float diff = levelTouch.y - levelPreTouch.y;
-        float speed = 10;
-        
-        if (diff>1&&diff<10) {
+        if (subMenuNum == 2) {
             
-            mParticle.pos.y+=speed;
-        }
-        else if (diff<-1&&diff>-10) {
+            levelTouch.set(x, y);
+            frc.y = 0;
+            mParticle.frc.set(0,0);
+            mParticle.vel.set(0,0);
             
-            mParticle.pos.y-=speed;
+            float diff = levelTouch.y - levelPreTouch.y;
+            float speed = 10;
+            
+            if (diff>1&&diff<10) {
+                
+                mParticle.pos.y+=speed;
+            }
+            else if (diff<-1&&diff>-10) {
+                
+                mParticle.pos.y-=speed;
 
-        }
-        
-        speed = 2;
-        if (diff >10) {
-            frc.y = speed;
-        }
-        else if (diff < -10){
-            frc.y = -speed;
-        }
-        
-        
-        levelPreTouch.y = levelTouch.y;
-        
-        for (int i=0; i<levelRect1.size(); i++) {
-            if (levelRect1[i].buttonRect.inside(x, y)) {
-                levelRect1[i].bTouchOver = true;
-            }else{
-                levelRect1[i].bTouchOver = false;
+            }
+            
+            speed = 2;
+            if (diff >10) {
+                frc.y = speed;
+            }
+            else if (diff < -10){
+                frc.y = -speed;
+            }
+            
+            
+            levelPreTouch.y = levelTouch.y;
+            
+            for (int i=0; i<levelRect1.size(); i++) {
+                if (levelRect1[i].buttonRect.inside(x, y)) {
+                    levelRect1[i].bTouchOver = true;
+                }else{
+                    levelRect1[i].bTouchOver = false;
+                }
+            }
+            
+            for (int i=0; i<levelRect2.size(); i++) {
+                if (levelRect2[i].buttonRect.inside(x, y)) {
+                    levelRect2[i].bTouchOver = true;
+                }else{
+                    levelRect2[i].bTouchOver = false;
+                }
             }
         }
-        
-        for (int i=0; i<levelRect2.size(); i++) {
-            if (levelRect2[i].buttonRect.inside(x, y)) {
-                levelRect2[i].bTouchOver = true;
-            }else{
-                levelRect2[i].bTouchOver = false;
-            }
-        }
-        
     }
     
 }
 
 //-------------------------------------------------------
 void menu::levelUp(int x, int y, int touchID){
-    if (subStep == 2 && subMenuNum == 2) {
-        for (int i=0; i<levelRect1.size(); i++) {
-            if (levelRect1[i].buttonRect.inside(x, y)) {
-                levelRect1[i].bTouchOver = false;
+    if (subStep ==1 || subStep == 2) {
+        if (subMenuNum == 2) {
+
+            for (int i=0; i<levelRect1.size(); i++) {
+                if (levelRect1[i].buttonRect.inside(x, y)) {
+                    levelRect1[i].bTouchOver = false;
+                }
             }
-        }
-        
-        for (int i=0; i<levelRect2.size(); i++) {
-            if (levelRect2[i].buttonRect.inside(x, y)) {
-                levelRect2[i].bTouchOver = false;
+            
+            for (int i=0; i<levelRect2.size(); i++) {
+                if (levelRect2[i].buttonRect.inside(x, y)) {
+                    levelRect2[i].bTouchOver = false;
+                }
             }
         }
     }
@@ -730,22 +739,24 @@ void menu::levelUp(int x, int y, int touchID){
 
 //-------------------------------------------------------
 void menu::purchaseSetup(){
-
+    
+    
     for (int i=0; i<10; i++) {
+        int startX = 500;
         rectangle tempRect;
         tempRect.rectW = 27;
         tempRect.rectH = 48;
          //coin 
-        tempRect.pos.set(400+27*i+20*i, 200);
+        tempRect.pos.set(startX+27*i+20*i, 200);
         coinRects.push_back(tempRect);
          //Time Slower
-        tempRect.pos.set(400+27*i+20*i, 200+100);
+        tempRect.pos.set(startX+27*i+20*i, 200+100);
         timeSlowerRects.push_back(tempRect);
         //dot extender
-        tempRect.pos.set(400+27*i+20*i, 200+200);
+        tempRect.pos.set(startX+27*i+20*i, 200+200);
         dotExtenderRects.push_back(tempRect);
         //dot freezer
-        tempRect.pos.set(400+27*i+20*i, 200+300);
+        tempRect.pos.set(startX+27*i+20*i, 200+300);
         dotFreezerRects.push_back(tempRect);
     }
     
@@ -753,7 +764,7 @@ void menu::purchaseSetup(){
         rectangle tempRect;
         tempRect.rectW = 48;
         tempRect.rectH = 48;
-        tempRect.pos.set(770+180, 200+100 * i);
+        tempRect.pos.set(400, 200+100 * i);
         purchaseButtons.push_back(tempRect);
     }
     
@@ -787,37 +798,66 @@ void menu::purchaseSetup(){
 }
 
 //-------------------------------------------------------
+void menu::purchaseUpdate(){
+
+    if (subStep ==1 || subStep ==2) {
+        if (subMenuNum == 3) {
+            for (int i=0; i<purchaseButtons.size(); i++) {
+                if (*coin<500) {
+                    purchaseButtons[i].bFixed = true;
+                    purchaseButtons[i].bTouchOver = true;
+                }
+            }
+        }
+    }
+
+}
+
+//-------------------------------------------------------
 void menu::purchaseDraw(){
-    if (subStep ==2&& subMenuNum == 3) {
-        for (int i=0; i<10; i++) {
-            timeSlowerRects[i].drawPurchase();
-            coinRects[i].drawPurchase();
-            dotExtenderRects[i].drawPurchase();
-            dotFreezerRects[i].drawPurchase();
-        }
+    
+    if (subStep ==1 || subStep ==2 ) {
         
-        for (int i=0; i<purchaseButtons.size(); i++) {
-            purchaseButtons[i].drawPurchase();
-        }
-        
-        //coin
-        if (coinCounter==10) {
-            purchaseButtons[0].bTouchOver = true;
-        }
-        
-        //timer slower
-        if (timeSlowerCounter==10) {
-            purchaseButtons[1].bTouchOver = true;
-        }
-        
-        //dot extender
-        if (dotExtenderCounter==10) {
-            purchaseButtons[2].bTouchOver = true;
-        }
-        
-        //dot freezer
-        if (dotFreezerCounter==10) {
-            purchaseButtons[3].bTouchOver = true;
+        if (subMenuNum == 3) {
+            
+            for (int i=0; i<10; i++) {
+                timeSlowerRects[i].drawPurchase();
+                coinRects[i].drawPurchase();
+                dotExtenderRects[i].drawPurchase();
+                dotFreezerRects[i].drawPurchase();
+            }
+            
+            for (int i=0; i<purchaseButtons.size(); i++) {
+                purchaseButtons[i].drawPurchase();
+            }
+            
+            //coin
+            if (coinCounter==10) {
+                purchaseButtons[0].bTouchOver = true;
+            }
+            
+            //timer slower
+            if (timeSlowerCounter==10) {
+                purchaseButtons[1].bTouchOver = true;
+            }
+            
+            //dot extender
+            if (dotExtenderCounter==10) {
+                purchaseButtons[2].bTouchOver = true;
+            }
+            
+            //dot freezer
+            if (dotFreezerCounter==10) {
+                purchaseButtons[3].bTouchOver = true;
+            }
+            
+            ofSetColor(255);
+            font.drawString("Coin: "+ofToString(*coin), 400, 100);
+            
+            if (bNoCoin) {
+                ofSetColor(255);
+                ofRect(400, 200, 400, 300);
+            }
         }
     }
 }
@@ -826,32 +866,35 @@ void menu::purchaseDraw(){
 void menu::purchaseTouchDown(int x, int y){
     //coin
 
-    if (subStep ==2&& subMenuNum == 3 && coinCounter<10) {
-        if (purchaseButtons[0].buttonRect.inside(x, y)) {
-            purchaseButtons[0].bTouchOver = true;
-        }
-    }
-    //timer slower
-
-     if (subStep ==2&& subMenuNum == 3 && timeSlowerCounter<10) {
-        if (purchaseButtons[1].buttonRect.inside(x, y)) {
-            purchaseButtons[1].bTouchOver = true;
-        }
-    }
-    
-    //dot extender
-    
-     if (subStep ==2&& subMenuNum == 3 && dotExtenderCounter<10) {
-        if (purchaseButtons[2].buttonRect.inside(x, y)) {
-            purchaseButtons[2].bTouchOver = true;
-        }
-    }
-    
-    //dot freezer
+    if (subStep ==1 || subStep ==2) {
         
-     if (subStep ==2&& subMenuNum == 3 && dotFreezerCounter<10) {
-        if (purchaseButtons[3].buttonRect.inside(x, y)) {
-            purchaseButtons[3].bTouchOver = true;
+        if ( subMenuNum == 3 && coinCounter<10) {
+            if (purchaseButtons[0].buttonRect.inside(x, y)) {
+                purchaseButtons[0].bTouchOver = true;
+            }
+        }
+        //timer slower
+
+         if (subMenuNum == 3 && timeSlowerCounter<10) {
+            if (purchaseButtons[1].buttonRect.inside(x, y)) {
+                purchaseButtons[1].bTouchOver = true;
+            }
+        }
+        
+        //dot extender
+        
+         if (subMenuNum == 3 && dotExtenderCounter<10) {
+            if (purchaseButtons[2].buttonRect.inside(x, y)) {
+                purchaseButtons[2].bTouchOver = true;
+            }
+        }
+        
+        //dot freezer
+            
+         if (subMenuNum == 3 && dotFreezerCounter<10) {
+            if (purchaseButtons[3].buttonRect.inside(x, y)) {
+                purchaseButtons[3].bTouchOver = true;
+            }
         }
     }
     
@@ -861,87 +904,120 @@ void menu::purchaseTouchDown(int x, int y){
 //-------------------------------------------------------
 void menu::purchaseTouchMove(int x, int y){
     //coin
+    if (subStep ==1 || subStep ==2) {
+        
+        if (subMenuNum == 3 && coinCounter<10) {
+            if (purchaseButtons[0].buttonRect.inside(x, y)) {
+                purchaseButtons[0].bTouchOver = true;
+            }else{
+                purchaseButtons[0].bTouchOver = false;
+            }
+        }
+        //timer slower
 
-    if (subStep ==2&& subMenuNum == 3 && coinCounter<10) {
-        if (purchaseButtons[0].buttonRect.inside(x, y)) {
-            purchaseButtons[0].bTouchOver = true;
-        }else{
-            purchaseButtons[0].bTouchOver = false;
+        if (subMenuNum == 3&& timeSlowerCounter<10) {
+            if (purchaseButtons[1].buttonRect.inside(x, y)) {
+                purchaseButtons[1].bTouchOver = true;
+            }else{
+                purchaseButtons[1].bTouchOver = false;
+            }
+        }
+        
+        //dot extender
+        if (subMenuNum == 3&& dotExtenderCounter<10) {
+           if (purchaseButtons[2].buttonRect.inside(x, y)) {
+               purchaseButtons[2].bTouchOver = true;
+           }else{
+               purchaseButtons[2].bTouchOver = false;
+           }
+       }
+        
+        //dot freezer
+        if (subMenuNum == 3&& dotFreezerCounter<10) {
+           if (purchaseButtons[3].buttonRect.inside(x, y)) {
+               purchaseButtons[3].bTouchOver = true;
+           }else{
+               purchaseButtons[3].bTouchOver = false;
+           }
         }
     }
-    //timer slower
-
-    if (subStep ==2&& subMenuNum == 3&& timeSlowerCounter<10) {
-        if (purchaseButtons[1].buttonRect.inside(x, y)) {
-            purchaseButtons[1].bTouchOver = true;
-        }else{
-            purchaseButtons[1].bTouchOver = false;
-        }
-    }
-    
-    //dot extender
-    if (subStep ==2&& subMenuNum == 3&& dotExtenderCounter<10) {
-       if (purchaseButtons[2].buttonRect.inside(x, y)) {
-           purchaseButtons[2].bTouchOver = true;
-       }else{
-           purchaseButtons[2].bTouchOver = false;
-       }
-   }
-    
-    //dot freezer
-    if (subStep ==2&& subMenuNum == 3&& dotFreezerCounter<10) {
-       if (purchaseButtons[3].buttonRect.inside(x, y)) {
-           purchaseButtons[3].bTouchOver = true;
-       }else{
-           purchaseButtons[3].bTouchOver = false;
-       }
-   }
 }
 
 //-------------------------------------------------------
 void menu::purchaseTouchUp(int x, int y){
    
     //coin
-    if (subStep ==2 && subMenuNum == 3 && coinCounter<10) {
-        if (purchaseButtons[0].buttonRect.inside(x, y)) {
-            purchaseButtons[0].bTouchOver = false;
-            coinCounter ++;
-            coinRects[coinCounter-1].bTouchOver = true;
-            *coinChance = (int)ofMap(coinCounter, 1, 10, 0, 20);
-            bSave = true;
+    if (subStep ==1 || subStep ==2){
+        if ( subMenuNum == 3 && coinCounter<10 && !purchaseButtons[0].bFixed) {
+            if (purchaseButtons[0].buttonRect.inside(x, y)) {
+                purchaseButtons[0].bTouchOver = false;
+                if (*coin>=500) {
+                    *coin -=500;
+                    coinCounter ++;
+                    bSave = true;
+                    coinRects[coinCounter-1].bTouchOver = true;
+                    *coinChance = (int)ofMap(coinCounter, 1, 10, 0, 20);
+                }else{
+                    purchaseButtons[0].bFixed = true;
+                    purchaseButtons[0].bTouchOver = true;
+                }
+            }
         }
-    }
-    //time slower
-     if (subStep ==2 && subMenuNum == 3 && timeSlowerCounter<10) {
-        if (purchaseButtons[1].buttonRect.inside(x, y)) {
-            purchaseButtons[1].bTouchOver = false;
-            timeSlowerCounter ++;
-            timeSlowerRects[timeSlowerCounter-1].bTouchOver = true;
-            *timeSlowerChance = (int)ofMap(timeSlowerCounter, 1, 10, 0, 20);
-            bSave = true;
+        //time slower
+         if (subMenuNum == 3 && timeSlowerCounter<10 && !purchaseButtons[1].bFixed) {
+            if (purchaseButtons[1].buttonRect.inside(x, y)) {
+                purchaseButtons[1].bTouchOver = false;
+                
+                if (*coin>=500) {
+                     *coin -=500;
+                    timeSlowerCounter ++;
+                    timeSlowerRects[timeSlowerCounter-1].bTouchOver = true;
+                    *timeSlowerChance = (int)ofMap(timeSlowerCounter, 1, 10, 0, 20);
+                    bSave = true;
+                }else{
+                    purchaseButtons[1].bFixed = true;
+                    purchaseButtons[1].bTouchOver = true;
+                }
+            }
         }
-    }
-    
-    //dot extender
-    
-     if (subStep ==2 && subMenuNum == 3 && dotExtenderCounter<10) {
-        if (purchaseButtons[2].buttonRect.inside(x, y)) {
-            purchaseButtons[2].bTouchOver = false;
-            dotExtenderCounter ++;
-            dotExtenderRects[dotExtenderCounter-1].bTouchOver = true;
-            *dotExtenderChance = (int)ofMap(dotExtenderCounter, 1, 10, 0, 20);
-            bSave = true;
+        
+        //dot extender
+        
+         if (subMenuNum == 3 && dotExtenderCounter<10 && !purchaseButtons[2].bFixed) {
+            if (purchaseButtons[2].buttonRect.inside(x, y)) {
+                purchaseButtons[2].bTouchOver = false;
+                
+                if (*coin>=500) {
+                    *coin -=500;
+                    dotExtenderCounter ++;
+                    dotExtenderRects[dotExtenderCounter-1].bTouchOver = true;
+                    *dotExtenderChance = (int)ofMap(dotExtenderCounter, 1, 10, 0, 20);
+                    bSave = true;
+                }else{
+                    purchaseButtons[2].bFixed = true;
+                    purchaseButtons[2].bTouchOver = true;
+                }
+               
+            }
         }
-    }
-    
-    //dot freezer
-     if (subStep ==2 && subMenuNum == 3 && dotFreezerCounter<10) {
-        if (purchaseButtons[3].buttonRect.inside(x, y)) {
-            purchaseButtons[3].bTouchOver = false;
-            dotFreezerCounter ++;
-            dotFreezerRects[dotFreezerCounter-1].bTouchOver = true;
-            *dotFreezerChance = (int)ofMap(dotFreezerCounter, 1, 10, 0, 20);
-            bSave = true;
+        
+        //dot freezer
+         if (subMenuNum == 3 && dotFreezerCounter<10 && !purchaseButtons[3].bFixed) {
+            if (purchaseButtons[3].buttonRect.inside(x, y)) {
+                purchaseButtons[3].bTouchOver = false;
+
+                if (*coin>=500) {
+                    *coin -=500;
+                    dotFreezerCounter ++;
+                    dotFreezerRects[dotFreezerCounter-1].bTouchOver = true;
+                    *dotFreezerChance = (int)ofMap(dotFreezerCounter, 1, 10, 0, 20);
+                    bSave = true;
+                }else{
+                    purchaseButtons[3].bFixed = true;
+                    purchaseButtons[3].bTouchOver = true;
+                }
+                
+            }
         }
     }
 }

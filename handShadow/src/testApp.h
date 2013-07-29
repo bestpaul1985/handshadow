@@ -6,6 +6,7 @@
 #include "menu.h"
 
 #include "baseScene.h"
+#include "handDetector.h"
 #include "Mode01.h"
 #include "ofxXmlSettings.h"
 #include "xmlPointer.h"
@@ -30,7 +31,6 @@ class testApp : public ofxiPhoneApp{
         void deviceOrientationChanged(int newOrientation);
 
         menu mMenu;
-        ofTrueTypeFont font;
         baseScene * scenes[5];
         int currentScene;
         ofImage pattern;

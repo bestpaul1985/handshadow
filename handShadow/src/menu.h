@@ -54,12 +54,12 @@ public:
     void purchaseTouchMove(int x, int y);
     void purchaseTouchUp(int x, int y);
     
+    ofTrueTypeFont font;
     
     rectangle mainMenuRect[MAIN_MENU_BUTTON];
     float pct[MAIN_MENU_BUTTON];    
     float speed;
 
-    ofTrueTypeFont *font;
     string situation;
     int *currentScene;
     bool bSnapIn;
@@ -104,6 +104,7 @@ public:
     bool bLevelSnapIn;
     
     //-------Purchase-------------
+    int *coin;
     int *timeSlowerChance;
     int *dotExtenderChance;
     int *dotFreezerChance;
@@ -119,6 +120,8 @@ public:
     int coinCounter;
     int dotExtenderCounter;
     int dotFreezerCounter;
+    
+    bool bNoCoin;
 };
 
 #endif /* defined(__handShadow__menu__) */

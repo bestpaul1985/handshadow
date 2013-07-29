@@ -41,6 +41,7 @@ public:
     ofImage *background;
     
     bool bTouchOver;
+    bool bFixed;
         
 };
 

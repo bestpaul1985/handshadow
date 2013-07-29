@@ -14,6 +14,7 @@ rectangle::rectangle(){
 	shaper = 1.0;
     rectW = rectH = 50;
     bTouchOver = false;
+    bFixed = false;
 }
 
 //------------------------------------------------------------------
@@ -32,6 +33,7 @@ void rectangle::drawLevel(){
 //------------------------------------------------------------------
 void rectangle::drawPurchase(){
 
+
     buttonRect.setFromCenter(pos, rectW, rectH);
     if (bTouchOver) {
         ofSetColor(125);
@@ -39,6 +41,8 @@ void rectangle::drawPurchase(){
         ofSetColor(255);
     }
     ofRect(buttonRect);
+
+  
 
 }
 
