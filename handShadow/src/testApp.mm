@@ -12,6 +12,7 @@ void testApp::setup(){
     currentScene  = 0;
     pattern.loadImage("assets/images/gamePlay/pattern02.png");
     
+    scale = 0.0f;
     
     //****XML******************************************
     if( XML.loadFile(ofxiPhoneGetDocumentsDirectory() + "mySettings.xml") ){
@@ -64,11 +65,13 @@ void testApp::setup(){
     
     scenes[1] = new handDetector();
     ((handDetector*)scenes[1])->scene = &currentScene;
+    ((handDetector*)scenes[1])->scale = &scale;
     scenes[1]->setup();
     
     scenes[2] = new Mode01();
     ((Mode01*)scenes[2])->xmlReader(points,&CurrentLevel,&currentScene);
     ((Mode01*)scenes[2])->coin = &coin;
+    ((Mode01*)scenes[2])->scale = &scale;
     ((Mode01*)scenes[2])->pattern = &pattern;
     ((Mode01*)scenes[2])->coinChance = &coinChance;
     ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
@@ -112,7 +115,6 @@ void testApp::update(){
 void testApp::draw(){
     
     scenes[currentScene]->draw();
-
 }
 
 //--------------------------------------------------------------

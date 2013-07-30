@@ -52,6 +52,9 @@ class testApp : public ofxiPhoneApp{
     int coinChance;
     
     int coin;
+    
+    //---handDetector--------------------------
+    float scale;
 
 };
 

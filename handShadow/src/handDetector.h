@@ -44,6 +44,9 @@ public:
     
     ofRectangle button[2];
     ofColor buttonColor[2];
+    
+    float *scale;
+    
 };
 
 #endif /* defined(__handShadow__handDetector__) */

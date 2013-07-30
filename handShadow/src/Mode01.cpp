@@ -56,7 +56,11 @@ void Mode01::reset(){
     
     for (int i=0; i< dotPos.size(); i++) {
         dots tempDos;
-        tempDos.setup(dotPos[i].x, dotPos[i].y,&dotImgA[(int)ofRandom(dotImgA.size())], &dotImgB[(int)ofRandom(dotImgB.size())]);
+        int diffX = ofGetWidth()/2-dotPos[i].x;
+        int diffY = ofGetHeight()/2-dotPos[i].y;
+        ofPoint temp(dotPos[i].x+(int)(diffX* (*scale)),
+                     dotPos[i].y+(int)(diffY* (*scale)));
+        tempDos.setup(temp.x, temp.y,&dotImgA[(int)ofRandom(dotImgA.size())], &dotImgB[(int)ofRandom(dotImgB.size())]);
         tempDos.angle = ofRandom(360);
         myDot.push_back(tempDos);
     
@@ -66,6 +70,7 @@ void Mode01::reset(){
         tempItem.dotExtenderChance = *dotExtenderChance;
         tempItem.dotFreezerChance = *dotFreezerChance;
 
+      
         tempItem.setup(myDot[i].pos.x,myDot[i].pos.y);
         items.push_back(tempItem);
     }
@@ -223,6 +228,8 @@ void Mode01::draw(){
     ofSetColor(230);
     fontSmaill.drawString("LEVEL: "+ofToString(*level), 400, 80);
     
+    cout<<*scale<<endl;
+
 }
 
 //-------------------------------------------------------

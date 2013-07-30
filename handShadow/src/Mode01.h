@@ -80,6 +80,9 @@ public:
     float timeSlowerTimer;
     float timeSlowerDuration;
     
+    
+    //*******handDetector******
+    float *scale;
 };
 
 
