@@ -11,7 +11,7 @@
 void handDetector::setup(){
 
     font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 40);
-    bgImg.loadImage("assets/images/handDetector/bg.png");
+    bgImg.loadImage("assets/images/handDetector/bg.jpg");
     reset();
 }
 
@@ -37,7 +37,7 @@ void handDetector::update(){
                 if (dis>=900)
                 {
                     message = "Your hand's is big size";
-                    *scale = -0.098;
+                    *scale = -0.09;
                 }
                 else if (dis>=800 && dis<900)
                 {
@@ -47,7 +47,7 @@ void handDetector::update(){
                 }else if(dis < 800 && dis>0)
                 {
                     message = "Your hand's is small size";
-                    *scale = 0.098;
+                    *scale = 0.09;
 
                 }else
                 {
@@ -103,13 +103,18 @@ void handDetector::draw(){
     font.drawString(message, -font.stringWidth(message)/2, -font.stringHeight(message)/2);
     ofPopMatrix();
     
+    
+    
+    ofSetColor(buttonColor[1]);
+    ofRect(button[1]);
+    
+    
+    
     if (myType == RESULT) {
         
         ofSetColor(buttonColor[0]);
         ofRect(button[0]);
-        
-        ofSetColor(buttonColor[1]);
-        ofRect(button[1]);
+
     }
 }
 
@@ -122,11 +127,20 @@ void handDetector::touchDown(int x, int y, int touchId){
         if (touchId >5) {
             myType = GO;
         }
+        
+        if (button[0].inside(x, y)) {
+            buttonColor[0].set(30);
+        }
     }
+    
     
     if (myType == GO) {
         ofPoint touch(x,y,touchId);
         touchs.push_back(touch);
+        
+        if (button[0].inside(x, y)) {
+            buttonColor[0].set(30);
+        }
     }
     
     if (myType == RESULT) {
@@ -139,14 +153,25 @@ void handDetector::touchDown(int x, int y, int touchId){
         }
     }
     
+    
 }
 
 //---------------------------------------------------
 void handDetector::touchMove(int x, int y, int touchId){
    
+    if(button[1].inside(x, y)) {
+        buttonColor[1].set(30);
+    }else{
+        buttonColor[1].set(255);
+    }
+    
     if (myType == GO) {
         ofPoint touch(x,y,touchId);
         touchs.push_back(touch);
+        
+        if (button[1].inside(x, y)) {
+            buttonColor[1].set(30);
+        }
     }
     
     if (myType == RESULT) {
@@ -154,12 +179,6 @@ void handDetector::touchMove(int x, int y, int touchId){
             buttonColor[0].set(30);
         }else{
             buttonColor[0].set(255);
-        }
-            
-        if(button[1].inside(x, y)) {
-            buttonColor[1].set(30);
-        }else{
-            buttonColor[1].set(255);
         }
     }
 
@@ -168,16 +187,26 @@ void handDetector::touchMove(int x, int y, int touchId){
 //---------------------------------------------------
 void handDetector::touchUp(int x, int y, int touchId){
    
+    if(button[1].inside(x, y)) {
+        buttonColor[1].set(255);
+        if (firstPlay == 0) {
+            *scene = 2;
+        }else{
+            *scene = 0;
+        }
+        reset();
+    }
+    
+    if (myType == GO) {
+        if (touchId == 8) {
+            reset();
+        }
+    }
+    
     if (myType == RESULT) {
         
         if (button[0].inside(x, y)) {
             buttonColor[0].set(255);
-            reset();
-        }
-        
-        if(button[1].inside(x, y)) {
-            buttonColor[1].set(255);
-            *scene = 2;
             reset();
         }
     }

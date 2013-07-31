@@ -37,12 +37,13 @@ class testApp : public ofxiPhoneApp{
     
     //-----XML-----------------------------------
     ofxXmlSettings XML;
+    vector<xmlPointer> points;
     string xmlStructure;
     string message;
-    vector<xmlPointer> points;
-    int CurrentLive;
-    int CurrentLevel;
-    int unLackedLevel;
+    
+    int level;
+    int unLockedLevel;
+    int firstPlay;
     string systemTime;
     
     //-----subGame------------------------------

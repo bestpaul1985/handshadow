@@ -5,8 +5,9 @@ void testApp::setup(){
 	ofxAccelerometer.setup();
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
+    ofSetCircleResolution(400);
+    ofEnableSmoothing();
     iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
-    
 	ofBackground(255);
     
     currentScene  = 0;
@@ -46,30 +47,34 @@ void testApp::setup(){
     }
 
     coin                = XML.getValue("SETTING:COIN",1000);
-    CurrentLevel        = XML.getValue("SETTING:CURRENTLEVEL", 0);
-    unLackedLevel       = XML.getValue("SETTING:CURRENTUNLACKEDLEVEL", 0);
+    level               = XML.getValue("SETTING:LEVEL", 0);
+    unLockedLevel       = XML.getValue("SETTING:UNLACKEDLEVEL", 0);
     coinChance          = XML.getValue("SETTING:COINCHANCE", 2);
     timeSlowerChance    = XML.getValue("SETTING:TIMESLOWER", 2);
     dotExtenderChance   = XML.getValue("SETTING:DOTEXTENDER", 2);
     dotFreezerChance    = XML.getValue("SETTING:FREEZERCHANCE", 2);
-    
+    firstPlay           = XML.getValue("SETTING:FIRST", 0);
     //******Scenes*************************************
     scenes[0] = new menu();
-    ((menu*)scenes[0])->currentScene = &currentScene;
+    ((menu*)scenes[0])->scene = &currentScene;
     ((menu*)scenes[0])->coin = &coin;
+    ((menu*)scenes[0])->level = &level;
+    ((menu*)scenes[0])->unLockedLevel = &unLockedLevel;
     ((menu*)scenes[0])->coinChance = &coinChance;
     ((menu*)scenes[0])->timeSlowerChance = &timeSlowerChance;
     ((menu*)scenes[0])->dotExtenderChance = &dotExtenderChance;
     ((menu*)scenes[0])->dotFreezerChance = &dotFreezerChance;
+    ((menu*)scenes[0])->firstPlay = &firstPlay;
     scenes[0]->setup();
     
     scenes[1] = new handDetector();
     ((handDetector*)scenes[1])->scene = &currentScene;
+    ((handDetector*)scenes[1])->firstPlay = &firstPlay;
     ((handDetector*)scenes[1])->scale = &scale;
     scenes[1]->setup();
     
     scenes[2] = new Mode01();
-    ((Mode01*)scenes[2])->xmlReader(points,&CurrentLevel,&currentScene);
+    ((Mode01*)scenes[2])->xmlReader(points,&level,&currentScene);
     ((Mode01*)scenes[2])->coin = &coin;
     ((Mode01*)scenes[2])->scale = &scale;
     ((Mode01*)scenes[2])->pattern = &pattern;
@@ -88,11 +93,16 @@ void testApp::update(){
     
     scenes[currentScene]->update();
     
-    if (((Mode01*)scenes[1])->bSave || ((menu*)scenes[0])->bSave) {
+    if (level>unLockedLevel) {
+        unLockedLevel = level;
+    }
+    
+    if (((menu*)scenes[0])->bSave || ((Mode01*)scenes[2])->bSave ) {
         
         XML.setValue("SETTING:COIN", coin);
-        XML.setValue("SETTING:CURRENTLEVEL", CurrentLevel);
-        XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", unLackedLevel);
+        XML.setValue("SETTING:LEVEL", level);
+        XML.setValue("SETTING:UNLACKEDLEVEL", unLockedLevel);
+        XML.setValue("SETTING:FIRST", firstPlay);
         
         XML.setValue("SETTING:COINCHANCE", coinChance);
         XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
@@ -100,14 +110,12 @@ void testApp::update(){
         XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
         
         XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
-        ((Mode01*)scenes[1])->bSave = false;
+        ((Mode01*)scenes[2])->bSave = false;
         ((menu*)scenes[0])->bSave =false;
         
         message = "mySettings.xml saved to app documents folder";
         cout<<message<<endl;
     }
-    
-   
 
 }
 
@@ -115,40 +123,40 @@ void testApp::update(){
 void testApp::draw(){
     
     scenes[currentScene]->draw();
+    
 }
 
 //--------------------------------------------------------------
 void testApp::touchDown(ofTouchEventArgs & touch){
     
-    if (CurrentLive>0) {
-        scenes[currentScene]->touchDown(touch.x, touch.y, touch.id);
-    }
+    scenes[currentScene]->touchDown(touch.x, touch.y, touch.id);
+    
 }
 
 //--------------------------------------------------------------
 void testApp::touchMoved(ofTouchEventArgs & touch){
     
-    if (CurrentLive>0) {
-        scenes[currentScene]->touchMove(touch.x, touch.y, touch.id);
-    }
+    scenes[currentScene]->touchMove(touch.x, touch.y, touch.id);
+    
 }
 
 //--------------------------------------------------------------
 void testApp::touchUp(ofTouchEventArgs & touch){
-    if (CurrentLive>0) {
-        scenes[currentScene]->touchUp(touch.x, touch.y, touch.id);
-    }
+    
+    scenes[currentScene]->touchUp(touch.x, touch.y, touch.id);
+    
 }
 //--------------------------------------------------------------
 void testApp::exit(){
     
     XML.setValue("SETTING:COIN", coin);
-	XML.setValue("SETTING:CURRENTLEVEL", CurrentLevel);
-	XML.setValue("SETTING:CURRENTUNLACKEDLEVEL", unLackedLevel);
+	XML.setValue("SETTING:LEVEL", level);
+	XML.setValue("SETTING:UNLACKEDLEVEL", unLockedLevel);
     XML.setValue("SETTING:COINCHANCE", coinChance);
     XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
     XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
     XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
+    XML.setValue("SETTING:FIRST", firstPlay);
     
 	XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
 	message = "mySettings.xml saved to app documents folder";

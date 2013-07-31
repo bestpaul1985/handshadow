@@ -30,6 +30,7 @@ public:
     void touchUp(int x, int y, int touchId);
     
     int *scene;
+    int *firstPlay;
     
     vector<ofPoint> touchs;
     ofPoint linePos;

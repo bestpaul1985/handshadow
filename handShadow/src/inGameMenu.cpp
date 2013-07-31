@@ -8,199 +8,194 @@
 
 #include "inGameMenu.h"
 
-void inGameMenu::setup(int *Coin){
+void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSize){
     
     coin = Coin;
+    level = Level;
+    gameTimer = &GameTimer;
+    fingerSize = &FingerSize;
     font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30);
+    bgImg.loadImage("assets/images/inGameMenu/bg.png");
+    clockOutLine.loadImage("assets/images/inGameMenu/outline.png");
+    wellDoneImg.loadImage("assets/images/inGameMenu/welldone.png");
+    for (int i=0; i<6; i++) {
+        ofImage temp;
+        temp.loadImage("assets/images/inGameMenu/"+ofToString(i)+".png");
+        fingerImg.push_back(temp);
+    }
+    for (int i=0; i<8; i++) {
+        ofImage temp;
+        temp.loadImage("assets/images/inGameMenu/Dot"+ofToString(i)+"_Small.png");
+        iconImg.push_back(temp);
+    }
     
+    bgRect.set(0, 0, bgImg.getWidth(),bgImg.getHeight());
+    for (int i=0; i<3; i++) {
+        ofRectangle temp;
+        temp.set(140+220*i, 500, 40, 30);
+        buttons.push_back(temp);
+        
+        ofColor tempColor;
+        tempColor.set(200);
+        buttonColor.push_back(tempColor);
+    }
     
-    wellDown.loadImage("assets/images/inGameMenu/welldone.png");
-    fingerBG.loadImage("assets/images/liveSystem/background_small.png");
-    imgMenu.loadImage("assets/images/inGameMenu/menu.png");
-    imgMenu_b.loadImage("assets/images/inGameMenu/menu_b.png");
-    imgResume.loadImage("assets/images/inGameMenu/resume.png");
-    imgResume_b.loadImage("assets/images/inGameMenu/resume_b.png");
-    
-    menuRect.set(ofGetWidth()/2-imgMenu.getWidth()-50, ofGetHeight()/2-imgMenu.getHeight()/2, imgMenu.getWidth(),imgMenu.getHeight());
-    resumeRect.set(ofGetWidth()/2+50, ofGetHeight()/2-imgResume.getHeight()/2, imgResume.getWidth(),imgResume.getHeight());
-
-    bwellDone = false;
-    bPause = false;
-    bTouchOverMenu = false;
-    bTouchOverResume = false;
-    bBackToMainMenu = false;
-    wellDoneTimer = 0;
-    liveSystemSetup();
-
-    
+    reset();
+        
 };
 
 //-----------------------------------------------------------------------
 void inGameMenu::update(){
     
+    
+    angle = (int)ofMap((60-*gameTimer), 0, 60, 0, 360);
+    
+    if (angle-preAngle == 1) {
+        lineColor[angle].set(255,30);
+    }
+    
+    preAngle = angle;
 
-    liveSystemUpdate();
+}
+//-----------------------------------------------------------------------
+void inGameMenu::reset(){
 
+    bLevelDone = false;
+    bNextLevel = false;
+    bTryAgin   = false;
+    bHome      = false;
+    bLevelFail = false;
+    angle      = 0;
+    preAngle   = 0;
+    timer      = 0;
+    
+    linePos.clear();
+    lineColor.clear();
+    
+    for (int i=0; i<360; i++) {
+        ofPoint temp;
+        temp.x = 20*cos(i*DEG_TO_RAD - PI/2);
+        temp.y = 20*sin(i*DEG_TO_RAD - PI/2);
+        linePos.push_back(temp);
+        
+        ofColor color(30);
+        lineColor.push_back(color);
+    }
+    
 }
 
 //-----------------------------------------------------------------------
 void inGameMenu::draw(){
 
-    if (bwellDone) {
-        
-        ofSetRectMode(OF_RECTMODE_CENTER);
+    ofSetColor(255);
+    bgImg.draw(bgRect);
+    
+    ofSetColor(255);
+    fingerImg[*live].draw(166,-5,fingerImg[*live].getWidth()/4*3,fingerImg[*live].getHeight()/4*3);
+    
+    ofSetColor(30);
+    font.drawString("LV: "+ofToString(*level), 880, 40);
+    
+    
+    ofPushMatrix();
+    ofTranslate(56, 27);
+    for (int i=0; i<linePos.size(); i++) {
+        ofSetColor(lineColor[i]);
+        ofLine(0, 0, linePos[i].x, linePos[i].y);
+    }
+    ofPopMatrix();
+    ofSetColor(255);
+    ofSetRectMode(OF_RECTMODE_CENTER);
+    clockOutLine.draw(56, 27);
+    ofSetRectMode(OF_RECTMODE_CORNER);
+
+    
+    for (int i=0; i<8; i++) {
         ofSetColor(255);
-        wellDown.draw(ofGetWidth()/2, ofGetHeight()/2);
-        ofSetRectMode(OF_RECTMODE_CORNER);
-        
+        if (i<*fingerSize) {
+            iconImg[i].draw(345+50*i,10);
+        }else{
+            iconImg[7].draw(345+50*i,10);
+        }
     }
     
-    if (bPause) {
-        
-        ofSetColor(255, 200);
-        ofRect(0,0,ofGetWidth(),ofGetHeight());
-        
-        if (bTouchOverMenu) imgMenu_b.draw(ofGetWidth()/2-imgMenu.getWidth()-50, ofGetHeight()/2-imgMenu.getHeight()/2);
-        else imgMenu.draw(ofGetWidth()/2-imgMenu.getWidth()-50, ofGetHeight()/2-imgMenu.getHeight()/2);
-        
-        if (bTouchOverResume) imgResume_b.draw(ofGetWidth()/2+50, ofGetHeight()/2-imgResume.getHeight()/2);
-        else imgResume.draw(ofGetWidth()/2+50, ofGetHeight()/2-imgResume.getHeight()/2);
-        
-    }else{
-        liveSystemDraw();
-        ofSetColor(30);
-        font.drawString("COIN: "+ ofToString(*coin), 10, 180);
+    if (bLevelDone) {
+        timer++;
+        if (timer>100) {
+            bNextLevel = true;
+        }
+        ofSetColor(255);
+        wellDoneImg.draw(ofGetWidth()/2-wellDoneImg.getWidth()/2, ofGetHeight()/2-wellDoneImg.getHeight()/2);
     }
-
-}
-
-//----------------------------------------------------------
-void inGameMenu::liveSystemSetup(){
     
-    spriteRenderer = new ofxSpriteSheetRenderer(1, 10000, 0, 56);
-	spriteRenderer->loadTexture("assets/images/liveSystem/spriteSheetExample2.png", 512, GL_NEAREST);
-    
-    basicSprite * newSprite = new basicSprite();
-    newSprite->pos.set(68,80);
-    newSprite->animation = fingerAnimation;
-    sprites.push_back(newSprite);
-    imgRect.set(70-fingerBG.getWidth()/2, 80-fingerBG.getHeight()/2, fingerBG.getWidth(), fingerBG.getHeight());
-
-}
-
-//----------------------------------------------------------
-void inGameMenu::liveSystemUpdate(){
-    
-    spriteRenderer->clear();
-	spriteRenderer->update(ofGetElapsedTimeMillis());
-    sprites[0]->animation.frame = *live;
-	spriteRenderer->addCenteredTile(&sprites[0]->animation, sprites[0]->pos.x, sprites[0]->pos.y);
-	
-}
-
-//----------------------------------------------------------
-void inGameMenu::liveSystemDraw(){
-    
-    if (bliveTouchOver) {
+    if(bLevelFail){
+        timer++;
+        if (timer>100) {
+             bTryAgin = true;
+        }
         ofSetColor(120);
-    }else{
-        ofSetColor(255);
+        wellDoneImg.draw(ofGetWidth()/2-wellDoneImg.getWidth()/2, ofGetHeight()/2-wellDoneImg.getHeight()/2);
     }
     
-    fingerBG.draw(imgRect);
-    spriteRenderer->draw();
-    
-}
-
-//----------------------------------------------------------
-void inGameMenu::liveSystemTouchDown(int x, int y, int touchID){
-    
-    if (imgRect.inside(x, y)) {
-        bliveTouchOver = true;
-    }
-}
-
-//----------------------------------------------------------
-void inGameMenu::liveSystemTouchMove(int x, int y, int touchID){
-    
-    ofRectangle rect;
-    if (!imgRect.inside(x, y)) {
-        bliveTouchOver = false;
-    }else{
-        bliveTouchOver = true;
-    }
-}
-
-
-//----------------------------------------------------------
-void inGameMenu::liveSystemTouchUp(int x, int y, int touchID){
-    
-    ofRectangle rect;
-    rect.set(70-fingerBG.getWidth()/2, 80-fingerBG.getHeight()/2, fingerBG.getWidth(), fingerBG.getHeight());
-    if (imgRect.inside(x, y)) {
-        bliveTouchOver = false;
-        bPause = true;
-    }
 }
 
 //-----------------------------------------------------------------------
-void inGameMenu::touchDown(int x, int y, int touchID){
-    
-    
-    if(!bPause){
-        liveSystemTouchDown(x,y,touchID);
-    }
-    else{
-        
-        if (menuRect.inside(x, y)) {
-            bTouchOverMenu = true;
-        }
-        
-        if(resumeRect.inside(x, y)){
-            bTouchOverResume = true;
+void inGameMenu::touchDown(int x, int y){
+
+    if (bLevelDone) {
+        for (int i=0; i<buttons.size(); i++) {
+            if (buttons[i].inside(x, y)) {
+                buttonColor[i].set(30);
+            }
         }
     }
+    
+
 }
 
 //-----------------------------------------------------------------------
-void inGameMenu::touchMove(int x, int y, int touchID){
-    
-    if(!bPause){
-        liveSystemTouchMove(x, y, touchID);
-    }else{
-        
-        if (menuRect.inside(x, y)) {
-            bTouchOverMenu = true;
-        }else{
-            bTouchOverMenu = false;
-        }
-        
-        if(resumeRect.inside(x, y)){
-            bTouchOverResume = true;
-        }else{
-            bTouchOverResume = false;
+void inGameMenu::touchMove(int x, int y){
+    if (bLevelDone) {
+        for (int i=0; i<buttons.size(); i++) {
+            if (buttons[i].inside(x, y)) {
+                buttonColor[i].set(30);
+            }else{
+                buttonColor[i].set(200);
+            }
         }
     }
+
 }
 
 //-----------------------------------------------------------------------
-void inGameMenu::touchUp(int x, int y, int touchID){
+void inGameMenu::touchUp(int x, int y){
     
-    if(!bPause){
-        liveSystemTouchUp(x, y, touchID);
-    }else{
-        
-        if (menuRect.inside(x, y)) {
-            bTouchOverMenu = false;
-            bPause = false;
-            bBackToMainMenu = true;
+    if (bLevelDone) {
+        if (buttons[0].inside(x, y)) {
+            buttonColor[0].set(200);
+            bTryAgin = true;
         }
         
-        if(resumeRect.inside(x, y)){
-            bTouchOverResume = false;
-            bPause = false;
+        if (buttons[1].inside(x, y)) {
+            buttonColor[1].set(200);
+            bHome = true;
+        }
+        
+        if (buttons[2].inside(x, y)) {
+            buttonColor[2].set(200);
+            bNextLevel = true;
         }
         
     }
+    
+
 }
+
+
+
+
+
+
+
+
 

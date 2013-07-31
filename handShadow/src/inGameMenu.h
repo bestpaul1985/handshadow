@@ -10,57 +10,47 @@
 #define __handShadow__inGameMenu__
 
 #include "ofMain.h"
-#include "ofxSpriteSheetRenderer.h"
 
-static animation_t fingerAnimation = {  0,  0,  1,  1,  1,  75, 0,  -1, -1, 1 };
 
-struct basicSprite {
-	animation_t animation;
-	ofPoint pos;
-	float speed;
-};
 
 class inGameMenu{
 public:
-    void setup(int *Coin);
+    void setup(int *Coin, int *Level, float &GameTimer, int &FingerSize);
     void update();
+    void reset();
     void draw();
-    void touchDown(int x, int y, int touchID);
-    void touchMove(int x, int y, int touchID);
-    void touchUp(int x, int y, int touchID);
-    void liveSystemSetup();
-    void liveSystemUpdate();
-    void liveSystemDraw();
-    void liveSystemTouchDown(int x, int y, int touchID);
-    void liveSystemTouchMove(int x, int y, int touchID);
-    void liveSystemTouchUp(int x, int y, int touchID);
-    
-    
+    void touchDown(int x, int y);
+    void touchMove(int x, int y);
+    void touchUp(int x, int y);
+
+    ofTrueTypeFont  font;
+    vector<ofImage> fingerImg;
+    vector<ofImage> iconImg;
+    vector<ofPoint> linePos;
+    vector<ofColor> lineColor;
+    ofImage         bgImg;
+    ofImage         clockOutLine;
+    ofImage         wellDoneImg;
+    ofRectangle     bgRect;
+    vector<ofRectangle>    buttons;
+    vector<ofColor>    buttonColor;
     int *live;
+    int *level;
     int *coin;
+    float *gameTimer;
+    int *fingerSize;
+    int angle;
+    int preAngle;
+    int timer;
     
-    ofTrueTypeFont font;
+    bool bLevelDone;
+    bool bLevelFail;
+    bool bNextLevel;
+    bool bTryAgin;
+    bool bHome;
     
-    ofImage wellDown;
-    ofRectangle imgRect;
-    bool bwellDone;
     bool bTouchOverMenu;
     bool bTouchOverResume;
-    int wellDoneTimer;
-    ofImage imgResume;
-    ofImage imgResume_b;
-    ofImage imgMenu;
-    ofImage imgMenu_b;
-    ofRectangle menuRect;
-    ofRectangle resumeRect;
-    
-    ofxSpriteSheetRenderer *spriteRenderer;
-    vector <basicSprite * > sprites;
-    ofImage fingerBG;
-   
-    bool bliveTouchOver;
-    bool bPause;
-    bool bBackToMainMenu;
     
 };
 

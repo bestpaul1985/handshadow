@@ -42,7 +42,7 @@ public:
     vector<ofImage> dotImgB;
     int *scene;
     int *level;
-    
+    int fingerSize;
     bool bSave;
     float bgWidth;
     float bgHight;
@@ -72,7 +72,6 @@ public:
     int *dotExtenderChance;
     int *dotFreezerChance;
     int *coinChance;
-
     
     float timeSpeed;
     

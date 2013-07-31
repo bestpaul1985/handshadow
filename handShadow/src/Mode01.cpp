@@ -9,12 +9,11 @@
 #include "Mode01.h"
 
 void Mode01::xmlReader(vector<xmlPointer> pointer, int *CurrentLevel, int *CurrentScene){
-    
-    live =5;
+
     xmlPos = pointer;
     level = CurrentLevel;
     scene = CurrentScene;
-    myInGameMenu.live = &live;
+    
     
 }
 
@@ -25,20 +24,16 @@ void Mode01::setup(){
     fontSmaill.loadFont("assets/fonts/Comfortaa_Regular.ttf", 46);
     
     ofImage temImg;
-    
-    temImg.loadImage("assets/images/dots/A/Dot_Ghost.png");
-    dotImgA.push_back(temImg);
-    temImg.loadImage("assets/images/dots/A/Dot_Monster.png");
-    dotImgA.push_back(temImg);
-    temImg.loadImage("assets/images/dots/A/Dot_Women.png");
-    dotImgA.push_back(temImg);
-    temImg.loadImage("assets/images/dots/A/Dot_Robot.png");
-    dotImgA.push_back(temImg);
-    temImg.loadImage("assets/images/dots/B/Dot_Pressed.png");
-    dotImgB.push_back(temImg);
+    for (int i =0; i<7; i++) {
+        temImg.loadImage("assets/images/dots/A/dot0"+ofToString(i)+".png");
+        dotImgA.push_back(temImg);
+    }
 
-    myInGameMenu.setup(coin);
+    temImg.loadImage("assets/images/dots/B/dot00.png");
+    dotImgB.push_back(temImg);
     reset();
+    myInGameMenu.setup(coin,level, gameTimer, fingerSize);
+    myInGameMenu.live = &live;
 
 }
 
@@ -60,7 +55,7 @@ void Mode01::reset(){
         int diffY = ofGetHeight()/2-dotPos[i].y;
         ofPoint temp(dotPos[i].x+(int)(diffX* (*scale)),
                      dotPos[i].y+(int)(diffY* (*scale)));
-        tempDos.setup(temp.x, temp.y,&dotImgA[(int)ofRandom(dotImgA.size())], &dotImgB[(int)ofRandom(dotImgB.size())]);
+        tempDos.setup(temp.x, temp.y,&dotImgA[i], &dotImgB[0]);
         tempDos.angle = ofRandom(360);
         myDot.push_back(tempDos);
     
@@ -69,11 +64,11 @@ void Mode01::reset(){
         tempItem.timeSlowerChance = *timeSlowerChance;
         tempItem.dotExtenderChance = *dotExtenderChance;
         tempItem.dotFreezerChance = *dotFreezerChance;
-
-      
         tempItem.setup(myDot[i].pos.x,myDot[i].pos.y);
         items.push_back(tempItem);
     }
+    
+    fingerSize = myDot.size();
     
     if (myDot.size()>0) {
         myDot[0].bFixed =false;
@@ -92,7 +87,6 @@ void Mode01::reset(){
     //check Win
     winTimer = 0;
     bWinTimerStart = false;
-    myInGameMenu.bwellDone = false;
     winEffectSpeed = 1;
     //check lose
     bLoseTimerStart = false;
@@ -104,16 +98,14 @@ void Mode01::reset(){
     timeSlowerDuration = 0;
     timeSlowerTimer = ofGetElapsedTimeMillis();
     timeSpeed = 1;
-    
+    live = 2;
 }
-
-
 
 //----------------------------------------------------------
 void Mode01::update(){
     
     //counter down to start game
-    if (bGameStart && !myInGameMenu.bPause) {
+    if (bGameStart) {
         gameStartTimer++;
         if (gameStartTimer>50) {
             gameStartNumber --;
@@ -155,7 +147,7 @@ void Mode01::update(){
         subGame();
         
     //timer
-        if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart) {
+        if (!myInGameMenu.bLevelDone && !bLoseTimerStart && !bGameStart) {
             
             if (ofGetElapsedTimeMillis() - gameTimerStart >= 100*timeSpeed) {
                 gameTimer = gameTimer - 0.1;
@@ -170,9 +162,31 @@ void Mode01::update(){
     
     // in game menu update
     myInGameMenu.update();
-    if (myInGameMenu.bBackToMainMenu) {
+    
+    if (myInGameMenu.bNextLevel) {
+        live = 5;
+        *level += 1;
+        bSave = true;
+        if (*level>=xmlPos.size()) {
+            *level = 0;
+        }
+        reset();
+        myInGameMenu.reset();
+    }
+    else if(myInGameMenu.bHome){
+        live = 5;
+        *level += 1;
+        bSave = true;
+        if (*level>=xmlPos.size()) {
+            *level = 0;
+        }
+        reset();
         *scene = 0;
-        myInGameMenu.bBackToMainMenu = false;
+        myInGameMenu.reset();
+    }
+    else if(myInGameMenu.bTryAgin){
+        reset();
+        myInGameMenu.reset();
     }
     
 }
@@ -201,7 +215,7 @@ void Mode01::draw(){
     //draw dots
     else{
         
-        if (!myInGameMenu.bwellDone) {
+        if (!myInGameMenu.bLevelDone) {
             for (int i=0; i<myDot.size(); i++) {
                 myDot[i].draw();
                 items[i].draw();
@@ -212,23 +226,16 @@ void Mode01::draw(){
     
     ofPopMatrix();
     
-    //draw timer
-    string sTime = ofToString(gameTimer,1);
-    ofSetColor(30);
-    fontSmaill.drawString(sTime, 900, 80);
+ 
     if (gameTimer<0) {
         gameTimer = 0;
+        
         bLoseTimerStart = true;
     }
     
     
     //draw in game menu
     myInGameMenu.draw();
-
-    ofSetColor(230);
-    fontSmaill.drawString("LEVEL: "+ofToString(*level), 400, 80);
-    
-    cout<<*scale<<endl;
 
 }
 
@@ -299,7 +306,7 @@ void Mode01::checkWin(){
         
         if (winTimer>0&&winTimer<100){
             
-            winEffectSpeed = 500;
+            winEffectSpeed = 1000;
             bgWidth+= winEffectSpeed;
         }
         
@@ -313,24 +320,14 @@ void Mode01::checkWin(){
                 bgHight+=ofGetHeight();
             }
             
-            myInGameMenu.bwellDone = true;
+            myInGameMenu.bLevelDone = true;
             
-        }
-        
-        else if(winTimer>=200){
-            live = 5;
-            *level += 1;
-            bSave = true;
-            if (*level>=xmlPos.size()) {
-                *level = 0;
-            }
-            reset();
         }
     }
    
+
     
 }
-
 
 //-------------------------------------------------------
 void Mode01::checkLose(int x, int y, int situation){
@@ -338,21 +335,28 @@ void Mode01::checkLose(int x, int y, int situation){
     ofPoint touch(x,y);
     switch (situation) {
         case 0:{
-            int unLackNum = 0;
-            int noTouchNum =0;
+           
+            int unFixed = 0;
+            int unTouched = 0;
+            
             for (int i=0; i<myDot.size(); i++) {
                 if (!myDot[i].bFixed){
-                    unLackNum ++;
-                    if(myDot[i].pos.distance(touch)>myDot[i].radius && !myInGameMenu.imgRect.inside(touch)) {
-                        noTouchNum++;
+                    unFixed ++;
+                    if(myDot[i].pos.distance(touch)>myDot[i].radius && !myInGameMenu.bgRect.inside(touch)) {
+                       unTouched ++;
                     }
                 }
             }
             
-            if (noTouchNum == unLackNum) {
-                
-                    bLoseTimerStart = true;
+            if (unFixed == unTouched) {
+                bLoseTimerStart = true;
+                live --;
+                if (live <0) {
+                    live = 0;
+                }
+                loseTimer = 0;
             }
+            
             
         }break;
             
@@ -366,6 +370,11 @@ void Mode01::checkLose(int x, int y, int situation){
             
             if (PreCoverNum>coveredNum) {
                 bLoseTimerStart = true;
+                live -= PreCoverNum-coveredNum;
+                if (live <0) {
+                    live = 0;
+                }
+                loseTimer = 0;
             }
             
             PreCoverNum = 0;
@@ -380,17 +389,13 @@ void Mode01::checkLose(int x, int y, int situation){
             if(loseTimer<50&&loseTimer>0){
                 translate.set(ofRandom(-10,10), ofRandom(-10,10));
             }else if(loseTimer>50){
-               
-                live --;
-                if (live == 0) {
-                    live = 5;
-                    reset();
-                }else{
-                    reset();
+              
+                if (live == 0 ||  gameTimer == 0) {
+                    myInGameMenu.bLevelFail = true;
                 }
                 
-                
-                bSave = true;
+                translate.set(0, 0);
+                loseTimer = 0;
                 bLoseTimerStart = false;
             }
         }break;
@@ -399,12 +404,10 @@ void Mode01::checkLose(int x, int y, int situation){
              
 }
 
-
-
 //----------------------------------------------------------
 void Mode01::touchDown(int x, int y, int touchID){
    
-    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart) {
+    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bGameStart && live>0) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchDown(x, y, touchID);
             items[i].touchDown(x, y, touchID);
@@ -415,7 +418,7 @@ void Mode01::touchDown(int x, int y, int touchID){
     
     
    
-    myInGameMenu.touchDown(x, y, touchID);
+    myInGameMenu.touchDown(x, y);
   
 }
 
@@ -423,7 +426,7 @@ void Mode01::touchDown(int x, int y, int touchID){
 void Mode01::touchMove(int x, int y, int touchID){
  
 
-    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart&& !bGameStart) {
+    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bGameStart&& live>0) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchMove(x, y, touchID);
             items[i].touchMove(x, y, touchID);
@@ -431,7 +434,7 @@ void Mode01::touchMove(int x, int y, int touchID){
         checkLose(x, y, 0);
     }
   
-    myInGameMenu.touchMove(x, y, touchID);
+    myInGameMenu.touchMove(x, y);
 
     
 }
@@ -444,16 +447,15 @@ void Mode01::touchUp(int x, int y, int touchID){
             PreCoverNum ++;
         }
     }
-    if (!myInGameMenu.bPause && !myInGameMenu.bwellDone && !bLoseTimerStart && !bGameStart) {
+    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bGameStart && live>0) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchUp(x, y, touchID);
         }
         checkLose(x, y, 1);
     }
     
+    myInGameMenu.touchUp(x, y);
     
-    myInGameMenu.touchUp(x, y, touchID);
-
 }
 
 

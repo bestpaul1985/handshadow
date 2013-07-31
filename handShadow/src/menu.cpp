@@ -25,15 +25,16 @@ void menu::setup(){
     buttonOver[2].loadImage("assets/images/mainMenu/Levels_b.png");
     background[2].loadImage("assets/images/mainMenu/mainMenuBg.png");
     
-    button[3].loadImage("assets/images/mainMenu/Theme.png");
-    buttonOver[3].loadImage("assets/images/mainMenu/Theme_b.png");
+    button[3].loadImage("assets/images/mainMenu/Store.png");
+    buttonOver[3].loadImage("assets/images/mainMenu/Store_b.png");
     background[3].loadImage("assets/images/mainMenu/mainMenuBg.png");
     
-    button[4].loadImage("assets/images/mainMenu/Credit.png");
-    buttonOver[4].loadImage("assets/images/mainMenu/Credit_b.png");
+    button[4].loadImage("assets/images/mainMenu/Setting.png");
+    buttonOver[4].loadImage("assets/images/mainMenu/Setting_b.png");
     background[4].loadImage("assets/images/mainMenu/mainMenuBg.png");
     
     hidenLogo.loadImage("assets/images/mainMenu/hidenLogo.png");
+    imgLockedLevel.loadImage("assets/images/mainMenu/lock.png");
     
     for (int i=0; i<MAIN_MENU_BUTTON; i++) {
         mainMenuRect[i].button = &button[i];
@@ -50,6 +51,7 @@ void menu::setup(){
     bSave = false;
     levelReset();
     purchaseSetup();
+    setSetup();
 
 }
 
@@ -144,7 +146,7 @@ void menu::draw(){
     
     levelDraw();
     purchaseDraw();
-    
+    setDraw();
     
     
     if (!bSubMenu && bShowHidenLogo) {
@@ -164,6 +166,7 @@ void menu::touchDown(int x, int y, int touchID){
     
     dragDown(x, y, touchID);
     levelDown(x, y, touchID);
+    setTouchDown(x, y);
     purchaseTouchDown(x, y);
     for (int i=0; i<MAIN_MENU_BUTTON; i++) {
         if (mainMenuRect[i].buttonRect.inside(x, y)) {
@@ -180,7 +183,9 @@ void menu::touchMove(int x, int y, int touchID){
     
     dragMove(x, y, touchID);
     levelMove(x, y, touchID);
+    setTouchMove(x, y);
     purchaseTouchMove(x, y);
+    
     for (int i=0; i<MAIN_MENU_BUTTON; i++) {
         if (mainMenuRect[i].buttonRect.inside(x, y)) {
             mainMenuRect[i].bTouchOver = true;
@@ -199,6 +204,7 @@ void menu::touchUp(int x, int y, int touchID){
     dragUp(x, y, touchID);
     subMenuUp(x,y,touchID);
     levelUp(x,y,touchID);
+    setTouchUp(x, y);
     purchaseTouchUp(x, y);
     for (int i=0; i<MAIN_MENU_BUTTON; i++) {
         if (mainMenuRect[i].buttonRect.inside(x, y)) {
@@ -331,7 +337,12 @@ void menu::subMenuUp(int x, int y, int touchID){
         }
         
         if (mainMenuRect[1].buttonRect.inside(x, y)) {
-            *currentScene = 1;
+            if (*firstPlay==0) {
+                *scene = 1;
+                *firstPlay =1;
+            }else if(*firstPlay == 1){
+                *scene = 2;
+            }
             mainMenuRect[1].bTouchOver = false;
             reset();
         }
@@ -378,7 +389,8 @@ void menu::subMenuUp(int x, int y, int touchID){
         }
         
         if (mainMenuRect[1].buttonRect.inside(x, y)) {
-            *currentScene = 1;
+            
+            *scene = 1;
             mainMenuRect[1].bTouchOver = false;
             reset();
         }
@@ -522,8 +534,6 @@ void menu::levelDraw(){
             }
         }
     }
-    
-
 
 }
 
@@ -533,6 +543,18 @@ void menu::levelUpdate(){
     if (subStep ==1 || subStep ==2) {
         if (subMenuNum == 2) {
     
+            //unlock
+            for (int i =0 ; i<levelRect1.size(); i++) {
+                if (i<=*unLockedLevel) {
+                    levelRect1[i].bLocked = false;
+                }
+                
+                if (i<=(*unLockedLevel-20)) {
+                    levelRect2[i].bLocked = false;
+                }
+            }
+            
+            //scroll
             mParticle.resetForce();
             mParticle.addForce(0, frc.y);
             mParticle.addDampingForce();
@@ -558,6 +580,7 @@ void menu::levelUpdate(){
             }
             
             preParticlePos.y = mParticle.pos.y;
+            
         }
     }
 }
@@ -582,7 +605,6 @@ void menu::levelReset(){
     int counter = -1;
     int j = 0;
     
-    
     //world 1
     
     for (int i = 0; i<axisX*axisY; i++) {
@@ -598,7 +620,7 @@ void menu::levelReset(){
         temp.shaper = 1.5;
         temp.rectW = 100;
         temp.rectH = 100;
-        temp.bTouchOver = false;
+        temp.imgLockedLevel = &imgLockedLevel;
         temp.pos.set(372+50+120*counter, 140+120*j);
         levelRect1.push_back(temp);
         
@@ -621,7 +643,7 @@ void menu::levelReset(){
         temp.shaper = 1.5;
         temp.rectW = 100;
         temp.rectH = 100;
-        temp.bTouchOver = false;
+        temp.imgLockedLevel = &imgLockedLevel;
         temp.pos.set(372+50+120*counter, 650-100+120*u);
         levelRect2.push_back(temp);
         
@@ -637,7 +659,7 @@ void menu::levelDown(int x, int y, int touchID){
 
     if (subStep ==1 || subStep ==2) {
         if (subMenuNum == 2) {
-        
+
             levelTouch.set(x, y);
             levelPreTouch.set(x, y);
             frc.y = 0;
@@ -725,12 +747,20 @@ void menu::levelUp(int x, int y, int touchID){
             for (int i=0; i<levelRect1.size(); i++) {
                 if (levelRect1[i].buttonRect.inside(x, y)) {
                     levelRect1[i].bTouchOver = false;
+                    if (i<= *unLockedLevel) {
+                        *level = i;
+                        *scene = 2;
+                    }
                 }
             }
             
             for (int i=0; i<levelRect2.size(); i++) {
                 if (levelRect2[i].buttonRect.inside(x, y)) {
                     levelRect2[i].bTouchOver = false;
+                    if (i<= (*unLockedLevel-20)) {
+                        *level = 20+i;
+                        *scene = 2;
+                    }
                 }
             }
         }
@@ -1021,6 +1051,115 @@ void menu::purchaseTouchUp(int x, int y){
         }
     }
 }
+
+//-------------------------------------------------------
+void menu::setSetup(){
+
+    for (int i=0; i<3; i++) {
+        rectangle tempRect;
+        tempRect.pos.set(400, 100+120*i);
+        tempRect.rectW = 100;
+        tempRect.rectH = 100;
+        settingButton.push_back(tempRect);
+    }
+    
+}
+
+//-------------------------------------------------------
+void menu::setUpdate(){
+    
+}
+
+//-------------------------------------------------------
+void menu::setDraw(){
+    if (subStep ==1 || subStep ==2){
+         if ( subMenuNum == 4) {
+            for (int i=0; i<settingButton.size(); i++) {
+               settingButton[i].drawSetting();
+            }
+         }
+    }
+}
+
+//-------------------------------------------------------
+void menu::setTouchDown(int x, int y){
+    if (subStep ==1 || subStep ==2) {
+        if ( subMenuNum == 4) {
+            if (settingButton[0].buttonRect.inside(x,y)) {
+                settingButton[0].bTouchOver = true;
+            }
+            
+            if (settingButton[1].buttonRect.inside(x,y)) {
+                settingButton[1].bTouchOver = true;
+            }
+            
+            if (settingButton[2].buttonRect.inside(x,y)) {
+                settingButton[2].bTouchOver = true;
+            }
+
+        }
+    }
+}
+
+//-------------------------------------------------------
+void menu::setTouchMove(int x, int y){
+    if (subStep ==1 || subStep ==2) {
+        
+        if ( subMenuNum == 4) {
+            if (settingButton[0].buttonRect.inside(x,y)) {
+                settingButton[0].bTouchOver = true;
+            }else{
+                settingButton[0].bTouchOver = false;
+            }
+            
+            if (settingButton[1].buttonRect.inside(x,y)) {
+                settingButton[1].bTouchOver = true;
+            }else{
+                settingButton[1].bTouchOver = false;
+            }
+            
+            if (settingButton[2].buttonRect.inside(x,y)) {
+                settingButton[2].bTouchOver = true;
+            }else{
+                settingButton[2].bTouchOver = false;
+            }
+            
+        }
+    }
+}
+
+//-------------------------------------------------------
+void menu::setTouchUp(int x, int y){
+    if (subStep ==1 || subStep ==2) {
+        
+        if ( subMenuNum == 4) {
+            if (settingButton[0].buttonRect.inside(x,y)) {
+                settingButton[0].bTouchOver = false;
+                *scene = 1;
+                *firstPlay = 1;
+            }
+            
+            if (settingButton[1].buttonRect.inside(x,y)) {
+                settingButton[1].bTouchOver = false;
+            }
+            
+            if (settingButton[2].buttonRect.inside(x,y)) {
+                settingButton[2].bTouchOver = false;
+            }
+            
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

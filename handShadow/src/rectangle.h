@@ -20,6 +20,7 @@ public:
     void draw();
     void drawLevel();
     void drawPurchase();
+    void drawSetting();
     void update();
     void interpolateByPct(float myPct);
     void interpolateByPct2(float myPct);
@@ -39,6 +40,10 @@ public:
     ofImage *button;
     ofImage *buttonTouchOver;
     ofImage *background;
+    
+    //level
+    ofImage *imgLockedLevel;
+    bool bLocked;
     
     bool bTouchOver;
     bool bFixed;

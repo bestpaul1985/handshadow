@@ -54,6 +54,14 @@ public:
     void purchaseTouchMove(int x, int y);
     void purchaseTouchUp(int x, int y);
     
+    void setSetup();
+    void setUpdate();
+    void setDraw();
+    void setTouchDown(int x, int y);
+    void setTouchMove(int x, int y);
+    void setTouchUp(int x, int y);
+    
+    
     ofTrueTypeFont font;
     
     rectangle mainMenuRect[MAIN_MENU_BUTTON];
@@ -61,7 +69,7 @@ public:
     float speed;
 
     string situation;
-    int *currentScene;
+    int *scene;
     bool bSnapIn;
     int counter;
     
@@ -80,7 +88,7 @@ public:
     bool bHidenLogo;
     bool bShowHidenLogo;
     bool bDrag;
-    int timer;
+    int  timer;
     bool bStartTime;
     bool bSave;
     vector<float> tempRectPos;
@@ -89,12 +97,15 @@ public:
     int subStep;
     bool bSubMenu;
     //--------levels-----------------
-
+    ofImage imgLockedLevel;
     vector<rectangle> levelRect1;
     vector<rectangle> levelRect2;
     vector<float> levelPct1;
     vector<float> levelPct2;
 
+    int *unLockedLevel;
+    int *level;
+    
     int levelCounter;
     int levelTimer;
     ofPoint levelTouch;
@@ -122,6 +133,12 @@ public:
     int dotFreezerCounter;
     
     bool bNoCoin;
+    
+    int *firstPlay;
+    
+    //---setting--------------------
+    vector<rectangle> settingButton;
+    
 };
 
 #endif /* defined(__handShadow__menu__) */

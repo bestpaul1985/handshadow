@@ -15,6 +15,7 @@ rectangle::rectangle(){
     rectW = rectH = 50;
     bTouchOver = false;
     bFixed = false;
+    bLocked = true;
 }
 
 //------------------------------------------------------------------
@@ -27,7 +28,13 @@ void rectangle::drawLevel(){
         ofSetColor(255);
     }
     
-    ofRect(buttonRect);
+    if (bLocked) {
+        ofRect(buttonRect);
+        imgLockedLevel->draw(buttonRect);
+    }else{
+        ofRect(buttonRect);
+    }
+    
 
 }
 //------------------------------------------------------------------
@@ -44,6 +51,19 @@ void rectangle::drawPurchase(){
 
   
 
+}
+
+//------------------------------------------------------------------
+void rectangle::drawSetting(){
+
+    buttonRect.setFromCenter(pos, rectW, rectH);
+    if (bTouchOver) {
+        ofSetColor(125);
+    }else{
+        ofSetColor(255);
+    }
+    ofRect(buttonRect);
+    
 }
 
 //------------------------------------------------------------------

@@ -11,8 +11,6 @@
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
 		4C1F7C051794ACC60012196A /* particle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C1F7C031794ACC60012196A /* particle.cpp */; };
-		4C1F7C0E1794E0800012196A /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C1F7C0D1794E0800012196A /* Default-Portrait@2x~ipad.png */; };
-		4C1F7C101794E09D0012196A /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C1F7C0F1794E09D0012196A /* Default-Portrait~ipad.png */; };
 		4C2EBE0B179D8D9C001A510E /* appicn144.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C2EBE0A179D8D9C001A510E /* appicn144.png */; };
 		4C2EBE0F179D9156001A510E /* Mode01.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C2EBE0D179D9156001A510E /* Mode01.cpp */; };
 		4C2EBE24179DC3C2001A510E /* README in Resources */ = {isa = PBXBuildFile; fileRef = 4C2EBE1A179DC3C2001A510E /* README */; };
@@ -29,6 +27,8 @@
 		4C91392617970C1800537CFB /* rectangle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4C91392417970C1800537CFB /* rectangle.cpp */; };
 		4CB4192D1799CBED002EB7C1 /* appicn_72.png in Resources */ = {isa = PBXBuildFile; fileRef = 4CB4192C1799CBED002EB7C1 /* appicn_72.png */; };
 		4CB644C917A5F92D00FD527E /* handDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CB644C717A5F92D00FD527E /* handDetector.cpp */; };
+		4CB644CF17A8A01400FD527E /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C1F7C0F1794E09D0012196A /* Default-Portrait~ipad.png */; };
+		4CB644D017A8A01A00FD527E /* Default-Portrait@2x~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 4C1F7C0D1794E0800012196A /* Default-Portrait@2x~ipad.png */; };
 		4CC846441793083800237FE4 /* menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CC846421793083800237FE4 /* menu.cpp */; };
 		4CD7983A179F353B0098ED7D /* inGameMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4CD79838179F353B0098ED7D /* inGameMenu.cpp */; };
 		5326AEA810A23A0500278DE6 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5326AEA710A23A0500278DE6 /* CoreLocation.framework */; };
@@ -406,11 +406,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C1F7C0E1794E0800012196A /* Default-Portrait@2x~ipad.png in Resources */,
-				4C1F7C101794E09D0012196A /* Default-Portrait~ipad.png in Resources */,
 				4CB4192D1799CBED002EB7C1 /* appicn_72.png in Resources */,
 				4C2EBE0B179D8D9C001A510E /* appicn144.png in Resources */,
 				4C2EBE24179DC3C2001A510E /* README in Resources */,
+				4CB644CF17A8A01400FD527E /* Default-Portrait~ipad.png in Resources */,
+				4CB644D017A8A01A00FD527E /* Default-Portrait@2x~ipad.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
