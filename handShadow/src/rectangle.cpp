@@ -65,6 +65,20 @@ void rectangle::drawSetting(){
     ofRect(buttonRect);
     
 }
+//------------------------------------------------------------------
+void rectangle::drawPause(){
+
+    bgRect.setFromCenter(pos, button->getWidth(), button->getHeight());
+
+    ofPushMatrix();
+    ofTranslate(pos);
+    if (bTouchOver) {
+        buttonTouchOver->draw(-buttonTouchOver->getWidth()/2,-buttonTouchOver->getHeight()/2);
+    }else{
+        button->draw(-button->getWidth()/2, -button->getHeight()/2);
+    }
+    ofPopMatrix();
+}
 
 //------------------------------------------------------------------
 void rectangle::draw() {

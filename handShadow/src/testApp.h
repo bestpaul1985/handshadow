@@ -35,6 +35,8 @@ class testApp : public ofxiPhoneApp{
         int currentScene;
         ofImage pattern;
     
+    ofPoint *accFrc;
+    
     //-----XML-----------------------------------
     ofxXmlSettings XML;
     vector<xmlPointer> points;

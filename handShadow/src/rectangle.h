@@ -21,6 +21,8 @@ public:
     void drawLevel();
     void drawPurchase();
     void drawSetting();
+    void drawPause();
+
     void update();
     void interpolateByPct(float myPct);
     void interpolateByPct2(float myPct);

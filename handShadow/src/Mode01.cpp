@@ -29,10 +29,15 @@ void Mode01::setup(){
         dotImgA.push_back(temImg);
     }
 
+    for (int i=0; i<3; i++) {
+        temImg.loadImage("assets/images/gamePlay/color"+ofToString(i)+".png");
+        colorBg.push_back(temImg);
+    }
+    
     temImg.loadImage("assets/images/dots/B/dot00.png");
     dotImgB.push_back(temImg);
     reset();
-    myInGameMenu.setup(coin,level, gameTimer, fingerSize);
+    myInGameMenu.setup(coin,level, gameTimer, fingerSize, bgScale, accFrc);
     myInGameMenu.live = &live;
 
 }
@@ -42,7 +47,7 @@ void Mode01::reset(){
     //defult
     bgWidth = ofGetWidth();
     bgHight = ofGetHeight();
-
+    bgScale = 1.0f;
     dotPos.clear();
     myDot.clear();
     items.clear();
@@ -76,14 +81,14 @@ void Mode01::reset(){
     if (items.size()>0) {
         items[0].bFixed =false;
     }
-    //game start
-    bGameStart = true;
-    gameStartTimer = 0;
-    gameStartNumber = 3;
+   
     
     //game timer
     gameTimer = 60;
     gameTimerStart = ofGetElapsedTimeMillis();
+    bColorBg = false;
+    colorBgTimer = 0;
+    bgOffSet.set(0,0);
     //check Win
     winTimer = 0;
     bWinTimerStart = false;
@@ -104,23 +109,9 @@ void Mode01::reset(){
 //----------------------------------------------------------
 void Mode01::update(){
     
-    //counter down to start game
-    if (bGameStart) {
-        gameStartTimer++;
-        if (gameStartTimer>50) {
-            gameStartNumber --;
-            gameStartTimer = 0;
-        }
-        
-        if (gameStartNumber <0) { 
-            gameTimerStart = ofGetElapsedTimeMillis();
-            bGameStart = false;
-        }
-        
-    }
     
     //real game play
-    else{
+    if(myInGameMenu.bGameStart){
         
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].update();
@@ -147,12 +138,17 @@ void Mode01::update(){
         subGame();
         
     //timer
-        if (!myInGameMenu.bLevelDone && !bLoseTimerStart && !bGameStart) {
+        if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bLoseTimerStart && myInGameMenu.bGameStart && !bWinTimerStart)
+        {
             
             if (ofGetElapsedTimeMillis() - gameTimerStart >= 100*timeSpeed) {
                 gameTimer = gameTimer - 0.1;
                 gameTimerStart = ofGetElapsedTimeMillis();
+                if (gameTimer<10) {
+                    bColorBg = true;
+                }
             }
+            
         }
         
     //check winning situation
@@ -201,21 +197,31 @@ void Mode01::draw(){
     //background
     ofSetColor(255);
     ofPushMatrix();
-    ofTranslate(512, 384);
-    pattern->draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
-    ofPopMatrix();
-    //draw counter
-    if (bGameStart) {
-
-        ofSetColor(30);
-        string num = ofToString(gameStartNumber);
-        font.drawString(num, ofGetWidth()/2 - (int)font.stringWidth(num)/2, ofGetHeight()/2+(int)font.stringHeight(num)/2);
-       
+    ofTranslate(512+bgOffSet.x, 384+bgOffSet.y);
+    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail) {
+        pattern->draw(-bgWidth/2*bgScale,-bgHight*bgScale+12,bgWidth*bgScale,bgHight*bgScale);
     }
+    pattern->draw(-bgWidth/2*bgScale,-bgHight/2*bgScale,bgWidth*bgScale,bgHight*bgScale);
+    
+    if (bColorBg && !myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail) {
+        colorBgTimer++;
+        float shaker = ofMap(gameTimer, 10, 0, 1, 6);
+        translate.set(ofRandom(-shaker,shaker), ofRandom(-shaker,shaker));
+        if (colorBgTimer%4 == 0) {
+            ofSetColor(255);
+            colorBg[0].draw(-bgWidth/2*bgScale+1,-bgHight/2*bgScale-1,bgWidth*bgScale,bgHight*bgScale);
+        }else if(colorBgTimer%4 == 1){
+            colorBg[1].draw(-bgWidth/2*bgScale-1,-bgHight/2*bgScale-1,bgWidth*bgScale,bgHight*bgScale);
+        }else if(colorBgTimer%4 == 2){
+            colorBg[2].draw(-bgWidth/2*bgScale+1,-bgHight/2*bgScale-1,bgWidth*bgScale,bgHight*bgScale);
+        }
+    }
+    ofPopMatrix();
+  
     //draw dots
-    else{
+    if(myInGameMenu.bGameStart){
         
-        if (!myInGameMenu.bLevelDone) {
+        if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail) {
             for (int i=0; i<myDot.size(); i++) {
                 myDot[i].draw();
                 items[i].draw();
@@ -223,13 +229,11 @@ void Mode01::draw(){
         }
     }
     
-    
     ofPopMatrix();
     
  
     if (gameTimer<0) {
         gameTimer = 0;
-        
         bLoseTimerStart = true;
     }
     
@@ -246,7 +250,6 @@ void Mode01::subGame(){
         //Coin
         if (items[i].bCoin) {
             *coin +=50;
-            bSave = true;
             items[i].bCoin = false;
         }
         //time slower
@@ -280,7 +283,7 @@ void Mode01::subGame(){
             timeSlowerDuration -= 0.1;
             timeSlowerTimer = ofGetElapsedTimeMillis();
         }
-        timeSpeed = 3;
+        timeSpeed = 4;
     }else{
         timeSpeed = 1;
     }
@@ -299,29 +302,22 @@ void Mode01::checkWin(){
             }
         }
         
-        if(counter == myDot.size())bWinTimerStart = true;
+        if(counter == myDot.size() && !bWinTimerStart){
+            bWinTimerStart = true;
+            myInGameMenu.scoreUpdate();
+        }
         
         if(bWinTimerStart)  winTimer ++;
         
         
-        if (winTimer>0&&winTimer<100){
+        if (winTimer>0&&winTimer<150){
             
-            winEffectSpeed = 1000;
-            bgWidth+= winEffectSpeed;
+            bgOffSet.y +=1;
+            
         }
-        
-        else if(winTimer>=100 && winTimer<=200) {
-            
-            if(bgWidth>ofGetWidth()){
-                winEffectSpeed+=500;
-                bgWidth -=winEffectSpeed;
-            }else{
-                bgWidth = ofGetWidth();
-                bgHight+=ofGetHeight();
-            }
-            
+        else if(winTimer>150){
+            bgOffSet.y = 0;
             myInGameMenu.bLevelDone = true;
-            
         }
     }
    
@@ -348,10 +344,10 @@ void Mode01::checkLose(int x, int y, int situation){
                 }
             }
             
-            if (unFixed == unTouched) {
+            if (unFixed == unTouched && !bLoseTimerStart) {
                 bLoseTimerStart = true;
                 live --;
-                if (live <0) {
+                if (live < 0) {
                     live = 0;
                 }
                 loseTimer = 0;
@@ -386,9 +382,11 @@ void Mode01::checkLose(int x, int y, int situation){
                 loseTimer ++;
             }
             
-            if(loseTimer<50&&loseTimer>0){
+            if(loseTimer<=30&&loseTimer>0){
                 translate.set(ofRandom(-10,10), ofRandom(-10,10));
-            }else if(loseTimer>50){
+            }
+            else if(loseTimer>30)
+            {
               
                 if (live == 0 ||  gameTimer == 0) {
                     myInGameMenu.bLevelFail = true;
@@ -407,7 +405,7 @@ void Mode01::checkLose(int x, int y, int situation){
 //----------------------------------------------------------
 void Mode01::touchDown(int x, int y, int touchID){
    
-    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bGameStart && live>0) {
+    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && myInGameMenu.bGameStart && live>0 && !myInGameMenu.bPauseL && !myInGameMenu.bPauseR) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchDown(x, y, touchID);
             items[i].touchDown(x, y, touchID);
@@ -416,8 +414,6 @@ void Mode01::touchDown(int x, int y, int touchID){
         checkLose(x, y, 0);
     }
     
-    
-   
     myInGameMenu.touchDown(x, y);
   
 }
@@ -426,7 +422,7 @@ void Mode01::touchDown(int x, int y, int touchID){
 void Mode01::touchMove(int x, int y, int touchID){
  
 
-    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bGameStart&& live>0) {
+    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && myInGameMenu.bGameStart && live>0 && !myInGameMenu.bPauseL && !myInGameMenu.bPauseR) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchMove(x, y, touchID);
             items[i].touchMove(x, y, touchID);
@@ -447,7 +443,7 @@ void Mode01::touchUp(int x, int y, int touchID){
             PreCoverNum ++;
         }
     }
-    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bGameStart && live>0) {
+    if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && myInGameMenu.bGameStart && live>0 && !myInGameMenu.bPauseL && !myInGameMenu.bPauseR) {
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchUp(x, y, touchID);
         }

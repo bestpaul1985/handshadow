@@ -11,10 +11,10 @@ void testApp::setup(){
 	ofBackground(255);
     
     currentScene  = 0;
-    pattern.loadImage("assets/images/gamePlay/pattern02.png");
+    pattern.loadImage("assets/images/gamePlay/bg.png");
     
     scale = 0.0f;
-    
+    accFrc = &ofxAccelerometer.getForce();
     //****XML******************************************
     if( XML.loadFile(ofxiPhoneGetDocumentsDirectory() + "mySettings.xml") ){
 		message = "mySettings.xml loaded from documents folder!";
@@ -79,6 +79,7 @@ void testApp::setup(){
     ((Mode01*)scenes[2])->scale = &scale;
     ((Mode01*)scenes[2])->pattern = &pattern;
     ((Mode01*)scenes[2])->coinChance = &coinChance;
+    ((Mode01*)scenes[2])->accFrc = accFrc;
     ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
     ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
     ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
@@ -90,6 +91,7 @@ void testApp::setup(){
 
 //--------------------------------------------------------------
 void testApp::update(){
+    
     
     scenes[currentScene]->update();
     

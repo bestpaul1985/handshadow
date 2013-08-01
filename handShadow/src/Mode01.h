@@ -46,16 +46,19 @@ public:
     bool bSave;
     float bgWidth;
     float bgHight;
-    //*****game start******
-    bool bGameStart;
-    int gameStartTimer;
+    float bgScale;
+
     ofTrueTypeFont font;
     ofTrueTypeFont fontSmaill;
-    int gameStartNumber;
+    ofPoint *accFrc;
     
     //*******game timer********
     float gameTimerStart;
     float gameTimer;
+    vector<ofImage> colorBg;
+    bool bColorBg;
+    int colorBgTimer;
+    ofPoint bgOffSet;
     //*****check win*****
     int winTimer;
     bool bWinTimerStart;
