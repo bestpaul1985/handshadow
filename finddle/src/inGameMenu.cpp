@@ -17,7 +17,7 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
     bgScale = &BGScale;
     accFrc = AccFrc;
     
-    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 40);    
+    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 46);
     fontBig.loadFont("assets/fonts/Comfortaa_Regular.ttf", 50);
     
     
@@ -79,8 +79,18 @@ void inGameMenu::update(){
     angle = (int)ofMap((60-*gameTimer), 0, 60, 0, 360);
     
     if (angle-preAngle == 1) {
+        
         lineColor[angle].set(255,30);
     }
+    
+    for (int i=(angle+1); i<360; i++) {
+        if (bTimeSlower) {
+            lineColor[i].set(153,201,235);
+        }else{
+            lineColor[i].set(30);
+        }
+    }
+    
     
     preAngle = angle;
     
@@ -169,6 +179,7 @@ void inGameMenu::reset(){
     bTryAgin   = false;
     bHome      = false;
     bLevelFail = false;
+    bTimeSlower = false;
     angle      = 0;
     preAngle   = 0;
     
@@ -216,6 +227,11 @@ void inGameMenu::reset(){
     resumeRect.shaper = 0.6;
     homeRect.pos.set(-1000, ofGetHeight()/2);
     resumeRect.pos.set(-1000, ofGetHeight()/2);
+    
+    //small icon
+    for (int i=0; i<8; i++) {
+        bSmallIconCovered[i] = false;
+    }
 }
 
 //-----------------------------------------------------------------------
@@ -234,7 +250,7 @@ void inGameMenu::draw(){
         fingerImg[*live].draw(166,-5,fingerImg[*live].getWidth()/4*3,fingerImg[*live].getHeight()/4*3);
         
         ofSetColor(30);
-        font.drawString(ofToString(*level), 970, 40);
+        font.drawString(ofToString(*level), 930, 45);
         
         ofPushMatrix();
         ofTranslate(56, 27);
@@ -244,13 +260,20 @@ void inGameMenu::draw(){
         }
         ofPopMatrix();
         ofSetColor(255);
+        
         ofSetRectMode(OF_RECTMODE_CENTER);
         clockOutLine.draw(56, 27);
         ofSetRectMode(OF_RECTMODE_CORNER);
         
         
         for (int i=0; i<8; i++) {
-            ofSetColor(255);
+           
+            if (bSmallIconCovered[i]) {
+                ofSetColor(100);
+            }else{
+                ofSetColor(255);
+            }
+            
             if (i<*fingerSize) {
                 iconImg[i].draw(345+50*i,10);
             }else{
@@ -421,7 +444,7 @@ void inGameMenu::levelDoneDraw(){
                     coinImg.draw( coinPos.x+offset, coinPos.y-12*i);
                 }
                 ofSetColor(255);
-                coinBag.draw(coinBagPos);
+//                coinBag.draw(coinBagPos);
                 ofPopMatrix();
             
                 
@@ -453,7 +476,7 @@ void inGameMenu::levelDoneDraw(){
                     coinImg.draw( coinPos.x, coinPos.y-12*i);
                 }
                 ofSetColor(255);
-                coinBag.draw(coinBagPos);
+//                coinBag.draw(coinBagPos);
                 ofPopMatrix();
                 
                 

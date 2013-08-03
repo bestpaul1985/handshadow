@@ -58,6 +58,7 @@ void testApp::setup(){
     dotFreezerChance    = XML.getValue("SETTING:FREEZERCHANCE", 2);
     firstPlay           = XML.getValue("SETTING:FIRST", 0);
     //******Scenes*************************************
+    
     scenes[0] = new menu();
     ((menu*)scenes[0])->scene = &currentScene;
     ((menu*)scenes[0])->coin = &coin;
@@ -71,9 +72,23 @@ void testApp::setup(){
     scenes[0]->setup();
     
     scenes[1] = new handDetector();
-   
+    ((handDetector*)scenes[1])->scene = &currentScene;
+    ((handDetector*)scenes[1])->firstPlay = &firstPlay;
+    ((handDetector*)scenes[1])->scale = &scale;
+    ((handDetector*)scenes[1])->touchNum = &touchNum;
+    scenes[1]->setup();
     
     scenes[2] = new Mode01();
+    ((Mode01*)scenes[2])->xmlReader(points,&level,&currentScene);
+    ((Mode01*)scenes[2])->coin = &coin;
+    ((Mode01*)scenes[2])->scale = &scale;
+    ((Mode01*)scenes[2])->pattern = &pattern;
+    ((Mode01*)scenes[2])->coinChance = &coinChance;
+    ((Mode01*)scenes[2])->accFrc = accFrc;
+    ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
+    ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
+    ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
+    scenes[2]->setup();
   
    
     //feedback
@@ -83,49 +98,48 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
     
-    
-    
-    if (currentScene != preScene) {
-        scenes[0] = NULL;
-        scenes[1] = NULL;
-        scenes[2] = NULL;
-        
-        if (currentScene == 0) {
-            scenes[0] = new menu();
-            ((menu*)scenes[0])->scene = &currentScene;
-            ((menu*)scenes[0])->coin = &coin;
-            ((menu*)scenes[0])->level = &level;
-            ((menu*)scenes[0])->unLockedLevel = &unLockedLevel;
-            ((menu*)scenes[0])->coinChance = &coinChance;
-            ((menu*)scenes[0])->timeSlowerChance = &timeSlowerChance;
-            ((menu*)scenes[0])->dotExtenderChance = &dotExtenderChance;
-            ((menu*)scenes[0])->dotFreezerChance = &dotFreezerChance;
-            ((menu*)scenes[0])->firstPlay = &firstPlay;
-            scenes[0]->setup();
-        }
-        else if(currentScene == 1){
-            scenes[1] = new handDetector();
-            ((handDetector*)scenes[1])->scene = &currentScene;
-            ((handDetector*)scenes[1])->firstPlay = &firstPlay;
-            ((handDetector*)scenes[1])->scale = &scale;
-            ((handDetector*)scenes[1])->touchNum = &touchNum;
-            scenes[1]->setup();
-            
-        }
-        else if(currentScene == 2){
-            scenes[2] = new Mode01();
-            ((Mode01*)scenes[2])->xmlReader(points,&level,&currentScene);
-            ((Mode01*)scenes[2])->coin = &coin;
-            ((Mode01*)scenes[2])->scale = &scale;
-            ((Mode01*)scenes[2])->pattern = &pattern;
-            ((Mode01*)scenes[2])->coinChance = &coinChance;
-            ((Mode01*)scenes[2])->accFrc = accFrc;
-            ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
-            ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
-            ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
-            scenes[2]->setup();
-        }
-    }
+
+//    if (currentScene != preScene) {
+//        scenes[0] = NULL;
+//        scenes[1] = NULL;
+//        scenes[2] = NULL;
+//        
+//        if (currentScene == 0) {
+//            scenes[0] = new menu();
+//            ((menu*)scenes[0])->scene = &currentScene;
+//            ((menu*)scenes[0])->coin = &coin;
+//            ((menu*)scenes[0])->level = &level;
+//            ((menu*)scenes[0])->unLockedLevel = &unLockedLevel;
+//            ((menu*)scenes[0])->coinChance = &coinChance;
+//            ((menu*)scenes[0])->timeSlowerChance = &timeSlowerChance;
+//            ((menu*)scenes[0])->dotExtenderChance = &dotExtenderChance;
+//            ((menu*)scenes[0])->dotFreezerChance = &dotFreezerChance;
+//            ((menu*)scenes[0])->firstPlay = &firstPlay;
+//            scenes[0]->setup();
+//        }
+//        else if(currentScene == 1){
+//            scenes[1] = new handDetector();
+//            ((handDetector*)scenes[1])->scene = &currentScene;
+//            ((handDetector*)scenes[1])->firstPlay = &firstPlay;
+//            ((handDetector*)scenes[1])->scale = &scale;
+//            ((handDetector*)scenes[1])->touchNum = &touchNum;
+//            scenes[1]->setup();
+//            
+//        }
+//        else if(currentScene == 2){
+//            scenes[2] = new Mode01();
+//            ((Mode01*)scenes[2])->xmlReader(points,&level,&currentScene);
+//            ((Mode01*)scenes[2])->coin = &coin;
+//            ((Mode01*)scenes[2])->scale = &scale;
+//            ((Mode01*)scenes[2])->pattern = &pattern;
+//            ((Mode01*)scenes[2])->coinChance = &coinChance;
+//            ((Mode01*)scenes[2])->accFrc = accFrc;
+//            ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
+//            ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
+//            ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
+//            scenes[2]->setup();
+//        }
+//    }
     
     if (level>unLockedLevel) {
         unLockedLevel = level;
@@ -218,6 +232,7 @@ void testApp::exit(){
     XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
     XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
     XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
+    
     XML.setValue("SETTING:FIRST", firstPlay);
     
 	XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );

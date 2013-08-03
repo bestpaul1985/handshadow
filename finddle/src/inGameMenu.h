@@ -106,7 +106,10 @@ public:
     rectangle resumeRect;
     rectangle homeRect;
     float pausePct;
-
+    
+    bool bTimeSlower;
+    bool bSmallIconCovered[8];
+    
 };
 
 #endif /* defined(__handShadow__inGameMenu__) */

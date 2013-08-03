@@ -11,12 +11,6 @@
 
 #include "ofMain.h"
 #include "ofxSpriteSheetRenderer.h"
-static animation_t itemAnimation0 = { 0,  0,  9,  1,  1,  75, 0,  -1, -1, 1 };
-static animation_t itemAnimation1 = { 0,  0,  1,  1,  1,  75, 0,  -1, -1, 1 };
-struct basicSprite {
-	animation_t animation;
-	ofPoint pos;
-};
 
 enum effect_type{
     NONE,
@@ -31,7 +25,7 @@ class item
 
 public:
 
-    void setup(float x, float y, ofxSpriteSheetRenderer *Render);
+    void setup(float x, float y);
     void typeDefinder();
     void reset();
     void update();
@@ -40,7 +34,6 @@ public:
     void touchMove(int x, int y, int touchId);
 
     
-    ofImage *itemImages[4];
     //defult
     ofPoint pos;
     float raduis;
@@ -59,14 +52,9 @@ public:
     bool bDotExtender;
     bool bDotFreezer;
     bool bCoin;
-    bool bAnimation;
     //timer
     int timer;
-    
-    //animation
-    ofxSpriteSheetRenderer *render;
-    vector <basicSprite * > sprites;
-    
+
 };
 
 

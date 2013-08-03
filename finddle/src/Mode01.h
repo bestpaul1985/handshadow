@@ -8,7 +8,13 @@
 #include "inGameMenu.h"
 #include "item.h"
 #include "ofxSpriteSheetRenderer.h"
+static animation_t itemAnimation = { 0,  0,  7,  1,  1,  75, 0,  1, 7, 1 };
 
+
+struct basicSprite {
+	animation_t animation;
+	ofPoint pos;
+};
 
 class Mode01 : public baseScene{
 public:
@@ -31,7 +37,7 @@ public:
    
     
     inGameMenu myInGameMenu;
-    ofxSpriteSheetRenderer *render;
+   
 
     //defult setting
     int *coin;
@@ -81,6 +87,9 @@ public:
     int *coinChance;
     
     float timeSpeed;
+    
+    ofxSpriteSheetRenderer *itemSpriteRenderer;
+    vector <basicSprite * > sprites;
     
     //*******subGame********
     float timeSlowerTimer;

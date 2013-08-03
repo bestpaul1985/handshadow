@@ -27,6 +27,7 @@ void dots::update(){
 }
 //-------------------------------------------------------
 void dots::radiusExtendReset(){
+    
     radiusPct = 0;
     radiusPctOrg = 0;
     bRadiusExtend = false;

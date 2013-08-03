@@ -256,13 +256,13 @@
 				79ba56cb84fe15b1d2729bf6884625bc /* dots.h */,
 				abb68ed105073a1ae3b0320c890886cf /* handDetector.cpp */,
 				93212b81d82d007bc42db3c4bc99f657 /* handDetector.h */,
-				c720f65b45d106e624363939b03c2568 /* item.cpp */,
-				e5addc3c2e520fc32797577e629f03f2 /* item.h */,
 				09150bf591fddf0eca6d1d302b43ae78 /* particle.cpp */,
 				c4290e0aa046ab2952a4f50603f7233e /* particle.h */,
 				1371a3870c52d45ea1fb1bebee192649 /* rectangle.cpp */,
 				23d13cee25b08d74f6be5ed553c71c8b /* rectangle.h */,
 				e89f6699ff52ab8d659d33570735b7bf /* xmlPointer.h */,
+				c720f65b45d106e624363939b03c2568 /* item.cpp */,
+				e5addc3c2e520fc32797577e629f03f2 /* item.h */,
 			);
 			name = utility;
 			sourceTree = "<group>";
@@ -487,7 +487,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv6 armv7";
@@ -500,7 +500,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = iPhone_Prefix.pch;
 				INFOPLIST_FILE = "ofxiphone-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "${TARGET_NAME}";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv6 armv7";

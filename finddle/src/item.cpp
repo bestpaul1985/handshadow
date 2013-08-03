@@ -9,7 +9,7 @@
 #include "item.h"
 
 
-void item::setup(float x, float y, ofxSpriteSheetRenderer *Render){
+void item::setup(float x, float y){
     
     raduis = 26;
     org.x = x;
@@ -28,19 +28,16 @@ void item::setup(float x, float y, ofxSpriteSheetRenderer *Render){
     bFixed        = true;
     
     typeDefinder();
-    render = Render;
     
-//    cout<<myType<<endl;
-//    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;
+    
+    //    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;
 }
 
 //---------------------------------------------------
 void item::typeDefinder(){
     
     int value = (int)ofRandom(90);
-    
-    
-    
+        
     if (value>=0 && value <10+coinChance) {
         
         myType = COIN_MAKER;
@@ -66,156 +63,25 @@ void item::typeDefinder(){
         myType = NONE;
     }
     
-    
+   
 }
 
-//---------------------------------------------------
-void item::update(){
-        
-            
-    if (!bFixed) {
-        switch (myType) {
-            case NONE:break;
-                
-            case TIME_SLOWER:
-            {
-                if (bCovered) {
-                    bTimeSlower = true;
-                    bCovered = false;
-                    myType = NONE;
-                }
-            }break;
-                
-            case DOT_FREEZER:
-            {
-                if (bCovered) {
-                    bDotFreezer = true;
-                    bCovered = false;
-                    myType = NONE;
-                }
-                
-            }break;
-                
-            case DOT_EXTENDER:
-            {
-                if (bCovered) {
-                    bDotExtender = true;
-                    bCovered = false;
-                    myType = NONE;
-                }
-                
-            }break;
-                
-            case COIN_MAKER:
-            {
-                if (bCovered){
-                    bCoin = true;
-                    bCovered = false;
-                    myType = NONE;
-                }
-            }break;
-                
-        }
-
-    }
-    
-    
-    
-}
-
-//---------------------------------------------------
-void item::draw(){
-
-  if (!bFixed) {         
-    
-    
-    switch (myType) {
-        case NONE:break;  
-        case COIN_MAKER:
-        {
-            ofPushMatrix();
-            ofTranslate(pos.x,pos.y);
-//            ofSetColor(255, 0, 0,100);
-//            ofCircle(0, 0, raduis);
-//            ofSetColor(30, 30, 30);
-//            ofCircle(0,0, 3);
-            ofSetColor(255);
-            itemImages[0]->draw(-itemImages[0]->getWidth()/2, -itemImages[0]->getHeight()/2);
-            ofPopMatrix();
-//            ofCircle(org,3);
-//            ofLine(pos, org);
-//            ofSetColor(30);
-//            ofDrawBitmapString("Coin", pos);
-
-        }break;
-            
-        case TIME_SLOWER:
-        {
-            ofPushMatrix();
-            ofTranslate(pos.x,pos.y);
-//            ofSetColor(0, 0, 255,100);
-//            ofCircle(0, 0, raduis);
-//            ofSetColor(30, 30, 30);
-//            ofCircle(0,0, 3);
-            ofSetColor(255);
-            itemImages[1]->draw(-itemImages[0]->getWidth()/2, -itemImages[0]->getHeight()/2);
-
-            ofPopMatrix();
-//            ofCircle(org,3);
-//            ofLine(pos, org);
-//            ofSetColor(30);
-//            ofDrawBitmapString("Timer", pos);
-        }break;
-            
-        case DOT_EXTENDER:
-        {
-            ofPushMatrix();
-            ofTranslate(pos.x,pos.y);
-//            ofSetColor(0, 255, 0,100);
-//            ofCircle(0, 0, raduis);
-//            ofSetColor(30, 30, 30);
-//            ofCircle(0,0, 3);
-            ofSetColor(255);
-            itemImages[2]->draw(-itemImages[0]->getWidth()/2, -itemImages[0]->getHeight()/2);
-
-            ofPopMatrix();
-//            ofCircle(org,3);
-//            ofLine(pos, org);
-//            ofSetColor(30);
-//            ofDrawBitmapString("Extender", pos);
-
-        }break;
-            
-        case DOT_FREEZER:
-        {
-            ofPushMatrix();
-            ofTranslate(pos.x,pos.y);
-//            ofSetColor(255, 255, 0,100);
-//            ofCircle(0, 0, raduis);
-//            ofSetColor(30, 30, 30);
-//            ofCircle(0,0, 3);
-            ofSetColor(255);
-            itemImages[3]->draw(-itemImages[0]->getWidth()/2, -itemImages[0]->getHeight()/2);
-
-            ofPopMatrix();
-//            ofCircle(org,3);
-//            ofLine(pos, org);
-//            ofSetColor(30);
-//            ofDrawBitmapString("Freezer", pos);
-        }break;
-            
-    }
-  
-    
-  }
-
-}
 
 //---------------------------------------------------
 void item::touchDown(int x, int y, int touchId){
     ofPoint touch(x,y);
-    if (touch.distance(pos)<raduis && !bFixed) {
+    if (touch.distance(pos)<raduis && !bFixed && !bCovered) {
         bCovered = true;
+        
+        if (myType == COIN_MAKER) {
+            bCoin = true;
+        }else if (myType == DOT_FREEZER){
+            bDotFreezer = true;
+        }else if (myType == DOT_EXTENDER){
+            bDotExtender = true;
+        }else if (myType == TIME_SLOWER){
+            bTimeSlower = true;
+        }
     }
     
 }
@@ -223,10 +89,18 @@ void item::touchDown(int x, int y, int touchId){
 //---------------------------------------------------
 void item::touchMove(int x, int y, int touchId){
     ofPoint touch(x,y);
-    if (touch.distance(pos)<raduis && !bFixed) {
-         bCovered = true;
+    if (touch.distance(pos)<raduis && !bFixed && !bCovered) {
+        bCovered = true;
+        if (myType == COIN_MAKER) {
+            bCoin = true;
+        }else if (myType == DOT_FREEZER){
+            bDotFreezer = true;
+        }else if (myType == DOT_EXTENDER){
+            bDotExtender = true;
+        }else if (myType == TIME_SLOWER){
+            bTimeSlower = true;
+        }
     }
-    
 }
 
 

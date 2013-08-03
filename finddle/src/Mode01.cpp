@@ -23,6 +23,9 @@ void Mode01::setup(){
     font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 84);
     fontSmaill.loadFont("assets/fonts/Comfortaa_Regular.ttf", 46);
     
+    itemSpriteRenderer = new ofxSpriteSheetRenderer(1, 10000, 0, 256);
+    itemSpriteRenderer->loadTexture("assets/images/items/iconAnimation.png", 2048, GL_NEAREST);
+    
     ofImage temImg;
     for (int i =0; i<7; i++) {
         temImg.loadImage("assets/images/dots/A/dot0"+ofToString(i)+".png");
@@ -37,18 +40,7 @@ void Mode01::setup(){
     
     temImg.loadImage("assets/images/dots/B/dot00.png");
     dotImgB.push_back(temImg);
-    
-    for (int i=0; i<4; i++) {
-        temImg.loadImage("assets/images/items/item0"+ofToString(i) +".png");
-        itemImgs.push_back(temImg);
-    }
-    
    
-    
-    //sprite
-    render = new ofxSpriteSheetRenderer(1, 100, 0, 224);
-    render->loadTexture("assets/images/items/iconAnimation.png", 2016, GL_NEAREST);
-    
     reset();
     myInGameMenu.setup(coin,level, gameTimer, fingerSize, bgScale, accFrc);
     myInGameMenu.live = &live;
@@ -64,7 +56,14 @@ void Mode01::reset(){
     dotPos.clear();
     myDot.clear();
     items.clear();
-
+    
+    if(sprites.size()>0){
+        for(int i=sprites.size()-1;i>=0;i--){
+            delete sprites[i];
+            sprites.erase(sprites.begin()+i);
+        }
+    }
+    
     dotPos = xmlPos[*level].pos;
     
     for (int i=0; i< dotPos.size(); i++) {
@@ -82,11 +81,26 @@ void Mode01::reset(){
         tempItem.timeSlowerChance = *timeSlowerChance;
         tempItem.dotExtenderChance = *dotExtenderChance;
         tempItem.dotFreezerChance = *dotFreezerChance;
-        for (int i=0; i<itemImgs.size(); i++) {
-            tempItem.itemImages[i] = &itemImgs[i];
-        }
-        tempItem.setup(myDot[i].pos.x,myDot[i].pos.y, render);
+        tempItem.setup(myDot[i].pos.x,myDot[i].pos.y);
         items.push_back(tempItem);
+        
+        basicSprite * newSprite = new basicSprite();
+		newSprite->pos.set(items[i].pos);
+        newSprite->animation = itemAnimation;
+        if (items[i].myType == COIN_MAKER) {
+            newSprite->animation.index = 0;
+        } else if (items[i].myType == TIME_SLOWER) {
+            newSprite->animation.index = 24;
+        } else if (items[i].myType == DOT_EXTENDER) {
+            newSprite->animation.index = 16;
+        }else if (items[i].myType == DOT_FREEZER) {
+            newSprite->animation.index = 8;
+        }else if (items[i].myType == NONE) {
+            newSprite->animation.index = 7;
+        }
+        newSprite->animation.total_frames = 1;
+		sprites.push_back(newSprite);
+        
     }
     
     fingerSize = myDot.size();
@@ -131,8 +145,12 @@ void Mode01::update(){
         
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].update();
+            if (myDot[i].bCovered) {
+                myInGameMenu.bSmallIconCovered[i] = true;
+            }else{
+                myInGameMenu.bSmallIconCovered[i] = false;
+            }
         }
-        
         
         for (int i=0; i<(myDot.size()-1); i++) {
             if (myDot[i].bCovered && myDot[i+1].bFixed) {
@@ -140,21 +158,33 @@ void Mode01::update(){
                 items[i+1].bFixed = false;
             }
         }
-        
+            
     //subGame
+
+        subGame();
+
+        itemSpriteRenderer->clear();
+        itemSpriteRenderer->update(ofGetElapsedTimeMillis());
         
-       
-        
+        int spriteSize = 0;
         for (int i=0; i<items.size(); i++) {
             if (!items[i].bFixed) {
-                items[i].update();
+                spriteSize++;
+            }
+            
+            if (items[i].bCovered && items[i].myType != NONE) {
+                sprites[i]->animation.total_frames = 9;
             }
         }
         
-        subGame();
         
+        if(sprites.size()>0){
+            for(int i=0;i<spriteSize;i++){
+                itemSpriteRenderer->addCenteredTile(&sprites[i]->animation, sprites[i]->pos.x, sprites[i]->pos.y);
+            }
+        }
     //timer
-        if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bLoseTimerStart && myInGameMenu.bGameStart && bWinTimerStart)
+        if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bLoseTimerStart && myInGameMenu.bGameStart && bWinTimerStart && !myInGameMenu.bPauseL && !myInGameMenu.bPauseR)
         {
             
             if (ofGetElapsedTimeMillis() - gameTimerStart >= 100*timeSpeed) {
@@ -238,10 +268,14 @@ void Mode01::draw(){
         if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail) {
             for (int i=0; i<myDot.size(); i++) {
                 myDot[i].draw();
-                items[i].draw();
             }
+            
+            itemSpriteRenderer->draw();
+
         }
+
     }
+    
     
     ofPopMatrix();
     
@@ -288,8 +322,7 @@ void Mode01::subGame(){
             
             items[i].bDotFreezer = false;
         }
-
-    
+        
     }
     
     //time slower update
@@ -299,8 +332,11 @@ void Mode01::subGame(){
             timeSlowerTimer = ofGetElapsedTimeMillis();
         }
         timeSpeed = 1;
+        myInGameMenu.bTimeSlower = true;
     }else{
         timeSpeed = 0.5;
+        myInGameMenu.bTimeSlower = false;
+
     }
 
 }
