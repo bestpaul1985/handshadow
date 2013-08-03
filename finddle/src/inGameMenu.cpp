@@ -17,13 +17,16 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
     bgScale = &BGScale;
     accFrc = AccFrc;
     
-    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30);
+    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 40);    
     fontBig.loadFont("assets/fonts/Comfortaa_Regular.ttf", 50);
-
+    
     
     bgImg.loadImage("assets/images/inGameMenu/bg.png");
     clockOutLine.loadImage("assets/images/inGameMenu/outline.png");
-    LDBackgroudImg.loadImage("assets/images/inGameMenu/menu_background_new.png");
+    
+    LDBackgroudImg[0].loadImage("assets/images/inGameMenu/bg_success.png");
+    LDBackgroudImg[1].loadImage("assets/images/inGameMenu/bg_unsuccess.png");
+
     coinBag.loadImage("assets/images/inGameMenu/coin_bag.png");
     coinImg.loadImage("assets/images/inGameMenu/single_coin.png");
     
@@ -65,7 +68,6 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
     resumeRect.button = &resumeImgA;
     resumeRect.buttonTouchOver = &resumeImgB;
     
- 
     reset();
         
 };
@@ -338,7 +340,7 @@ void inGameMenu::levelDoneDraw(){
         ofPoint coinBagPos(-coinBag.getWidth()-fontBig.stringWidth(ofToString(*coin))/2-10, 45);
         
         ofPoint scorePos(0,-10);
-        ofPoint totalPos(0,120);
+        ofPoint totalPos(0,110);
         
         switch (LDType) {
                 
@@ -402,11 +404,15 @@ void inGameMenu::levelDoneDraw(){
                 ofPushMatrix();
                 ofTranslate(LDPos);
                 ofSetRectMode(OF_RECTMODE_CENTER);
-                LDBackgroudImg.draw(0,0);
+                if (bLevelDone) {
+                    LDBackgroudImg[0].draw(0,0);
+                }else{
+                    LDBackgroudImg[1].draw(0,0);
+                }
                 ofSetRectMode(OF_RECTMODE_CORNER);
                 ofSetColor(30);
                 fontBig.drawString(ofToString(score), scorePos.x-fontBig.stringWidth(ofToString(score))/2, scorePos.y-fontBig.stringHeight(ofToString(score))/2);
-                fontBig.drawString(ofToString(preCoin), totalPos.x-fontBig.stringWidth(ofToString(preCoin))/2, totalPos.y-fontBig.stringHeight(ofToString(preCoin))/2);
+                font.drawString(ofToString(preCoin), totalPos.x-font.stringWidth(ofToString(preCoin))/2, totalPos.y-font.stringHeight(ofToString(preCoin))/2);
 
                 for (int i=0; i<5; i++) {
                     ofSetColor(255);
@@ -432,11 +438,14 @@ void inGameMenu::levelDoneDraw(){
                 ofPushMatrix();
                 ofTranslate(LDPos);
                 ofSetRectMode(OF_RECTMODE_CENTER);
-                LDBackgroudImg.draw(0,0);
-                ofSetRectMode(OF_RECTMODE_CORNER);
+                if (bLevelDone) {
+                    LDBackgroudImg[0].draw(0,0);
+                }else{
+                    LDBackgroudImg[1].draw(0,0);
+                }                ofSetRectMode(OF_RECTMODE_CORNER);
                 ofSetColor(30);
                 fontBig.drawString(ofToString(score), scorePos.x-fontBig.stringWidth(ofToString(score))/2,scorePos.y -fontBig.stringHeight(ofToString(score))/2);
-                fontBig.drawString(ofToString(preCoin), totalPos.x-fontBig.stringWidth(ofToString(preCoin))/2, totalPos.y -fontBig.stringHeight(ofToString(preCoin))/2);
+                font.drawString(ofToString(preCoin), totalPos.x-font.stringWidth(ofToString(preCoin))/2, totalPos.y -font.stringHeight(ofToString(preCoin))/2);
                 for (int i=0; i<5; i++) {
                     ofSetColor(255);
                     int offset;

@@ -83,13 +83,19 @@ void rectangle::drawPause(){
 //------------------------------------------------------------------
 void rectangle::draw() {
     
+    int offset = 270;
+    
     bgRect.set(pos.x,pos.y, 300, ofGetHeight());
     buttonRect.setFromCenter(bgRect.getCenter(), rectW, rectH);
     
     ofSetRectMode(OF_RECTMODE_CENTER);
     if (bTouchOver) {
+        fingerImg[0]->draw(bgRect.getCenter().x,bgRect.getCenter().y-offset+60);
+        fingerImg[1]->draw(bgRect.getCenter().x,bgRect.getCenter().y+offset-60);
         buttonTouchOver->draw(bgRect.getCenter()); 
     }else{
+        fingerImg[0]->draw(bgRect.getCenter().x,bgRect.getCenter().y-offset);
+        fingerImg[1]->draw(bgRect.getCenter().x,bgRect.getCenter().y+offset);
         button->draw(bgRect.getCenter());
     }
     ofSetRectMode(OF_RECTMODE_CORNER);

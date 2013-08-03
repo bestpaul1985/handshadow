@@ -33,6 +33,7 @@ class testApp : public ofxiPhoneApp{
         menu mMenu;
         baseScene * scenes[5];
         int currentScene;
+        int preScene;
         ofImage pattern;
     
     ofPoint *accFrc;

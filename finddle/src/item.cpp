@@ -8,13 +8,10 @@
 
 #include "item.h"
 
-item::item(){
+
+void item::setup(float x, float y, ofxSpriteSheetRenderer *Render){
     
     raduis = 26;
-}
-
-void item::setup(float x, float y){
-
     org.x = x;
     org.y = y;
     myType = NONE;
@@ -31,6 +28,7 @@ void item::setup(float x, float y){
     bFixed        = true;
     
     typeDefinder();
+    render = Render;
     
 //    cout<<myType<<endl;
 //    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;

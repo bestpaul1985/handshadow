@@ -7,6 +7,8 @@
 #include "xmlPointer.h"
 #include "inGameMenu.h"
 #include "item.h"
+#include "ofxSpriteSheetRenderer.h"
+
 
 class Mode01 : public baseScene{
 public:
@@ -29,7 +31,8 @@ public:
    
     
     inGameMenu myInGameMenu;
-    
+    ofxSpriteSheetRenderer *render;
+
     //defult setting
     int *coin;
     int live;

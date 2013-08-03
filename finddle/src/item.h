@@ -10,6 +10,13 @@
 #define __handShadow__item__
 
 #include "ofMain.h"
+#include "ofxSpriteSheetRenderer.h"
+static animation_t itemAnimation0 = { 0,  0,  9,  1,  1,  75, 0,  -1, -1, 1 };
+static animation_t itemAnimation1 = { 0,  0,  1,  1,  1,  75, 0,  -1, -1, 1 };
+struct basicSprite {
+	animation_t animation;
+	ofPoint pos;
+};
 
 enum effect_type{
     NONE,
@@ -23,8 +30,8 @@ class item
 {
 
 public:
-    item();
-    void setup(float x, float y);
+
+    void setup(float x, float y, ofxSpriteSheetRenderer *Render);
     void typeDefinder();
     void reset();
     void update();
@@ -52,9 +59,14 @@ public:
     bool bDotExtender;
     bool bDotFreezer;
     bool bCoin;
-    
+    bool bAnimation;
     //timer
     int timer;
+    
+    //animation
+    ofxSpriteSheetRenderer *render;
+    vector <basicSprite * > sprites;
+    
 };
 
 

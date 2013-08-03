@@ -75,7 +75,9 @@ public:
     
     ofImage button[MAIN_MENU_BUTTON];
     ofImage buttonOver[MAIN_MENU_BUTTON];
-    ofImage background[MAIN_MENU_BUTTON];
+    ofImage fingerTop[MAIN_MENU_BUTTON];
+    ofImage fingerBot[MAIN_MENU_BUTTON];
+    ofImage buttonBackground;
     ofImage hidenLogo;
     ofImage mainMenuBg;
     ofPoint mainMenuBgPos;

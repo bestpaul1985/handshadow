@@ -43,6 +43,7 @@ public:
     ofImage *buttonTouchOver;
     ofImage *background;
     
+    ofImage *fingerImg[2];
     //level
     ofImage *imgLockedLevel;
     bool bLocked;

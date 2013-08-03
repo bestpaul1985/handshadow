@@ -44,10 +44,15 @@ public:
     string message;
     ofImage bgImg;
     
-    ofRectangle button[2];
-    ofColor buttonColor[2];
+    ofRectangle button;
+    ofImage skipImg[2];
+    ofImage reScanImg[2];
     
     float *scale;
+    bool bButtonCoverd;
+    
+    float timer;
+    int timerNum;
     
 };
 

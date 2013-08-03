@@ -13,40 +13,32 @@ void menu::setup(){
 
     font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 40);
     
+    for (int i=0; i<5; i++) {
+        fingerTop[i].loadImage("assets/images/mainMenu/f"+ofToString(i+1)+".png");
+        fingerBot[i].loadImage("assets/images/mainMenu/f"+ofToString(i+6)+".png");
+    }
+    
     mainMenuBg.loadImage("assets/images/mainMenu/mainMenuBg.png");
+    
     button[0].loadImage("assets/images/mainMenu/Tutorial.png");
     buttonOver[0].loadImage("assets/images/mainMenu/Tutorial_b.png");
-    background[0].loadImage("assets/images/mainMenu/mainMenuBg.png");
+    
     
     button[1].loadImage("assets/images/mainMenu/Play.png");
     buttonOver[1].loadImage("assets/images/mainMenu/Play_b.png");
-    background[1].loadImage("assets/images/mainMenu/mainMenuBg.png");
     
     button[2].loadImage("assets/images/mainMenu/Levels.png");
     buttonOver[2].loadImage("assets/images/mainMenu/Levels_b.png");
-    background[2].loadImage("assets/images/mainMenu/mainMenuBg.png");
     
     button[3].loadImage("assets/images/mainMenu/Store.png");
     buttonOver[3].loadImage("assets/images/mainMenu/Store_b.png");
-    background[3].loadImage("assets/images/mainMenu/mainMenuBg.png");
     
     button[4].loadImage("assets/images/mainMenu/Setting.png");
     buttonOver[4].loadImage("assets/images/mainMenu/Setting_b.png");
-    background[4].loadImage("assets/images/mainMenu/mainMenuBg.png");
     
     hidenLogo.loadImage("assets/images/mainMenu/hidenLogo.png");
     imgLockedLevel.loadImage("assets/images/mainMenu/lock.png");
-    
-    for (int i=0; i<MAIN_MENU_BUTTON; i++) {
-        mainMenuRect[i].button = &button[i];
-        mainMenuRect[i].buttonTouchOver = &buttonOver[i];
-        mainMenuRect[i].background = &background[i];
-        
-        mainMenuRect[i].rectW = button[i].getWidth();
-        mainMenuRect[i].rectH = button[i].getHeight();
 
-    }
-    
     
     reset();
     bSave = false;
@@ -66,7 +58,6 @@ void menu::update(){
         subMenu(subMenuNum);
         levelUpdate();
         purchaseUpdate();
-        
     }
     else{
         drag();
@@ -99,6 +90,16 @@ void menu::hiden(){
 
 //-------------------------------------------------------
 void menu::reset(){
+    
+    for (int i=0; i<MAIN_MENU_BUTTON; i++) {
+        mainMenuRect[i].button = &button[i];
+        mainMenuRect[i].buttonTouchOver = &buttonOver[i];
+        mainMenuRect[i].background = &buttonBackground;
+        mainMenuRect[i].fingerImg[0]= &fingerTop[i];
+        mainMenuRect[i].fingerImg[1]= &fingerBot[i];
+        mainMenuRect[i].rectW = button[i].getWidth();
+        mainMenuRect[i].rectH = button[i].getHeight();
+    }
     
     for (int i=0; i<MAIN_MENU_BUTTON; i++) {
         mainMenuRect[i].posa.x = 1000+ 100*i;
@@ -290,7 +291,9 @@ void menu::subMenu(int num){
             mainMenuRect[i].interpolateByPct2(pct[i]);
         }
         
-        if (pct[MAIN_MENU_BUTTON-1] == 1) subStep = 2;
+        if (pct[MAIN_MENU_BUTTON-1] == 1) {
+            subStep = 2;
+        }
         
     }
     else if(subStep == 4){
@@ -305,7 +308,8 @@ void menu::subMenu(int num){
             if (pct[i]>1) pct[i] = 1;
             mainMenuRect[i].interpolateByPct2(pct[i]);
         }
-        
+        cout<<pct[0]<<endl;
+
         if (pct[MAIN_MENU_BUTTON-1] == 1 ) {
             bSubMenu = false;
             subStep = 0;
@@ -534,7 +538,7 @@ void menu::snapIn(){
 //********-----------------------------------------------
 void menu::levelDraw(){
    
-    if (subStep ==1 || subStep ==2) {
+    if (subStep ==2) {
         if (subMenuNum == 2) {
             for (int i =0 ; i<levelRect.size(); i++) {
                 levelRect[i].drawLevel();
@@ -547,7 +551,7 @@ void menu::levelDraw(){
 //-------------------------------------------------------
 void menu::levelUpdate(){
     
-    if (subStep ==1 || subStep ==2) {
+    if (subStep ==2) {
         if (subMenuNum == 2) {
     
             //unlock
@@ -563,12 +567,12 @@ void menu::levelUpdate(){
             mParticle.addDampingForce();
             mParticle.update();
             
-            if (mParticle.pos.y>384) {
-                mParticle.pos.y = 384;
+            if (mParticle.pos.y>410) {
+                mParticle.pos.y = 410;
             }
             
-            else if (mParticle.pos.y< -800) {
-                mParticle.pos.y = -800;
+            else if (mParticle.pos.y< -1000) {
+                mParticle.pos.y = -1000;
             }
             
             float diff = mParticle.pos.y - preParticlePos.y;
@@ -587,8 +591,8 @@ void menu::levelUpdate(){
 //-------------------------------------------------------
 void menu::levelReset(){
     
-    mParticle.pos.y = 384;
-    preParticlePos.y = 384;
+    mParticle.pos.y = 410;
+    preParticlePos.y = 410;
     levelCounter = 0;
     levelTimer = 0;
     levelRect.clear();
@@ -598,7 +602,7 @@ void menu::levelReset(){
     levelTouch.set(0, 0);
     levelPreTouch.set(0, 0);
     axisX = 5;
-    axisY = 12;
+    axisY = 16;
     int counter = -1;
     int j = 0;
     
@@ -632,7 +636,7 @@ void menu::levelReset(){
 //-------------------------------------------------------
 void menu::levelDown(int x, int y, int touchID){
 
-    if (subStep ==1 || subStep ==2) {
+    if (subStep ==2) {
         if (subMenuNum == 2) {
 
             levelTouch.set(x, y);
@@ -656,7 +660,7 @@ void menu::levelDown(int x, int y, int touchID){
 //-------------------------------------------------------
 void menu::levelMove(int x, int y, int touchID){
 
-    if (subStep ==1 || subStep ==2) {
+    if (subStep ==2) {
         
         if (subMenuNum == 2) {
             
@@ -666,15 +670,14 @@ void menu::levelMove(int x, int y, int touchID){
             mParticle.vel.set(0,0);
             
             float diff = levelTouch.y - levelPreTouch.y;
-            float speed = 5;
-            
+            float speed;
             
             if (diff >1 ) {
-                speed = ofMap(diff, 5, 50, 8, 12,true);
+                speed = ofMap(diff, 5, 50, 5, 6,true);
                 frc.y = speed;
             }
             else if (diff < -1){
-                speed = ofMap(diff, -50, -5, -12, -8,true);
+                speed = ofMap(diff, -50, -5, -5, -6,true);
                 frc.y = speed;
                 if (mParticle.pos.x<=36) {
                     bHidenLogo = true;
@@ -702,15 +705,16 @@ void menu::levelMove(int x, int y, int touchID){
 
 //-------------------------------------------------------
 void menu::levelUp(int x, int y, int touchID){
-    if (subStep ==1 || subStep == 2) {
+    if (subStep == 2) {
         if (subMenuNum == 2) {
-
             for (int i=0; i<levelRect.size(); i++) {
                 if (levelRect[i].buttonRect.inside(x, y)) {
                     levelRect[i].bTouchOver = false;
                     if (i<= *unLockedLevel) {
                         *level = i;
                         *scene = 2;
+                        levelReset();
+                        reset();
                     }
                 }
             }
@@ -720,7 +724,6 @@ void menu::levelUp(int x, int y, int touchID){
 
 //-------------------------------------------------------
 void menu::purchaseSetup(){
-    
     
     for (int i=0; i<10; i++) {
         int startX = 500;

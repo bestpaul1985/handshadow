@@ -43,6 +43,12 @@ void Mode01::setup(){
         itemImgs.push_back(temImg);
     }
     
+   
+    
+    //sprite
+    render = new ofxSpriteSheetRenderer(1, 100, 0, 224);
+    render->loadTexture("assets/images/items/iconAnimation.png", 2016, GL_NEAREST);
+    
     reset();
     myInGameMenu.setup(coin,level, gameTimer, fingerSize, bgScale, accFrc);
     myInGameMenu.live = &live;
@@ -79,7 +85,7 @@ void Mode01::reset(){
         for (int i=0; i<itemImgs.size(); i++) {
             tempItem.itemImages[i] = &itemImgs[i];
         }
-        tempItem.setup(myDot[i].pos.x,myDot[i].pos.y);
+        tempItem.setup(myDot[i].pos.x,myDot[i].pos.y, render);
         items.push_back(tempItem);
     }
     
@@ -113,7 +119,7 @@ void Mode01::reset(){
     timeSlowerDuration = 0;
     timeSlowerTimer = ofGetElapsedTimeMillis();
     timeSpeed = 0.5;
-    live = 2;
+    live = 3;
 }
 
 //----------------------------------------------------------
@@ -170,27 +176,17 @@ void Mode01::update(){
     myInGameMenu.update();
     
     if (myInGameMenu.bNextLevel) {
-        live = 5;
+        
         *level += 1;
         bSave = true;
         if (*level>=xmlPos.size()) {
             *level = 0;
         }
         reset();
-        myInGameMenu.reset();
-    }
-    else if(myInGameMenu.bHome){
-        live = 5;
-        *level += 1;
-        bSave = true;
-        if (*level>=xmlPos.size()) {
-            *level = 0;
-        }
-        reset();
-        *scene = 0;
         myInGameMenu.reset();
     }
     else if(myInGameMenu.bTryAgin){
+        
         reset();
         myInGameMenu.reset();
     }
@@ -258,6 +254,7 @@ void Mode01::draw(){
     
     //draw in game menu
     myInGameMenu.draw();
+
 
 }
 
@@ -470,7 +467,11 @@ void Mode01::touchUp(int x, int y, int touchID){
     }
     
     myInGameMenu.touchUp(x, y);
-    
+    if(myInGameMenu.bHome){
+        reset();
+        myInGameMenu.reset();
+        *scene = 0;
+    }
 }
 
 

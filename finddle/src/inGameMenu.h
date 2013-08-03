@@ -22,6 +22,9 @@ enum LevelDoneType{
 
 class inGameMenu{
 public:
+
+    
+    
     void setup(int *Coin, int *Level, float &GameTimer, int &FingerSize, float &BGScale, ofPoint *AccFrc);
     void update();
     void reset();
@@ -81,7 +84,7 @@ public:
     float gameStartScale;
     float gameStartPct;
     //level done
-    ofImage LDBackgroudImg;
+    ofImage LDBackgroudImg[2];
     float LDAlpha;
     LevelDoneType LDType;
     ofPoint LDVelocity;
