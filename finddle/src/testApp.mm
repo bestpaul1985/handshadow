@@ -1,19 +1,20 @@
 #include "testApp.h"
 
 //--------------------------------------------------------------
-void testApp::setup(){	
+void testApp::setup(){
+    
 	ofxAccelerometer.setup();
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
     ofSetCircleResolution(400);
     ofEnableSmoothing();
-    iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
-	ofBackground(255);
+//    iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+    ofxiPhoneSetOrientation(OF_ORIENTATION_90_RIGHT);
     
+	ofBackground(255);
     currentScene  = 0;
     preScene = 0;
     pattern.loadImage("assets/images/gamePlay/bg.png");
-    
     scale = 0.0f;
     accFrc = &ofxAccelerometer.getForce();
     touchNum = 0;
@@ -98,12 +99,27 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
     
+    if (ofGetFrameNum()<10){
+        
+        //set it to mirror if it isn't already
+        
+        if (!ofxiPhoneExternalDisplay::isMirroring()){
+            
+            //code from the internet to get it to mirror on exteral screens
+            
+            ofxiPhoneExternalDisplay::mirrorOn();
+            
+            ofxiPhoneExternalDisplay::isMirroring();
+            
+        }
+        
+    }
 
 //    if (currentScene != preScene) {
 //        scenes[0] = NULL;
 //        scenes[1] = NULL;
 //        scenes[2] = NULL;
-//        
+//
 //        if (currentScene == 0) {
 //            scenes[0] = new menu();
 //            ((menu*)scenes[0])->scene = &currentScene;
@@ -251,9 +267,9 @@ void testApp::gotMemoryWarning(){}
 void testApp::deviceOrientationChanged(int newOrientation){
 
     if (newOrientation == 4) {
-        iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+        ofxiPhoneSetOrientation(OF_ORIENTATION_90_RIGHT);
     }else if(newOrientation ==3){
-        iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_LEFT);
+        ofxiPhoneSetOrientation(OF_ORIENTATION_90_LEFT);
     }
 
 }

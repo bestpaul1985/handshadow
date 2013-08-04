@@ -4,6 +4,7 @@
 #include "ofxiPhone.h"
 #include "ofxiPhoneExtras.h"
 #include "menu.h"
+#include "ofxiPhoneExternalDisplay.h" 
 
 #include "baseScene.h"
 #include "handDetector.h"
@@ -11,7 +12,7 @@
 #include "ofxXmlSettings.h"
 #include "xmlPointer.h"
 
-class testApp : public ofxiPhoneApp{
+class testApp : public ofxiPhoneApp, public ofxiPhoneExternalDisplay{
 	
     public:
         void setup();
