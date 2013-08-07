@@ -308,7 +308,7 @@ void menu::subMenu(int num){
             if (pct[i]>1) pct[i] = 1;
             mainMenuRect[i].interpolateByPct2(pct[i]);
         }
-        cout<<pct[0]<<endl;
+
 
         if (pct[MAIN_MENU_BUTTON-1] == 1 ) {
             bSubMenu = false;

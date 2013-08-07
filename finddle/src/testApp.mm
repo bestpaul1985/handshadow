@@ -1,15 +1,17 @@
 #include "testApp.h"
+#import "TestFlight.h"
 
 //--------------------------------------------------------------
 void testApp::setup(){
-    
+
+   
+    ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
+    [TestFlight takeOff:@"4e90e00e-4b78-429b-93c0-60b513898f2a"];
 	ofxAccelerometer.setup();
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
     ofSetCircleResolution(400);
     ofEnableSmoothing();
-//    iPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
-    ofxiPhoneSetOrientation(OF_ORIENTATION_90_RIGHT);
     
 	ofBackground(255);
     currentScene  = 0;
@@ -53,7 +55,7 @@ void testApp::setup(){
     level               = XML.getValue("SETTING:LEVEL", 0);
     unLockedLevel       = XML.getValue("SETTING:UNLACKEDLEVEL", 0);
     coinChance          = XML.getValue("SETTING:COINCHANCE", 2);
-    
+    unixTime            = XML.getValue("SETTING:TIME", (int)ofGetUnixTime());
     timeSlowerChance    = XML.getValue("SETTING:TIMESLOWER", 2);
     dotExtenderChance   = XML.getValue("SETTING:DOTEXTENDER", 2);
     dotFreezerChance    = XML.getValue("SETTING:FREEZERCHANCE", 2);
@@ -91,13 +93,19 @@ void testApp::setup(){
     ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
     scenes[2]->setup();
   
-   
+    
+
+
+
     //feedback
 //     cout<<"coinChance: "<<coinChance<<" timeSlowerChance: "<<timeSlowerChance<<" dotExtenderChance: "<<dotExtenderChance<<" dotFreezerChance"<<dotFreezerChance<<endl;
+   
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
+
+    
     
     if (ofGetFrameNum()<10){
         
@@ -114,53 +122,8 @@ void testApp::update(){
         }
         
     }
-
-//    if (currentScene != preScene) {
-//        scenes[0] = NULL;
-//        scenes[1] = NULL;
-//        scenes[2] = NULL;
-//
-//        if (currentScene == 0) {
-//            scenes[0] = new menu();
-//            ((menu*)scenes[0])->scene = &currentScene;
-//            ((menu*)scenes[0])->coin = &coin;
-//            ((menu*)scenes[0])->level = &level;
-//            ((menu*)scenes[0])->unLockedLevel = &unLockedLevel;
-//            ((menu*)scenes[0])->coinChance = &coinChance;
-//            ((menu*)scenes[0])->timeSlowerChance = &timeSlowerChance;
-//            ((menu*)scenes[0])->dotExtenderChance = &dotExtenderChance;
-//            ((menu*)scenes[0])->dotFreezerChance = &dotFreezerChance;
-//            ((menu*)scenes[0])->firstPlay = &firstPlay;
-//            scenes[0]->setup();
-//        }
-//        else if(currentScene == 1){
-//            scenes[1] = new handDetector();
-//            ((handDetector*)scenes[1])->scene = &currentScene;
-//            ((handDetector*)scenes[1])->firstPlay = &firstPlay;
-//            ((handDetector*)scenes[1])->scale = &scale;
-//            ((handDetector*)scenes[1])->touchNum = &touchNum;
-//            scenes[1]->setup();
-//            
-//        }
-//        else if(currentScene == 2){
-//            scenes[2] = new Mode01();
-//            ((Mode01*)scenes[2])->xmlReader(points,&level,&currentScene);
-//            ((Mode01*)scenes[2])->coin = &coin;
-//            ((Mode01*)scenes[2])->scale = &scale;
-//            ((Mode01*)scenes[2])->pattern = &pattern;
-//            ((Mode01*)scenes[2])->coinChance = &coinChance;
-//            ((Mode01*)scenes[2])->accFrc = accFrc;
-//            ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
-//            ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
-//            ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
-//            scenes[2]->setup();
-//        }
-//    }
     
-    if (level>unLockedLevel) {
-        unLockedLevel = level;
-    }
-    
+    unixTime = ofGetUnixTime();
     scenes[currentScene]->update();
     
     
@@ -170,7 +133,7 @@ void testApp::update(){
             XML.setValue("SETTING:LEVEL", level);
             XML.setValue("SETTING:UNLACKEDLEVEL", unLockedLevel);
             XML.setValue("SETTING:FIRST", firstPlay);
-            
+            XML.setValue("SETTING:TIME", unixTime);
             XML.setValue("SETTING:COINCHANCE", coinChance);
             XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
             XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
@@ -188,7 +151,7 @@ void testApp::update(){
             XML.setValue("SETTING:LEVEL", level);
             XML.setValue("SETTING:UNLACKEDLEVEL", unLockedLevel);
             XML.setValue("SETTING:FIRST", firstPlay);
-            
+            XML.setValue("SETTING:TIME", unixTime);
             XML.setValue("SETTING:COINCHANCE", coinChance);
             XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
             XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
@@ -203,15 +166,13 @@ void testApp::update(){
     
     }
    
-
 }
 
 //--------------------------------------------------------------
 void testApp::draw(){
     
- 
-    scenes[currentScene]->draw();
 
+    scenes[currentScene]->draw();
     preScene = currentScene;
 
 }
@@ -248,9 +209,8 @@ void testApp::exit(){
     XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
     XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
     XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
-    
+    XML.setValue("SETTING:TIME", unixTime);
     XML.setValue("SETTING:FIRST", firstPlay);
-    
 	XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
 	message = "mySettings.xml saved to app documents folder";
     cout<<message<<endl;
@@ -259,7 +219,21 @@ void testApp::exit(){
 //--------------------------------------------------------------
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){}
 void testApp::touchCancelled(ofTouchEventArgs & touch){}
-void testApp::lostFocus(){}
+void testApp::lostFocus(){
+    
+    XML.setValue("SETTING:COIN", coin);
+	XML.setValue("SETTING:LEVEL", level);
+	XML.setValue("SETTING:UNLACKEDLEVEL", unLockedLevel);
+    XML.setValue("SETTING:COINCHANCE", coinChance);
+    XML.setValue("SETTING:TIMESLOWER", timeSlowerChance);
+    XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
+    XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
+    XML.setValue("SETTING:FIRST", firstPlay);
+	XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
+	message = "mySettings.xml saved to app documents folder";
+    cout<<message<<endl;
+    
+}
 void testApp::gotFocus(){}
 void testApp::gotMemoryWarning(){}
 

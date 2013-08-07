@@ -27,7 +27,7 @@ void Mode01::setup(){
     itemSpriteRenderer->loadTexture("assets/images/items/iconAnimation.png", 2048, GL_NEAREST);
     
     ofImage temImg;
-    for (int i =0; i<7; i++) {
+    for (int i =0; i<8; i++) {
         temImg.loadImage("assets/images/dots/A/dot0"+ofToString(i)+".png");
         dotImgA.push_back(temImg);
     }

@@ -48,6 +48,8 @@ class testApp : public ofxiPhoneApp, public ofxiPhoneExternalDisplay{
     int level;
     int unLockedLevel;
     int firstPlay;
+    int unixTime;
+    int preUnixTime;
     string systemTime;
     
     //-----subGame------------------------------
