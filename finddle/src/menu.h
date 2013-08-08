@@ -49,6 +49,7 @@ public:
     
     void purchaseSetup();
     void purchaseUpdate();
+    void purchaseReset();
     void purchaseDraw();
     void purchaseTouchDown(int x, int y);
     void purchaseTouchMove(int x, int y);
@@ -57,17 +58,19 @@ public:
     void setSetup();
     void setUpdate();
     void setDraw();
+    void setReset();
     void setTouchDown(int x, int y);
     void setTouchMove(int x, int y);
     void setTouchUp(int x, int y);
     
     void tutorialSetup();
     void tutorialUpdate();
+    void tutorialReset();
     void tutorialDraw();
     void tutorialTouchDown(int x, int y);
     void tutorialTouchMove(int x, int y);
 
-    
+   
     ofTrueTypeFont font;
     ofTrueTypeFont fontLevel;
     
@@ -93,7 +96,7 @@ public:
 
     particle mParticle;
     ofPoint preParticlePos;
-
+    int *firstPlay;
     ofPoint frc;
     bool bHidenLogo;
     bool bShowHidenLogo;
@@ -124,28 +127,37 @@ public:
     int axisX;
     int axisY;
     bool bLevelSnapIn;
-    
+    bool bLevelChosen;
     //-------Purchase-------------
     int *coin;
     int *timeSlowerChance;
     int *dotExtenderChance;
     int *dotFreezerChance;
     int *coinChance;
-   
-    vector<rectangle> coinRects;
-    vector<rectangle> timeSlowerRects;
-    vector<rectangle> dotExtenderRects;
-    vector<rectangle> dotFreezerRects;
-    vector<rectangle> purchaseButtons;
+    ofPoint coinOffset;
+ 
+    vector<rectangle> liveButtons;
+    vector<rectangle> coinButtons;
+    vector<rectangle> itemButtons;
+    vector<ofImage> purChaseImgCoins;
+    vector<ofImage> purChaseImglives;
+    vector<ofImage> purChaseImgItems;
+
     
-    int timeSlowerCounter;
-    int coinCounter;
-    int dotExtenderCounter;
-    int dotFreezerCounter;
-    
+    ofImage purChaseImglines[3];
+
+    ofImage infoBarImg;
+    ofRectangle prices01[3];
+    ofRectangle prices02[3];
+    ofRectangle prices03[4];
+    ofRectangle purchaseline[3];
+    ofPoint purchasePos;
+    ofPoint purchasePrePos;
+    ofRectangle infoRect;
     bool bNoCoin;
     
-    int *firstPlay;
+    
+    
     
     //---setting--------------------
     vector<rectangle> settingButton;

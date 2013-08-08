@@ -43,13 +43,13 @@ void rectangle::drawLevel(){
 //------------------------------------------------------------------
 void rectangle::drawPurchase(){
 
-    buttonRect.setFromCenter(pos, rectW, rectH);
+    buttonRect.set(pos, rectW, rectH);
     if (bTouchOver) {
         ofSetColor(125);
     }else{
         ofSetColor(255);
     }
-    ofRect(buttonRect);
+    purchaseImg->draw(buttonRect.getPosition());
     
 }
 

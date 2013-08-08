@@ -56,7 +56,8 @@ public:
     bool bFixed;
     float shadowWidth;
 
-    
+    //purchase
+    ofImage *purchaseImg;
     
     //setting
     ofImage *setImg;

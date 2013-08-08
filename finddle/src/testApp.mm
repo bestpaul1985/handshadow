@@ -123,6 +123,11 @@ void testApp::update(){
     }
     
     unixTime = ofGetUnixTime();
+    if (((menu*)scenes[0])->bLevelChosen) {
+        currentScene = 2;
+        ((Mode01*)scenes[2])->reset();
+        ((menu*)scenes[0])->bLevelChosen = false;
+    }
     scenes[currentScene]->update();
     
     
@@ -164,9 +169,7 @@ void testApp::update(){
         }
     
     }
-    
-    cout<<level<<endl;
-   
+       
 }
 
 //--------------------------------------------------------------
