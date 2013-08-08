@@ -250,7 +250,7 @@ void inGameMenu::draw(){
         fingerImg[*live].draw(166,-5,fingerImg[*live].getWidth()/4*3,fingerImg[*live].getHeight()/4*3);
         
         ofSetColor(30);
-        font.drawString(ofToString(*level), 930, 45);
+        font.drawString(ofToString(*level+1), 930, 45);
         
         ofPushMatrix();
         ofTranslate(56, 27);
@@ -288,7 +288,7 @@ void inGameMenu::draw(){
     
     pause();
 
- 
+    
 }
 
 //-----------------------------------------------------------------------
@@ -359,9 +359,7 @@ void inGameMenu::levelDoneDraw(){
    
     if (bLevelDone || bLevelFail) {
         
-        ofPoint coinPos(-coinImg.getWidth()-fontBig.stringWidth(ofToString(score))/2-20,-45);
-        ofPoint coinBagPos(-coinBag.getWidth()-fontBig.stringWidth(ofToString(*coin))/2-10, 45);
-        
+        ofPoint coinPos(-coinImg.getWidth()-fontBig.stringWidth(ofToString(score))/2-20,-45);        
         ofPoint scorePos(0,-10);
         ofPoint totalPos(0,110);
         

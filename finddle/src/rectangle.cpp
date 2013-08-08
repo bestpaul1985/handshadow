@@ -11,17 +11,20 @@
 
 //------------------------------------------------------------------
 rectangle::rectangle(){
+    
 	shaper = 1.0;
     rectW = rectH = 50;
     bTouchOver = false;
     bFixed = false;
     bLocked = true;
+    shadowWidth = 0;
 }
 
 //------------------------------------------------------------------
 void rectangle::drawLevel(){
     
     buttonRect.setFromCenter(pos, rectW, rectH);
+    
     if (bTouchOver) {
         ofSetColor(125);
     }else{
@@ -29,17 +32,16 @@ void rectangle::drawLevel(){
     }
     
     if (bLocked) {
-        ofRect(buttonRect);
         imgLockedLevel->draw(buttonRect);
     }else{
-        ofRect(buttonRect);
+        imgUnlockedLevel->draw(buttonRect);
+        ofSetColor(255);
+        font->drawString(message, buttonRect.getCenter().x - font->stringWidth(message)/2,buttonRect.getCenter().y +font->stringHeight(message)/2);
     }
     
-
 }
 //------------------------------------------------------------------
 void rectangle::drawPurchase(){
-
 
     buttonRect.setFromCenter(pos, rectW, rectH);
     if (bTouchOver) {
@@ -48,9 +50,7 @@ void rectangle::drawPurchase(){
         ofSetColor(255);
     }
     ofRect(buttonRect);
-
-  
-
+    
 }
 
 //------------------------------------------------------------------
@@ -62,7 +62,8 @@ void rectangle::drawSetting(){
     }else{
         ofSetColor(255);
     }
-    ofRect(buttonRect);
+    
+    setImg->draw(buttonRect);
     
 }
 //------------------------------------------------------------------
@@ -87,6 +88,7 @@ void rectangle::draw() {
     
     bgRect.set(pos.x,pos.y, 300, ofGetHeight());
     buttonRect.setFromCenter(bgRect.getCenter(), rectW, rectH);
+    ofSetColor(255);
     
     ofSetRectMode(OF_RECTMODE_CENTER);
     if (bTouchOver) {
@@ -100,6 +102,9 @@ void rectangle::draw() {
     }
     ofSetRectMode(OF_RECTMODE_CORNER);
 
+    
+    ofSetColor(30, 30);
+    ofRect(bgRect.getPosition().x+bgRect.getWidth(),0,shadowWidth,768);
     
 }
 

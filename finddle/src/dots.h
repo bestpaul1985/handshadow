@@ -14,7 +14,7 @@
 class dots{
 
 public:
-    void setup(float x, float y,ofImage *A, ofImage *B);
+    void setup(float x, float y,ofImage *A, ofImage *B, ofImage *C);
     void update();
     void radiusExtend();
     void radiusExtendReset();
@@ -36,7 +36,7 @@ public:
     //-----button image---------
     ofImage *dot_normal;
     ofImage *dot_pressed;
-    
+    ofImage *dot_freezed;
     //-----Effect --------------
     bool bRadiusExtend;
     bool bFreezed;

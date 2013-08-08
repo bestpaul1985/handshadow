@@ -27,6 +27,8 @@ public:
     void interpolateByPct(float myPct);
     void interpolateByPct2(float myPct);
     
+    ofTrueTypeFont *font;
+    
     ofPoint		pos;
     ofPoint		posa;
     ofPoint		posb;
@@ -46,11 +48,19 @@ public:
     ofImage *fingerImg[2];
     //level
     ofImage *imgLockedLevel;
+    ofImage *imgUnlockedLevel;
+    string message;
     bool bLocked;
     
     bool bTouchOver;
     bool bFixed;
-        
+    float shadowWidth;
+
+    
+    
+    //setting
+    ofImage *setImg;
+    
 };
 
 #endif /* defined(__handShadow__rectangle__) */

@@ -33,6 +33,7 @@ public:
     int *firstPlay;
     int *touchNum;
     
+    
     vector<ofPoint> touchs;
     ofPoint linePos;
     ofPoint max;
@@ -47,10 +48,11 @@ public:
     ofRectangle button;
     ofImage skipImg[2];
     ofImage reScanImg[2];
+
     
     float *scale;
     bool bButtonCoverd;
-    
+
     float timer;
     int timerNum;
     

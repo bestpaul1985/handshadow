@@ -42,8 +42,9 @@ public:
     //defult setting
     int *coin;
     int live;
+    int bgNum;
     
-    ofImage *pattern;
+    vector<ofImage> patterns;
     vector<dots> myDot;
     vector<xmlPointer>  xmlPos;
     vector<ofPoint> dotPos;
@@ -68,6 +69,7 @@ public:
     bool bColorBg;
     int colorBgTimer;
     ofPoint bgOffSet;
+    float bgOffSetSpeed;
     //*****check win*****
     int winTimer;
     bool bWinTimerStart;
@@ -94,7 +96,7 @@ public:
     //*******subGame********
     float timeSlowerTimer;
     float timeSlowerDuration;
-    
+    ofImage dotFreezerIcon;
     
     //*******handDetector******
     float *scale;

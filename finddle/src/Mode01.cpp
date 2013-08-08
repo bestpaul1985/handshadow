@@ -27,24 +27,31 @@ void Mode01::setup(){
     itemSpriteRenderer->loadTexture("assets/images/items/iconAnimation.png", 2048, GL_NEAREST);
     
     ofImage temImg;
+    for (int i=0; i<3; i++) {
+        temImg.loadImage("assets/images/gamePlay/bg_"+ofToString(i)+".png");
+        patterns.push_back(temImg);
+    }
+    
     for (int i =0; i<8; i++) {
         temImg.loadImage("assets/images/dots/A/dot0"+ofToString(i)+".png");
         dotImgA.push_back(temImg);
     }
 
+    for (int i =0; i<2; i++) {
+        temImg.loadImage("assets/images/dots/B/dot0"+ofToString(i)+".png");
+        dotImgB.push_back(temImg);
+    }
+    
     for (int i=0; i<3; i++) {
         temImg.loadImage("assets/images/gamePlay/color"+ofToString(i)+".png");
         colorBg.push_back(temImg);
     }
     
-    
-    temImg.loadImage("assets/images/dots/B/dot00.png");
-    dotImgB.push_back(temImg);
    
+    bgNum = -1;
     reset();
     myInGameMenu.setup(coin,level, gameTimer, fingerSize, bgScale, accFrc);
     myInGameMenu.live = &live;
-
 }
 
 //----------------------------------------------------------
@@ -56,7 +63,10 @@ void Mode01::reset(){
     dotPos.clear();
     myDot.clear();
     items.clear();
-    
+    bgNum ++;
+    if (bgNum>patterns.size()-1) {
+        bgNum = 0;
+    }
     if(sprites.size()>0){
         for(int i=sprites.size()-1;i>=0;i--){
             delete sprites[i];
@@ -72,7 +82,7 @@ void Mode01::reset(){
         int diffY = ofGetHeight()/2-dotPos[i].y;
         ofPoint temp(dotPos[i].x+(int)(diffX* (*scale)),
                      dotPos[i].y+(int)(diffY* (*scale)));
-        tempDos.setup(temp.x, temp.y,&dotImgA[i], &dotImgB[0]);
+        tempDos.setup(temp.x, temp.y,&dotImgA[i], &dotImgB[0],&dotImgB[1]);
         tempDos.angle = ofRandom(360);
         myDot.push_back(tempDos);
     
@@ -134,6 +144,8 @@ void Mode01::reset(){
     timeSlowerTimer = ofGetElapsedTimeMillis();
     timeSpeed = 0.5;
     live = 3;
+    
+    bgOffSetSpeed = 2;
 }
 
 //----------------------------------------------------------
@@ -220,46 +232,65 @@ void Mode01::update(){
         reset();
         myInGameMenu.reset();
     }
-    
+        
 }
 
 //----------------------------------------------------------
 void Mode01::draw(){
     
+    ofBackground(0);
+    
     //shaking effect
     ofPushMatrix();
     ofTranslate(translate);
     //background
-    ofSetColor(0);
-    ofRect(0, 0, ofGetWidth(), ofGetHeight());
     ofPushMatrix();
-    if (bgOffSet.y>384) {
-        bgOffSet.y = 0;
-    }
-    if (myInGameMenu.bLevelFail || myInGameMenu.bLevelDone) {
-        bgOffSet.y = 0;
-    }
-    ofTranslate(512+bgOffSet.x, 384+bgOffSet.y);
-    if (!myInGameMenu.bLevelFail && !myInGameMenu.bLevelDone) {
-        ofSetColor(255);
-        pattern->draw(-bgWidth/2*bgScale,-bgHight*bgScale+12,bgWidth*bgScale,bgHight*bgScale);
-    }
+
     ofSetColor(255);
-    pattern->draw(-bgWidth/2*bgScale,-bgHight/2*bgScale,bgWidth*bgScale,bgHight*bgScale);
+
+    ofTranslate(512+bgOffSet.x, 384+bgOffSet.y);
     
-    if (bColorBg && !myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail) {
-        colorBgTimer++;
-        float shaker = ofMap(gameTimer, 10, 0, 1, 6);
-        translate.set(ofRandom(-shaker,shaker), ofRandom(-shaker,shaker));
-        if (colorBgTimer%6 == 0) {
-            ofSetColor(255);
-            colorBg[0].draw(-bgWidth/2*bgScale+1,-bgHight/2*bgScale-1,bgWidth*bgScale,bgHight*bgScale);
-        }else if(colorBgTimer%4 == 2){
-            colorBg[1].draw(-bgWidth/2*bgScale-1,-bgHight/2*bgScale-1,bgWidth*bgScale,bgHight*bgScale);
-        }else if(colorBgTimer%4 == 4){
-            colorBg[2].draw(-bgWidth/2*bgScale+1,-bgHight/2*bgScale-1,bgWidth*bgScale,bgHight*bgScale);
+    if (!myInGameMenu.bLevelFail && !myInGameMenu.bLevelDone) {
+       
+     
+        if (bColorBg) {
+            colorBgTimer++;
+            float shaker = ofMap(gameTimer, 10, 0, 1, 6);
+            translate.set(ofRandom(-shaker,shaker), ofRandom(-shaker,shaker));
+            if (colorBgTimer%6 == 0) {
+                ofSetColor(255,255,0);
+                patterns[bgNum].draw(-bgWidth/2,-bgHight-30,bgWidth,bgHight);
+                patterns[bgNum].draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
+            }else if(colorBgTimer%6 == 2){
+                ofSetColor(0,255,255);
+                patterns[bgNum].draw(-bgWidth/2,-bgHight-30,bgWidth,bgHight);
+                patterns[bgNum].draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
+            }else if(colorBgTimer%6 == 4){
+                ofSetColor(255,0,255);
+                patterns[bgNum].draw(-bgWidth/2,-bgHight-30,bgWidth,bgHight);
+                patterns[bgNum].draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
+            }
+        }
+        else{
+            if (myInGameMenu.bTimeSlower) {
+                ofSetColor(ofMap(timeSlowerDuration, 0, 5, 255, 221,true), ofMap(timeSlowerDuration, 0, 5, 255, 198,true), ofMap(timeSlowerDuration, 0, 5, 255, 167,true));
+            }
+            
+            patterns[bgNum].draw(-bgWidth/2,-bgHight-30,bgWidth,bgHight);
+            patterns[bgNum].draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
         }
     }
+    
+    else{
+        
+        if (myInGameMenu.bTimeSlower) {
+            ofSetColor(221, 198, 167,ofMap(timeSlowerDuration, 0, 5, 0, 255));
+        }
+        
+        patterns[bgNum].draw(-bgWidth/2*bgScale,-bgHight/2*bgScale,bgWidth*bgScale,bgHight*bgScale);
+        
+    }
+    
     ofPopMatrix();
   
     //draw dots
@@ -319,7 +350,6 @@ void Mode01::subGame(){
         //dot freezer
         else if (items[i].bDotFreezer) {
             myDot[i].bFreezed = true;
-            
             items[i].bDotFreezer = false;
         }
         
@@ -356,16 +386,13 @@ void Mode01::checkWin(){
     if(counter == myDot.size() && bWinTimerStart){
         winTimer ++;
     }else{
+        bgOffSet.y = 0;
         winTimer =0;
     }
     
     
     if (winTimer>0&&winTimer<150){
-        
-        bgOffSet.y +=2;
-        if (bgOffSet.y>=300) {
-            bgOffSet.y = 0;
-        }
+        bgOffSet.y +=bgOffSetSpeed;
     }
     else if(winTimer>=150){
         myInGameMenu.scoreUpdate();

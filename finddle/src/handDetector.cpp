@@ -46,7 +46,7 @@ void handDetector::update(){
                 if (dis>=850)
                 {
                     message = "Your hand's size is large  ";
-                    *scale = -0.09;
+                    *scale = -0.12;
                 }
                 else if (dis>=700 && dis<850)
                 {
@@ -56,7 +56,7 @@ void handDetector::update(){
                 }else if(dis < 700 && dis>0)
                 {
                     message = "Your hand's size is medium small  ";
-                    *scale = 0.09;
+                    *scale = 0.12;
 
                 }
                 

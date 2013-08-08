@@ -16,10 +16,10 @@ void testApp::setup(){
 	ofBackground(255);
     currentScene  = 0;
     preScene = 0;
-    pattern.loadImage("assets/images/gamePlay/bg.png");
     scale = 0.0f;
     accFrc = &ofxAccelerometer.getForce();
     touchNum = 0;
+    
     //****XML******************************************
     if( XML.loadFile(ofxiPhoneGetDocumentsDirectory() + "mySettings.xml") ){
 		message = "mySettings.xml loaded from documents folder!";
@@ -85,7 +85,6 @@ void testApp::setup(){
     ((Mode01*)scenes[2])->xmlReader(points,&level,&currentScene);
     ((Mode01*)scenes[2])->coin = &coin;
     ((Mode01*)scenes[2])->scale = &scale;
-    ((Mode01*)scenes[2])->pattern = &pattern;
     ((Mode01*)scenes[2])->coinChance = &coinChance;
     ((Mode01*)scenes[2])->accFrc = accFrc;
     ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
@@ -165,6 +164,8 @@ void testApp::update(){
         }
     
     }
+    
+    cout<<level<<endl;
    
 }
 

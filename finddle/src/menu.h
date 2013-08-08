@@ -61,8 +61,15 @@ public:
     void setTouchMove(int x, int y);
     void setTouchUp(int x, int y);
     
+    void tutorialSetup();
+    void tutorialUpdate();
+    void tutorialDraw();
+    void tutorialTouchDown(int x, int y);
+    void tutorialTouchMove(int x, int y);
+
     
     ofTrueTypeFont font;
+    ofTrueTypeFont fontLevel;
     
     rectangle mainMenuRect[MAIN_MENU_BUTTON];
     float pct[MAIN_MENU_BUTTON];    
@@ -101,6 +108,8 @@ public:
     bool bSubMenu;
     //--------levels-----------------
     ofImage imgLockedLevel;
+    ofImage imgUnlockedLevel;
+    
     vector<rectangle> levelRect;
     vector<float> levelPct;
 
@@ -140,6 +149,13 @@ public:
     
     //---setting--------------------
     vector<rectangle> settingButton;
+    vector<ofImage> setImgs;
+    bool bSound;
+    //---tutorial-------------------
+    vector<ofImage> tutorialImg;
+    vector<ofPoint> tutorialPos;
+    ofPoint tutorialTouch;
+    ofPoint tutorialPreTouch;
     
 };
 

@@ -38,22 +38,22 @@ void item::typeDefinder(){
     
     int value = (int)ofRandom(90);
         
-    if (value>=0 && value <10+coinChance) {
+    if (value>=0 && value <0+coinChance) {
         
         myType = COIN_MAKER;
         
     }
-    else if(value>=30 && value < 30+timeSlowerChance){
+    else if(value>30 && value < 30+timeSlowerChance){
     
         myType = TIME_SLOWER;
 
     }
-    else if(value>=50 && value < 50+dotExtenderChance){
+    else if(value>50 && value < 50+dotExtenderChance){
     
         myType = DOT_EXTENDER;
 
     }
-    else if(value>=70 && value < 70+dotFreezerChance){
+    else if(value>70 && value < 70+dotFreezerChance){
     
         myType = DOT_FREEZER;
         
@@ -63,6 +63,7 @@ void item::typeDefinder(){
         myType = NONE;
     }
     
+//    cout<<myType<<endl;
    
 }
 

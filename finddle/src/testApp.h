@@ -35,34 +35,33 @@ class testApp : public ofxiPhoneApp, public ofxiPhoneExternalDisplay{
         baseScene * scenes[5];
         int currentScene;
         int preScene;
-        ofImage pattern;
     
-    ofPoint *accFrc;
-    
-    //-----XML-----------------------------------
-    ofxXmlSettings XML;
-    vector<xmlPointer> points;
-    string xmlStructure;
-    string message;
-    
-    int level;
-    int unLockedLevel;
-    int firstPlay;
-    int unixTime;
-    int preUnixTime;
-    string systemTime;
-    
-    //-----subGame------------------------------
-    int timeSlowerChance;
-    int dotExtenderChance;
-    int dotFreezerChance;
-    int coinChance;
-    
-    int coin;
-    
-    //---handDetector--------------------------
-    float scale;
-    int touchNum;
+        ofPoint *accFrc;
+        
+        //-----XML-----------------------------------
+        ofxXmlSettings XML;
+        vector<xmlPointer> points;
+        string xmlStructure;
+        string message;
+        
+        int level;
+        int unLockedLevel;
+        int firstPlay;
+        int unixTime;
+        int preUnixTime;
+        string systemTime;
+        
+        //-----subGame------------------------------
+        int timeSlowerChance;
+        int dotExtenderChance;
+        int dotFreezerChance;
+        int coinChance;
+        
+        int coin;
+        
+        //---handDetector--------------------------
+        float scale;
+        int touchNum;
 
 };
 
