@@ -9,15 +9,12 @@
 #include "item.h"
 
 
-void item::setup(float x, float y){
+void item::setup(ofPoint *Org){
     
     raduis = 26;
-    org.x = x;
-    org.y = y;
+    org = Org;
     myType = NONE;
-    int angle = (int)ofRandom(359);
-    pos.x = (org.x)+60*cos(angle);
-    pos.y = (org.y)+60*sin(angle);
+   
     bCovered = false;
     timer = 0;
     
@@ -28,9 +25,12 @@ void item::setup(float x, float y){
     bFixed        = true;
     
     typeDefinder();
+    angle = (int)ofRandom(359);
     
     
-    //    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;
+//    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;
+    
+    
 }
 
 //---------------------------------------------------
@@ -38,7 +38,7 @@ void item::typeDefinder(){
     
     int value = (int)ofRandom(90);
         
-    if (value>=0 && value <0+coinChance) {
+    if (value>=0 && value <10+coinChance) {
         
         myType = COIN_MAKER;
         
@@ -66,7 +66,6 @@ void item::typeDefinder(){
 //    cout<<myType<<endl;
    
 }
-
 
 //---------------------------------------------------
 void item::touchDown(int x, int y, int touchId){
@@ -104,7 +103,13 @@ void item::touchMove(int x, int y, int touchId){
     }
 }
 
+//---------------------------------------------------
+void item::update(){
 
+    pos.x = (org->x)+60*cos(angle);
+    pos.y = (org->y)+60*sin(angle);
+    
+}
 
 
 

@@ -36,7 +36,8 @@ public:
     float		shaper;
     ofRectangle bgRect;
     ofRectangle buttonRect;
-
+    ofRectangle purchaseRect;
+    
     float rectW;
     float rectH;
     
@@ -52,6 +53,8 @@ public:
     bool bLocked;
     
     bool bTouchOver;
+    bool bIsEnoughMoney;
+
     bool bFixed;
     float shadowWidth;
 

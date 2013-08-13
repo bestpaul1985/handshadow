@@ -42,6 +42,7 @@ public:
     ofTrueTypeFont  font;
     handDetectorType myType;
     bool bStart;
+    bool bSave;
     string message;
     ofImage bgImg;
     

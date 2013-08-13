@@ -25,7 +25,7 @@ class item
 
 public:
 
-    void setup(float x, float y);
+    void setup(ofPoint *Org);
     void typeDefinder();
     void reset();
     void update();
@@ -37,9 +37,10 @@ public:
     //defult
     ofPoint pos;
     float raduis;
+    float angle;
     bool bCovered;
     bool bFixed;
-    ofPoint org;
+    ofPoint *org;
     //type
     effect_type myType;
     

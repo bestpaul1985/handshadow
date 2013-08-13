@@ -38,6 +38,7 @@ public:
     void touchUp(int x, int y);
 
     ofTrueTypeFont  font;
+    ofTrueTypeFont  fontSmall;
     ofTrueTypeFont  fontBig;
 
     vector<ofImage> fingerImg;
@@ -45,6 +46,7 @@ public:
     vector<ofPoint> linePos;
     vector<ofColor> lineColor;
     ofImage         bgImg;
+    ofImage         superCoin;
     ofImage         clockOutLine;
     ofRectangle     bgRect;
     vector<ofRectangle>    buttons;
@@ -95,9 +97,12 @@ public:
     
     //score
     int score;
+    int scoreNow;
     ofImage coinBag;
     ofImage coinImg;
-    
+    float scorePct;
+     int fingerRate;
+    int superCoinSize;
     //poused;
     bool bPauseL,bPauseR;
     

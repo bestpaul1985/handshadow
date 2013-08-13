@@ -1,14 +1,18 @@
 #include "testApp.h"
-#import "TestFlight.h"
+#include "ofAppiOSWindow.h"
+#import "AlertViewDelegate.h"
+
+AlertViewDelegate * alertViewDelegate = nil;
 
 //--------------------------------------------------------------
 void testApp::setup(){
-
-    coins00 = new ofxInAppProduct("com.handshadow.finddle.IAP002");
-    restoreAllPreviousTransactions();
     
-    ofxiPhoneSetOrientation(OFXIPHONE_ORIENTATION_LANDSCAPE_RIGHT);
-    [TestFlight takeOff:@"4e90e00e-4b78-429b-93c0-60b513898f2a"];
+    coins00 = new ofxInAppProduct("com.handshadow.finddle.IAP002");
+    coins01 = new ofxInAppProduct("com.handshadow.finddle.IAP003");
+    coins02 = new ofxInAppProduct("com.handshadow.finddle.IAP004");
+
+    //    restoreAllPreviousTransactions();
+
 	ofxAccelerometer.setup();
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
@@ -33,7 +37,7 @@ void testApp::setup(){
     
     int levels = XML.getNumTags("STROKE:PT");
     
-     if(levels > 0){
+    if(levels > 0){
         for (int i=0; i<levels; i++) {
             
             xmlPointer tempPoints;
@@ -52,7 +56,28 @@ void testApp::setup(){
             XML.popTag();
         }
     }
-    live                = XML.getValue("SETTING:LIVE",5);
+    int upGrades = XML.getNumTags("UPGRADE:PT");
+    if(upGrades > 0){
+        for (int i=0; i<upGrades; i++) {
+            
+            xmlPointer tempPoints;
+            XML.pushTag("UPGRADE", i);
+            int numPtTags = XML.getNumTags("PT");
+            if(numPtTags > 0){
+                for(int i = 0; i < numPtTags; i++){
+                    int x = XML.getValue("PT:X", 0, i);
+                    int y = XML.getValue("PT:Y", 0, i);
+                    ofPoint temp(x,y);
+                    tempPoints.pos.push_back(temp);
+                }
+            }
+            
+            upGradePrices.push_back(tempPoints);
+            XML.popTag();
+        }
+    }
+    
+    live                = XML.getValue("SETTING:LIVE",0);
     coin                = XML.getValue("SETTING:COIN",1000);
     level               = XML.getValue("SETTING:LEVEL", 0);
     unLockedLevel       = XML.getValue("SETTING:UNLACKEDLEVEL", 0);
@@ -62,9 +87,11 @@ void testApp::setup(){
     dotExtenderChance   = XML.getValue("SETTING:DOTEXTENDER", 2);
     dotFreezerChance    = XML.getValue("SETTING:FREEZERCHANCE", 2);
     firstPlay           = XML.getValue("SETTING:FIRST", 0);
+    
     //******Scenes*************************************
     
     scenes[0] = new menu();
+    ((menu*)scenes[0])->upGradePrices = upGradePrices;
     ((menu*)scenes[0])->live = &live;
     ((menu*)scenes[0])->scene = &currentScene;
     ((menu*)scenes[0])->coin = &coin;
@@ -95,24 +122,25 @@ void testApp::setup(){
     ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
     ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
     scenes[2]->setup();
-  
-
-//feedback
-//     cout<<"coinChance: "<<coinChance<<" timeSlowerChance: "<<timeSlowerChance<<" dotExtenderChance: "<<dotExtenderChance<<" dotFreezerChance"<<dotFreezerChance<<endl;
-   
+    
+    live += ofClamp((ofGetUnixTime()- unixTime)/3600, 0, 5);
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
-
-    
-     //for mirroring
+    //for mirroring
     if (ofGetFrameNum()<10){
-        if (!ofxiPhoneExternalDisplay::isMirroring()){
-            ofxiPhoneExternalDisplay::mirrorOn();
-            ofxiPhoneExternalDisplay::isMirroring();
+        if (!ofxiOSExternalDisplay::isMirroring()){
+            ofxiOSExternalDisplay::mirrorOn();
+            ofxiOSExternalDisplay::isMirroring();
         }
     }
+    
+    //level update
+    if (unLockedLevel<level) {
+        unLockedLevel = level;
+    }
+    
     
     //update time
     unixTime = ofGetUnixTime();
@@ -125,41 +153,33 @@ void testApp::update(){
     }
     
     //purchase
-    if (((menu*)scenes[0])->bPurchaseCoin[0] || ((menu*)scenes[1])->bPurchaseCoin[1]||((menu*)scenes[2])->bPurchaseCoin[2]) {
-        coins00->buy();
-    }
-    
-    if (coins00->isPurchesed()) {
-        coin += 10000;
-        save();
-        ((menu*)scenes[0])->bPurchaseCoin[0] = false;
-        ((menu*)scenes[0])->bPurchaseWithMoney = false;
-        ((menu*)scenes[1])->bPurchaseCoin[0] = false;
-        ((menu*)scenes[1])->bPurchaseWithMoney = false;
-        ((menu*)scenes[2])->bPurchaseCoin[0] = false;
-        ((menu*)scenes[2])->bPurchaseWithMoney = false;
-        coins00->unbuy();//only consumables should call this
-    }
+    purchase();
 
-    
     //update scenes
     scenes[currentScene]->update();
     
-    
+    //goStore
+    if ((((menu*)scenes[0])->bGoStore)) {
+        purchasePopup();
+        (((menu*)scenes[0])->bGoStore) = false;
+    }
+
     //save
-    if (currentScene == 0) {
-        if (((menu*)scenes[0])->bSave){
-            save();
-            ((menu*)scenes[0])->bSave =false;
-        }
-    }else if(currentScene == 2){
-        if(((Mode01*)scenes[2])->bSave){
-            save();
-            ((Mode01*)scenes[2])->bSave = false;
-        }
+    if(((menu*)scenes[0])->bSave){
+        save();
+        ((menu*)scenes[0])->bSave = false;
     }
     
-       
+    if(((handDetector*)scenes[1])->bSave){
+        save();
+        ((handDetector*)scenes[1])->bSave = false;
+    }
+
+    if(((Mode01*)scenes[2])->bSave){
+        save();
+        ((Mode01*)scenes[2])->bSave = false;
+    }
+    
 }
 
 //--------------------------------------------------------------
@@ -167,15 +187,18 @@ void testApp::draw(){
     
     scenes[currentScene]->draw();
     preScene = currentScene;
-
 }
 
 //--------------------------------------------------------------
-void testApp::touchDown(ofTouchEventArgs & touch){
+void testApp::exit(){
+    save();
+}
+
+//--------------------------------------------------------------
+void testApp::touchDown(ofTouchEventArgs & touch) {
     
     scenes[currentScene]->touchDown(touch.x, touch.y, touch.id);
     touchNum = touch.numTouches;
-
 }
 
 //--------------------------------------------------------------
@@ -183,7 +206,6 @@ void testApp::touchMoved(ofTouchEventArgs & touch){
     
     scenes[currentScene]->touchMove(touch.x, touch.y, touch.id);
     touchNum = touch.numTouches;
-
 }
 
 //--------------------------------------------------------------
@@ -192,37 +214,52 @@ void testApp::touchUp(ofTouchEventArgs & touch){
     scenes[currentScene]->touchUp(touch.x, touch.y, touch.id);
     touchNum = touch.numTouches;
 }
+
 //--------------------------------------------------------------
-void testApp::exit(){
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){
     
-    save();
+}
+
+
+//--------------------------------------------------------------
+void testApp::touchCancelled(ofTouchEventArgs & touch){
+    
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs & touch){}
-void testApp::touchCancelled(ofTouchEventArgs & touch){}
 void testApp::lostFocus(){
-    
     save();
+
+}
+
+//--------------------------------------------------------------
+void testApp::gotFocus(){
     
 }
-void testApp::gotFocus(){}
-void testApp::gotMemoryWarning(){}
+
+//--------------------------------------------------------------
+void testApp::gotMemoryWarning(){
+    
+}
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
 
-    if (newOrientation == 4) {
-        ofxiPhoneSetOrientation(OF_ORIENTATION_90_RIGHT);
-    }else if(newOrientation ==3){
-        ofxiPhoneSetOrientation(OF_ORIENTATION_90_LEFT);
+    if (newOrientation == 3) {
+        ofSetOrientation(OF_ORIENTATION_90_LEFT);
+    }else if(newOrientation == 4){
+        ofSetOrientation(OF_ORIENTATION_90_RIGHT);
     }
+}
+
+//--------------------------------------------------------------
+void testApp::windowResized(int w, int h) {
 
 }
 
 //--------------------------------------------------------------
 void testApp::save(){
-
+    
     XML.setValue("SETTING:COIN", coin);
 	XML.setValue("SETTING:LEVEL", level);
 	XML.setValue("SETTING:UNLACKEDLEVEL", unLockedLevel);
@@ -231,7 +268,93 @@ void testApp::save(){
     XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
     XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
     XML.setValue("SETTING:FIRST", firstPlay);
-	XML.saveFile( ofxiPhoneGetDocumentsDirectory() + "mySettings.xml" );
+    
+    int time = (int)ofGetUnixTime()-(ofGetUnixTime()-unixTime);
+    XML.setValue("SETTING:TIME", time);
+
+    XML.saveFile( ofxiOSGetDocumentsDirectory() + "mySettings.xml" );
+    
 	message = "mySettings.xml saved to app documents folder";
     cout<<message<<endl;
 }
+//--------------------------------------------------------------
+void testApp::purchase(){
+
+    if (((menu*)scenes[0])->bPurchaseCoin[0]) {
+        coins00->buy();
+        ((menu*)scenes[0])->bPurchaseCoin[0] = false;
+        ((menu*)scenes[0])->bPurchaseWithMoney = false;
+    }
+    
+    if (((menu*)scenes[0])->bPurchaseCoin[1]) {
+        coins01->buy();
+        ((menu*)scenes[0])->bPurchaseCoin[1] = false;
+        ((menu*)scenes[0])->bPurchaseWithMoney = false;
+    }
+    
+    if (((menu*)scenes[0])->bPurchaseCoin[2]) {
+        coins02->buy();
+       
+        ((menu*)scenes[0])->bPurchaseCoin[2] = false;
+        ((menu*)scenes[0])->bPurchaseWithMoney = false;
+    }
+    
+    
+    if (coins00->isPurchesed()) {
+        coin += 10000;
+        save();
+        coins00->unbuy();
+    }else{
+        coins00->reset();
+    }
+    
+    if (coins01->isPurchesed()) {
+        coin += 50000;
+        save();
+        coins01->unbuy();
+    }else{
+        coins01->reset();
+    }
+    
+    if (coins02->isPurchesed()) {
+        coin += 100000;
+        save();
+        coins02->unbuy();
+    }else{
+        coins02->reset();
+    }
+    
+
+}
+
+//--------------------------------------------------------------
+void testApp::purchasePopup(){
+
+    UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"You need more live"
+                                                      message:@"Go to store to purchase\nmore lives. Live will be increased \none per hours, maximum 5"
+                                                     delegate:nil
+                                            cancelButtonTitle:@"OK"
+                                            otherButtonTitles:nil] retain];
+    [alert show];
+    [alert release];
+
+}
+
+//--------------------------------------------------------------
+void testApp::popupDismissed(){
+
+    if(alertViewDelegate){
+        [alertViewDelegate release];
+        alertViewDelegate = nil;
+    }
+    
+}
+
+
+
+
+
+
+
+
+

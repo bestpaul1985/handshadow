@@ -18,6 +18,7 @@ rectangle::rectangle(){
     bFixed = false;
     bLocked = true;
     shadowWidth = 0;
+    bIsEnoughMoney = true;
 }
 
 //------------------------------------------------------------------
@@ -44,13 +45,17 @@ void rectangle::drawLevel(){
 void rectangle::drawPurchase(){
 
     buttonRect.set(pos, rectW, rectH);
-    if (bTouchOver) {
+    purchaseRect.set(pos.x+rectW-40, pos.y+rectH-40, 40, 40);
+    ofSetColor(255);
+    purchaseImg->draw(buttonRect.getPosition());
+    
+    if (bTouchOver || !bIsEnoughMoney) {
         ofSetColor(125);
     }else{
         ofSetColor(255);
     }
-    purchaseImg->draw(buttonRect.getPosition());
-    
+    ofRect(purchaseRect);
+
 }
 
 //------------------------------------------------------------------
@@ -90,18 +95,15 @@ void rectangle::draw() {
     buttonRect.setFromCenter(bgRect.getCenter(), rectW, rectH);
     ofSetColor(255);
     
-    ofSetRectMode(OF_RECTMODE_CENTER);
     if (bTouchOver) {
-        fingerImg[0]->draw(bgRect.getCenter().x,bgRect.getCenter().y-offset+60);
-        fingerImg[1]->draw(bgRect.getCenter().x,bgRect.getCenter().y+offset-60);
-        buttonTouchOver->draw(bgRect.getCenter()); 
+        fingerImg[0]->draw(bgRect.getCenter().x-fingerImg[1]->getWidth()/2,bgRect.getCenter().y-fingerImg[1]->getHeight()/2-offset+60);
+        fingerImg[1]->draw(bgRect.getCenter().x-fingerImg[1]->getWidth()/2,bgRect.getCenter().y-fingerImg[1]->getHeight()/2+offset-60);
+        buttonTouchOver->draw(buttonRect.position); 
     }else{
-        fingerImg[0]->draw(bgRect.getCenter().x,bgRect.getCenter().y-offset);
-        fingerImg[1]->draw(bgRect.getCenter().x,bgRect.getCenter().y+offset);
-        button->draw(bgRect.getCenter());
+        fingerImg[0]->draw(bgRect.getCenter().x-fingerImg[1]->getWidth()/2,bgRect.getCenter().y-fingerImg[1]->getHeight()/2-offset);
+        fingerImg[1]->draw(bgRect.getCenter().x-fingerImg[1]->getWidth()/2,bgRect.getCenter().y-fingerImg[1]->getHeight()/2+offset);
+        button->draw(buttonRect.position);
     }
-    ofSetRectMode(OF_RECTMODE_CORNER);
-
     
     ofSetColor(30, 30);
     ofRect(bgRect.getPosition().x+bgRect.getWidth(),0,shadowWidth,768);

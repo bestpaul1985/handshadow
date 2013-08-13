@@ -17,6 +17,8 @@ void handDetector::setup(){
     skipImg[0].loadImage("assets/images/handDetector/skip_normal.png");
     skipImg[1].loadImage("assets/images/handDetector/skip_pressed.png");
     reset();
+    bSave = false;
+
 }
 
 //---------------------------------------------------
@@ -43,19 +45,19 @@ void handDetector::update(){
                 float dis = max.x-min.x;
 //                cout<<dis<<"  "<<max.x<<" "<<min.x<<endl;
                 
-                if (dis>=850)
+                if (dis>=800)
                 {
                     message = "Your hand's size is large  ";
                     *scale = -0.12;
                 }
-                else if (dis>=700 && dis<850)
+                else if (dis>=700 && dis<800)
                 {
                     message = "Your hand's size is medium  ";
                     *scale = 0.0;
 
                 }else if(dis < 700 && dis>0)
                 {
-                    message = "Your hand's size is medium small  ";
+                    message = "Your hand's size is  small  ";
                     *scale = 0.12;
 
                 }
@@ -78,6 +80,7 @@ void handDetector::update(){
                     }
                     reset();
                 }
+                bSave = true;
                 timer = ofGetElapsedTimeMillis();
             }
             
@@ -98,7 +101,6 @@ void handDetector::reset(){
     message = "";
     timer = ofGetElapsedTimeMillis();
     timerNum = 3;
-    
 }
 
 //---------------------------------------------------
@@ -211,6 +213,7 @@ void handDetector::touchUp(int x, int y, int touchId){
             }else{
                 *scene = 0;
             }
+            bSave = true;
             reset();
         }
     }else if(myType == READY){
@@ -223,6 +226,7 @@ void handDetector::touchUp(int x, int y, int touchId){
             }else{
                 *scene = 0;
             }
+            bSave = true;
             reset();
         }
     }

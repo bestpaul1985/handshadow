@@ -13,7 +13,7 @@
 #include "baseScene.h"
 #include "rectangle.h"
 #include "particle.h"
-
+#include "xmlPointer.h"
 
 #define MAIN_MENU_BUTTON 5
 
@@ -55,6 +55,7 @@ public:
     void purchaseTouchDown(int x, int y);
     void purchaseTouchMove(int x, int y);
     void purchaseTouchUp(int x, int y);
+
     
     void setSetup();
     void setUpdate();
@@ -70,11 +71,14 @@ public:
     void tutorialDraw();
     void tutorialTouchDown(int x, int y);
     void tutorialTouchMove(int x, int y);
-
-   
-    ofTrueTypeFont font;
-    ofTrueTypeFont fontLevel;
     
+    vector<xmlPointer> upGradePrices;
+    
+    
+    
+    ofTrueTypeFont font;
+    ofTrueTypeFont fontPrice;
+    ofTrueTypeFont fontLevel;
     rectangle mainMenuRect[MAIN_MENU_BUTTON];
     float pct[MAIN_MENU_BUTTON];    
     float speed;
@@ -110,6 +114,7 @@ public:
     int subMenuNum;
     int subStep;
     bool bSubMenu;
+    bool bGoStore;
     //--------levels-----------------
     ofImage imgLockedLevel;
     ofImage imgUnlockedLevel;
@@ -136,18 +141,19 @@ public:
     int *dotExtenderChance;
     int *dotFreezerChance;
     int *coinChance;
+    
     ofPoint coinOffset;
- 
+    
+    int livePrice[3];
+    int upGradeLevel[4];
     vector<rectangle> liveButtons;
     vector<rectangle> coinButtons;
     vector<rectangle> itemButtons;
     vector<ofImage> purChaseImgCoins;
     vector<ofImage> purChaseImglives;
     vector<ofImage> purChaseImgItems;
-
-    
+       
     ofImage purChaseImglines[3];
-
     ofImage infoBarImg;
     ofRectangle prices01[3];
     ofRectangle prices02[3];
@@ -156,6 +162,7 @@ public:
     ofPoint purchasePos;
     ofPoint purchasePrePos;
     ofRectangle infoRect;
+    
     bool bNoCoin;
     bool bPurchaseWithCoin;
     bool bPurchaseWithMoney;
@@ -163,14 +170,15 @@ public:
     bool bPurchaseCoin[3];
     bool bPurchaseLive[3];
     bool bPurchaseItem[4];
-
-    rectangle purchaseAppleButton[2];
-    ofImage purchaseAppleImg[3];
+    bool bIsEnoughMoneyLive[3];
+    bool bIsEnoughMoneyItem[4];
+    
         
     //---setting--------------------
     vector<rectangle> settingButton;
     vector<ofImage> setImgs;
     bool bSound;
+    
     //---tutorial-------------------
     vector<ofImage> tutorialImg;
     vector<ofPoint> tutorialPos;

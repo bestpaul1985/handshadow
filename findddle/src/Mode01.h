@@ -50,6 +50,7 @@ public:
     vector<ofPoint> dotPos;
     vector<ofImage> dotImgA;
     vector<ofImage> dotImgB;
+    vector<ofImage> dotFinger;
     int *scene;
     int *level;
     int fingerSize;
@@ -87,7 +88,6 @@ public:
     int *dotExtenderChance;
     int *dotFreezerChance;
     int *coinChance;
-    
     float timeSpeed;
     
     ofxSpriteSheetRenderer *itemSpriteRenderer;
