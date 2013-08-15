@@ -60,7 +60,11 @@ public:
 
     //purchase
     ofImage *purchaseImg;
-    
+    ofImage *purchasePlusImg;
+    bool bPurchaseAnimation;
+    int itemNumber;
+    ofTrueTypeFont *purchaseAnimationfont;
+    float purchaseAnimationPct;
     //setting
     ofImage *setImg;
     

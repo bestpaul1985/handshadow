@@ -8,7 +8,8 @@ void dots::setup(float x, float y,ofImage *A, ofImage *B, ofImage *C, ofImage *D
     
     
     ofPoint tempPos;
-
+    
+    bSondPlay=false;
 
     if (x<512 && y<384) {
         //top Left
@@ -187,6 +188,7 @@ void dots::touchDown(int x, int y, int touchID){
         
         if (myId.size()>0) {
             bCovered = true;
+            bSondPlay = true;
         }
         
         if (bFreezed) {

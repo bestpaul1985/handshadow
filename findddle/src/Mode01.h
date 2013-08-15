@@ -8,6 +8,7 @@
 #include "inGameMenu.h"
 #include "item.h"
 #include "ofxSpriteSheetRenderer.h"
+
 static animation_t itemAnimation = { 0,  0,  7,  1,  1,  75, 0,  1, 7, 1 };
 
 
@@ -28,6 +29,7 @@ public:
     void touchDown(int x, int y, int touchID);
     void touchMove(int x, int y, int touchID);
     void touchUp(int x, int y, int touchID);
+    void tutorialDraw();
     
     void subGame();
     void inGameMenuDraw();
@@ -37,8 +39,6 @@ public:
    
     
     inGameMenu myInGameMenu;
-   
-
     //defult setting
     int *coin;
     int *live;
@@ -53,6 +53,7 @@ public:
     vector<ofImage> dotFinger;
     int *scene;
     int *level;
+    int tryLive;
     int fingerSize;
     bool bSave;
     float bgWidth;
@@ -61,6 +62,8 @@ public:
 
     ofTrueTypeFont font;
     ofTrueTypeFont fontSmaill;
+    ofTrueTypeFont fontReallySmaill;
+
     ofPoint *accFrc;
     
     //*******game timer********
@@ -100,6 +103,16 @@ public:
     
     //*******handDetector******
     float *scale;
+    
+    //*****tutorial***********
+    ofImage arrow;
+    ofColor overAllColor;
+    ofColor overAllColor2;
+    int bTutorialStep;
+    float arrowOffSet;
+    float arrowSpeed;
+    
+    
 };
 
 

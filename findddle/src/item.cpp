@@ -27,7 +27,6 @@ void item::setup(ofPoint *Org){
     typeDefinder();
     angle = (int)ofRandom(359);
     
-    
 //    cout<<coinChance<<" "<<timeSlowerChance<<" "<<dotExtenderChance<<"  "<<dotFreezerChance<<endl;
     
     
@@ -36,24 +35,19 @@ void item::setup(ofPoint *Org){
 //---------------------------------------------------
 void item::typeDefinder(){
     
-    int value = (int)ofRandom(90);
+    int value = (int)ofRandom(70);
         
     if (value>=0 && value <10+coinChance) {
         
         myType = COIN_MAKER;
         
     }
-    else if(value>30 && value < 30+timeSlowerChance){
-    
-        myType = TIME_SLOWER;
-
-    }
-    else if(value>50 && value < 50+dotExtenderChance){
+    else if(value>30 && value < 30+dotExtenderChance){
     
         myType = DOT_EXTENDER;
 
     }
-    else if(value>70 && value < 70+dotFreezerChance){
+    else if(value>50 && value < 50+dotFreezerChance){
     
         myType = DOT_FREEZER;
         

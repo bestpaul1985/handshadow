@@ -19,6 +19,9 @@ rectangle::rectangle(){
     bLocked = true;
     shadowWidth = 0;
     bIsEnoughMoney = true;
+    itemNumber = 0;
+    purchaseAnimationPct = 0;
+    bPurchaseAnimation = false;
 }
 
 //------------------------------------------------------------------
@@ -45,7 +48,7 @@ void rectangle::drawLevel(){
 void rectangle::drawPurchase(){
 
     buttonRect.set(pos, rectW, rectH);
-    purchaseRect.set(pos.x+rectW-40, pos.y+rectH-40, 40, 40);
+    purchaseRect.set(pos.x+rectW-40, pos.y+rectH-40, 36, 36);
     ofSetColor(255);
     purchaseImg->draw(buttonRect.getPosition());
     
@@ -54,8 +57,43 @@ void rectangle::drawPurchase(){
     }else{
         ofSetColor(255);
     }
-    ofRect(purchaseRect);
+    
+    purchasePlusImg->draw(purchaseRect);
 
+    
+    // plus animation;
+    
+    if (bPurchaseAnimation) {
+        float speed = 0.03f;
+        purchaseAnimationPct+=speed;
+        
+        if (purchaseAnimationPct >1) {
+            purchaseAnimationPct = 1;
+            bPurchaseAnimation = false;
+        }
+        
+        float y = (1-purchaseAnimationPct)*purchaseRect.getCenter().y + purchaseAnimationPct*(purchaseRect.getCenter().y-80);
+      
+     
+        string message;
+        
+        if (itemNumber == 0) {
+           message = "+1";
+        }else if(itemNumber == 1){
+            message = "+3";
+
+        }else if(itemNumber == 2){
+            message = "+5";
+
+        }else if(itemNumber == 3){
+            message = "+UP";
+            
+        }
+        
+        ofSetColor(255);
+        purchaseAnimationfont->drawString(message, purchaseRect.getCenter().x-purchaseAnimationfont->stringWidth(message)/2, y);
+    }
+    
 }
 
 //------------------------------------------------------------------
@@ -107,7 +145,7 @@ void rectangle::draw() {
     
     ofSetColor(30, 30);
     ofRect(bgRect.getPosition().x+bgRect.getWidth(),0,shadowWidth,768);
-    
+
 }
 
 

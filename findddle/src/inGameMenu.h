@@ -39,6 +39,7 @@ public:
 
     ofTrueTypeFont  font;
     ofTrueTypeFont  fontSmall;
+    ofTrueTypeFont  fontSmall2;
     ofTrueTypeFont  fontBig;
 
     vector<ofImage> fingerImg;
@@ -52,7 +53,10 @@ public:
     vector<ofRectangle>    buttons;
     vector<ofColor>    buttonColor;
     
+    ofColor *overAllColor;
     int *live;
+    int *TryLive;
+    int nowLive;
     int *level;
     int *coin;
     int preCoin;
@@ -97,12 +101,10 @@ public:
     
     //score
     int score;
-    int scoreNow;
     ofImage coinBag;
     ofImage coinImg;
-    float scorePct;
-     int fingerRate;
-    int superCoinSize;
+    int fingerRate;
+    int itemSize[3];
     //poused;
     bool bPauseL,bPauseR;
     

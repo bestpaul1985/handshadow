@@ -750,7 +750,11 @@ void menu::levelUp(int x, int y, int touchID){
             for (int i=0; i<levelRect.size(); i++) {
                 if (levelRect[i].buttonRect.inside(x, y)) {
                     levelRect[i].bTouchOver = false;
-                    if (i<= *unLockedLevel) {
+                    if (*live==0) {
+                        bGoStore = true;
+                        return;
+                    }
+                    else if (i<= *unLockedLevel) {
                         *level = i;
                         levelReset();
                         reset();
@@ -770,7 +774,8 @@ void menu::purchaseSetup(){
     //info bar
     infoRect.set(offSetX, 0, 632, 100);
     infoBarImg.loadImage("assets/images/mainMenu/purchaseBanner.png");
-    
+    purchasePlusImg.loadImage("assets/images/mainMenu/add.png");
+
     purchaseline[0].set(offSetX, 127, 608, 30);
     purChaseImglines[0].loadImage("assets/images/mainMenu/purchaseline00.png");
     //purchase buttons
@@ -801,6 +806,8 @@ void menu::purchaseSetup(){
         tempRect.rectH = 175;
         tempRect.pos.set(offSetX + 228*i, 170);
         tempRect.purchaseImg = &purChaseImgCoins[i];
+        tempRect.purchasePlusImg = &purchasePlusImg;
+        tempRect.itemNumber = -1;
         coinButtons.push_back(tempRect);
     }
     
@@ -817,6 +824,9 @@ void menu::purchaseSetup(){
         tempRect.rectH = 175;
         tempRect.pos.set(offSetX + 228*i,  468);
         tempRect.purchaseImg = &purChaseImglives[i];
+        tempRect.purchasePlusImg = &purchasePlusImg;
+        tempRect.itemNumber = i;
+        tempRect.purchaseAnimationfont = &fontPrice;
         liveButtons.push_back(tempRect);
     }
     
@@ -835,9 +845,10 @@ void menu::purchaseSetup(){
         tempRect.rectW = 175;
         tempRect.rectH = 175;
         tempRect.pos.set(offSetX + 228*i,  744);
-        
-       
         tempRect.purchaseImg = &purChaseImgItems[i];
+        tempRect.purchasePlusImg = &purchasePlusImg;
+        tempRect.itemNumber = 3;
+        tempRect.purchaseAnimationfont = &fontPrice;
         itemButtons.push_back(tempRect);
     }
     
@@ -847,17 +858,17 @@ void menu::purchaseSetup(){
     
    
     
-    for (int i=0; i<1; i++) {
-        rectangle tempRect;
-        tempRect.rectW = 176;
-        tempRect.rectH = 176;
-        tempRect.pos.set(offSetX + 220*i, 974);
-        
-        tempRect.purchaseImg = &purChaseImgItems[i+3];
-        itemButtons.push_back(tempRect);
-    }
-    
-    prices03[3].set(offSetX + 24, 1155, 122, 27);
+//    for (int i=0; i<1; i++) {
+//        rectangle tempRect;
+//        tempRect.rectW = 176;
+//        tempRect.rectH = 176;
+//        tempRect.pos.set(offSetX + 220*i, 974);
+//        
+//        tempRect.purchaseImg = &purChaseImgItems[i+3];
+//        itemButtons.push_back(tempRect);
+//    }
+//    
+//    prices03[3].set(offSetX + 24, 1155, 122, 27);
     
 
     //--upgrade------------
@@ -878,7 +889,7 @@ void menu::purchaseSetup(){
         }
     }
     
-    for (int i=0; i<4; i++) {
+    for (int i=0; i<3; i++) {
         if (*coin < upGradePrices[i].pos[upGradeLevel[i]].x) {
             bIsEnoughMoneyItem[i] = false;
         }else{
@@ -913,6 +924,8 @@ void menu::purchaseReset(){
         tempRect.rectH = 175;
         tempRect.pos.set(offSetX + 228*i, 170);
         tempRect.purchaseImg = &purChaseImgCoins[i];
+        tempRect.purchasePlusImg = &purchasePlusImg;
+        tempRect.itemNumber = -1;
         coinButtons.push_back(tempRect);
     }
     
@@ -929,6 +942,9 @@ void menu::purchaseReset(){
         tempRect.rectH = 175;
         tempRect.pos.set(offSetX + 228*i,  468);
         tempRect.purchaseImg = &purChaseImglives[i];
+        tempRect.purchasePlusImg = &purchasePlusImg;
+        tempRect.itemNumber = i;
+        tempRect.purchaseAnimationfont = &fontPrice;
         liveButtons.push_back(tempRect);
     }
     
@@ -948,7 +964,9 @@ void menu::purchaseReset(){
         tempRect.rectH = 175;
         tempRect.pos.set(offSetX + 228*i,  744);
         tempRect.purchaseImg = &purChaseImgItems[i];
-        tempRect.purchaseImg = &purChaseImgItems[i];
+        tempRect.purchasePlusImg = &purchasePlusImg;
+        tempRect.itemNumber = 3;
+        tempRect.purchaseAnimationfont = &fontPrice;
         itemButtons.push_back(tempRect);
     }
     
@@ -958,16 +976,16 @@ void menu::purchaseReset(){
     
     
     
-    for (int i=0; i<1; i++) {
-        rectangle tempRect;
-        tempRect.rectW = 176;
-        tempRect.rectH = 176;
-        tempRect.pos.set(offSetX + 220*i, 974);
-        tempRect.purchaseImg = &purChaseImgItems[i+3];
-        itemButtons.push_back(tempRect);
-    }
+//    for (int i=0; i<1; i++) {
+//        rectangle tempRect;
+//        tempRect.rectW = 176;
+//        tempRect.rectH = 176;
+//        tempRect.pos.set(offSetX + 220*i, 974);
+//        tempRect.purchaseImg = &purChaseImgItems[i+3];
+//        itemButtons.push_back(tempRect);
+//    }
     
-    prices03[3].set(offSetX + 24, 1155, 122, 27);
+//    prices03[3].set(offSetX + 24, 1155, 122, 27);
     
     
 }
@@ -1046,7 +1064,7 @@ void menu::purchaseUpdate(){
                 }
             }
             
-            for (int i=0; i<4; i++) {
+            for (int i=0; i<3; i++) {
                 if (*coin < upGradePrices[i].pos[upGradeLevel[i]].x || upGradeLevel[i] > 4) {
                     bIsEnoughMoneyItem[i] = false;
                     itemButtons[i].bIsEnoughMoney = false;
@@ -1080,7 +1098,7 @@ void menu::purchaseDraw(){
             for (int i=0; i<itemButtons.size(); i++) {
                 itemButtons[i].drawPurchase();
                 ofSetColor(30);
-                fontPrice.drawString(ofToString(upGradeLevel[i]), itemButtons[i].pos.x +10,itemButtons[i].pos.y+30);
+                fontPrice.drawString("lv"+ofToString(upGradeLevel[i]), itemButtons[i].pos.x +10,itemButtons[i].pos.y+30);
             }
             
             for (int i=0; i<3; i++) {
@@ -1237,16 +1255,20 @@ void menu::purchaseTouchUp(int x, int y){
                 
                 
                 for (int i=0; i<liveButtons.size(); i++) {
-                    if (liveButtons[i].purchaseRect.inside(x, y) && bIsEnoughMoneyLive[i]) {
+                    if (liveButtons[i].purchaseRect.inside(x, y) && bIsEnoughMoneyLive[i] && !liveButtons[i].bPurchaseAnimation) {
                         liveButtons[i].bTouchOver = false;
+                        liveButtons[i].bPurchaseAnimation = true;
+                        liveButtons[i].purchaseAnimationPct = 0;
                         bPurchaseWithCoin = true;
                         bPurchaseLive[i] = true;
                     }
                 }
                 
                 for (int i=0; i<itemButtons.size(); i++) {
-                    if (itemButtons[i].purchaseRect.inside(x, y) && bIsEnoughMoneyItem[i]) {
+                    if (itemButtons[i].purchaseRect.inside(x, y) && bIsEnoughMoneyItem[i] && !itemButtons[i].bPurchaseAnimation) {
                         itemButtons[i].bTouchOver = false;
+                        itemButtons[i].bPurchaseAnimation = true;
+                        itemButtons[i].purchaseAnimationPct = 0;
                         bPurchaseWithCoin = true;
                         bPurchaseItem[i] = true;
                     }

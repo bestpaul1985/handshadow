@@ -17,9 +17,10 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
     bgScale = &BGScale;
     accFrc = AccFrc;
     
-    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30);
-    fontBig.loadFont("assets/fonts/Comfortaa_Regular.ttf", 50);
-    fontSmall.loadFont("assets/fonts/Comfortaa_Regular.ttf", 28);
+    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30,true, true);
+    fontBig.loadFont("assets/fonts/Comfortaa_Regular.ttf", 60,true, true);
+    fontSmall.loadFont("assets/fonts/Comfortaa_Regular.ttf", 28,true, true);
+    
     superCoin.loadImage("assets/images/inGameMenu/item00.png");
     bgImg.loadImage("assets/images/inGameMenu/bg.png");
     clockOutLine.loadImage("assets/images/inGameMenu/outline.png");
@@ -75,6 +76,7 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
 //-----------------------------------------------------------------------
 void inGameMenu::update(){
     
+    scoreUpdate();
     
     angle = (int)ofMap((60-*gameTimer), 0, 60, 0, 360);
     
@@ -217,9 +219,8 @@ void inGameMenu::reset(){
     preCoin = *coin;
     score = 0;
     timer = 0;
-    scorePct = 0;
-    scoreNow = 0;
-    if (*fingerSize ==5) {
+    
+    if (*fingerSize <=5) {
         fingerRate = 30;
     }else if(*fingerSize ==6){
         fingerRate = 50;
@@ -254,19 +255,23 @@ void inGameMenu::draw(){
     
     if (LDType == BG_FADE) {
         
-        ofSetColor(255,255);
+        ofSetColor(*overAllColor);
         bgImg.draw(bgRect);
         
         //life
-       
+        if (*level < 5) {
+            nowLive = *TryLive;
+        }else{
+            nowLive = *live;
+        }
         int num;
         int NUM;
-        if (*live<=5) {
+        if (nowLive<=5) {
             num = 0;
-            NUM = *live;
+            NUM = nowLive;
         }else{
-            num = (int)*live/5;
-            NUM = *live-num*5;
+            num = (int)nowLive/5;
+            NUM = nowLive-num*5;
             if (NUM ==0) {
                 num -=1;
                 NUM = 5;
@@ -274,7 +279,7 @@ void inGameMenu::draw(){
         }
         
         
-        ofSetColor(255);
+        ofSetColor(*overAllColor);
         fingerImg[NUM].draw(166,-5,fingerImg[NUM].getWidth()/4*3,fingerImg[NUM].getHeight()/4*3);
         ofSetColor(30);
         font.drawString(" x"+ofToString(num), 190, 45);
@@ -289,9 +294,8 @@ void inGameMenu::draw(){
             ofLine(0, 0, linePos[i].x, linePos[i].y);
         }
         ofPopMatrix();
-        ofSetColor(255);
         
-        
+        ofSetColor(*overAllColor);
         clockOutLine.draw(56-clockOutLine.getWidth()/2, 27-clockOutLine.getHeight()/2);
         
         
@@ -300,7 +304,7 @@ void inGameMenu::draw(){
             if (bSmallIconCovered[i]) {
                 ofSetColor(100);
             }else{
-                ofSetColor(255);
+                ofSetColor(*overAllColor);
             }
             
             if (i<*fingerSize) {
@@ -317,7 +321,6 @@ void inGameMenu::draw(){
     
     pause();
 
-    
 }
 
 //-----------------------------------------------------------------------
@@ -388,8 +391,6 @@ void inGameMenu::levelDoneDraw(){
    
     if (bLevelDone || bLevelFail) {
         
-        ofPoint coinPos(-coinImg.getWidth()-fontBig.stringWidth(ofToString(score))/2-20,-45);        
-        ofPoint scorePos(0,-10);
         ofPoint totalPos(0,110);
         
         switch (LDType) {
@@ -422,66 +423,40 @@ void inGameMenu::levelDoneDraw(){
                 
                 
                 if (LDVelocity.y < 0 && LDVelocity.y > -5) {
-                    float speed = 0.01f;
-                    scorePct+=speed;
-                    if (scorePct>1) {
-                        scorePct = 1;
+                    
                         timer ++;
-                    }
-                    scoreNow = scorePct*score;
                 }
                 
-                if (bLevelFail) {
-                    if (timer>30) {
+             
+                if (timer>40) {
                         LDType = ICON_FADE;
                         LDVelocity.y = -70;
-                    }
-                }else{
-                    if (timer>100) {
-                        LDType = ICON_FADE;
-                        LDVelocity.y = -70;
-                    }
                 }
-                
+                            
                 
                 ofSetColor(255);
                 ofPushMatrix();
                 ofTranslate(LDPos);
-                ofSetRectMode(OF_RECTMODE_CENTER);
-                
                 if (bLevelDone) {
-                    LDBackgroudImg[0].draw(0,0);
+                    LDBackgroudImg[0].draw(-165,-165);
                 }else{
-                    LDBackgroudImg[1].draw(0,0);
-                    
+                    LDBackgroudImg[1].draw(-165,-165);
                 }
                 
-                ofSetRectMode(OF_RECTMODE_CORNER);
+                string message;
+                message = ofToString(score);
                 ofSetColor(30);
+                fontBig.drawString(message, -fontBig.stringWidth(message)/2, -40-fontBig.stringHeight(message)/2);
                 
-                fontBig.drawString(ofToString(scoreNow), scorePos.x-fontBig.stringWidth(ofToString(scoreNow))/2, scorePos.y-fontBig.stringHeight(ofToString(scoreNow))/2);
+                ofSetColor(125);
+                message = "Total:"+ofToString(*coin);
+                fontSmall.drawString(message,10 -fontSmall.stringWidth(message)/2, -fontSmall.stringHeight(message)/2);
                 
-                for (int i=0; i<*fingerSize; i++) {
-                    ofSetColor(255);
-                    iconImg[i].draw(scorePos.x+10*i -140,scorePos.y + 30);
-                }
-                
-                for (int i=0; i<3; i++) {
-                    superCoin.draw(scorePos.x -110+10*i,scorePos.y + 80);
-                }
-                
-                ofSetColor(30);
-                fontSmall.drawString(ofToString((*fingerSize))+"x"+ofToString(fingerRate)+"="+ofToString(fingerRate * (*fingerSize)), scorePos.x-30, scorePos.y + 60);
-              
-                fontSmall.drawString(ofToString((int)(*coin - preCoin)/50)+"x"+ofToString(50)+"="+ofToString(*coin - preCoin), scorePos.x-30, scorePos.y + 110);
-                
-                for (int i=0; i<5; i++) {
-                    ofSetColor(255);
-                    int offset;
-                    (i%2)==0?  offset = -5: offset = 5;
-                    coinImg.draw( coinPos.x+offset, coinPos.y-12*i);
-                }
                 ofSetColor(255);
+                fontSmall.drawString(ofToString(itemSize[0]), -82,50);
+                fontSmall.drawString(ofToString(itemSize[1]), 25, 50);
+                fontSmall.drawString(ofToString(itemSize[2]), 109,50);
+                
                 ofPopMatrix();
             
                 
@@ -497,42 +472,26 @@ void inGameMenu::levelDoneDraw(){
                 ofSetColor(255);
                 ofPushMatrix();
                 ofTranslate(LDPos);
-                ofSetRectMode(OF_RECTMODE_CENTER);
-               
                 if (bLevelDone) {
-                    LDBackgroudImg[0].draw(0,0);
+                    LDBackgroudImg[0].draw(-165,-165);
                 }else{
-                    LDBackgroudImg[1].draw(0,0);
+                    LDBackgroudImg[1].draw(-165,-165);
                 }
-                
-                
-                ofSetRectMode(OF_RECTMODE_CORNER);
                 ofSetColor(30);
                 
-                
-                fontBig.drawString(ofToString(scoreNow), scorePos.x-fontBig.stringWidth(ofToString(scoreNow))/2,scorePos.y -fontBig.stringHeight(ofToString(scoreNow))/2);
-              
-                for (int i=0; i<*fingerSize; i++) {
-                    ofSetColor(255);
-                    iconImg[i].draw(scorePos.x+10*i -140,scorePos.y + 30);
-                }
-                
-                for (int i=0; i<3; i++) {
-                    superCoin.draw(scorePos.x -110+10*i,scorePos.y + 80);
-                }
-                
+                string message;
+                message = ofToString(score);
                 ofSetColor(30);
-                fontSmall.drawString(ofToString((*fingerSize))+"x"+ofToString(fingerRate)+"="+ofToString(fingerRate * (*fingerSize)), scorePos.x-30, scorePos.y + 60);
+                fontBig.drawString(message, -fontBig.stringWidth(message)/2, -40-fontBig.stringHeight(message)/2);
                 
-                fontSmall.drawString(ofToString((int)(*coin - preCoin)/50)+"x"+ofToString(50)+"="+ofToString(*coin - preCoin), scorePos.x-30, scorePos.y + 110);
-                for (int i=0; i<5; i++) {
-                    ofSetColor(255);
-                    int offset;
-                    (i%2)==0?  offset = -5: offset = 5;
-                    coinImg.draw( coinPos.x, coinPos.y-12*i);
-                }
+                ofSetColor(125);
+                message = "Total:"+ofToString(*coin);
+                fontSmall.drawString(message,50 -fontSmall.stringWidth(message)/2, -fontSmall.stringHeight(message)/2);
                 
                 ofSetColor(255);
+                fontSmall.drawString(ofToString(itemSize[0]), -82,50);
+                fontSmall.drawString(ofToString(itemSize[1]), 25, 50);
+                fontSmall.drawString(ofToString(itemSize[2]), 109,50);
                 ofPopMatrix();
                 
                 
@@ -550,7 +509,7 @@ void inGameMenu::levelDoneDraw(){
                     
                     *coin += score;
                     
-                    if (*live == 0) {
+                    if (nowLive == 0) {
                         bHome = true;
                     }else if (bLevelDone) {
                         bNextLevel = true;
@@ -573,12 +532,15 @@ void inGameMenu::levelDoneDraw(){
 //-----------------------------------------------------------------------
 void inGameMenu::scoreUpdate(){
 
-    score = fingerRate*(*fingerSize) + (*coin - preCoin);
-    
-    if (bLevelFail) {
+    if (bLevelDone) {
+        score = fingerRate*(*fingerSize) + (*coin - preCoin);
+        
+    }else if(bLevelFail){
+        score = 0;
+    }else{
         score = 0;
     }
-    
+
 }
 
 //-----------------------------------------------------------------------

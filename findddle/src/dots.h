@@ -60,6 +60,9 @@ public:
     float radiusPct;
     float radiusPctOrg;
     
+    //---sound-----------------
+    bool bSondPlay;
+    
 };
 
 

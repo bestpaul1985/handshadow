@@ -12,6 +12,7 @@
 #include "xmlPointer.h"
 #include "ofxInAppProduct.h"
 #include "menu.h"
+#import "AVSoundPlayer.h"
 
 class testApp : public ofxiOSApp, public ofxiOSExternalDisplay{
     
@@ -24,6 +25,9 @@ public:
     void purchase();
     void purchasePopup();
     void popupDismissed();
+    void soundSetup();
+    void soundTouchDown();
+    void soundUpdate();
 
     
     void touchDown(ofTouchEventArgs & touch);
@@ -57,6 +61,7 @@ public:
     string xmlStructure;
     string message;
     int live;
+    int preLive;
     int level;
     int unLockedLevel;
     int firstPlay;
@@ -76,10 +81,15 @@ public:
     int touchNum;
     
     
-    //purchase
+    //----purchase------------------------------
     ofxInAppProduct * coins00;
     ofxInAppProduct * coins01;
     ofxInAppProduct * coins02;
+    
+    //----sound---------------------------------
+    AVSoundPlayer * sDotPressed;
+    AVSoundPlayer * sDead;
+
 
 
 };

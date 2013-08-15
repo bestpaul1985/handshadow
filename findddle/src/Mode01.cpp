@@ -20,8 +20,10 @@ void Mode01::xmlReader(vector<xmlPointer> pointer, int *CurrentLevel, int *Curre
 //----------------------------------------------------------
 void Mode01::setup(){
     
-    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 84);
-    fontSmaill.loadFont("assets/fonts/Comfortaa_Regular.ttf", 46);
+    font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 84,true, true);
+    fontSmaill.loadFont("assets/fonts/Comfortaa_Regular.ttf", 40,true, true);
+    fontReallySmaill.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30,true, true);
+    fontReallySmaill.setLineHeight(36);
     
     itemSpriteRenderer = new ofxSpriteSheetRenderer(1, 10000, 0, 256);
     itemSpriteRenderer->loadTexture("assets/images/items/iconAnimation.png", 2048, GL_NEAREST);
@@ -52,11 +54,17 @@ void Mode01::setup(){
         dotFinger.push_back(temImg);
     }
    
+    arrow.loadImage("assets/images/gamePlay/arrow.png");
     bgNum = -1;
     reset();
+    myInGameMenu.overAllColor = &overAllColor2;
     myInGameMenu.setup(coin,level, gameTimer, fingerSize, bgScale, accFrc);
     myInGameMenu.live = live;
+    myInGameMenu.TryLive = &tryLive;
 
+    arrowOffSet = 0;
+    arrowSpeed = 0.3;
+    bTutorialStep = 0;
 }
 
 //----------------------------------------------------------
@@ -68,6 +76,26 @@ void Mode01::reset(){
     dotPos.clear();
     myDot.clear();
     items.clear();
+    tryLive = 10;
+   
+    //bg color
+    if (*level<5) {
+        overAllColor.set(100);
+    }else{
+        overAllColor.set(255);
+    }
+
+    if (*level <5) {
+        overAllColor2.set(100);
+    }else{
+        overAllColor2.set(255);
+    }
+    
+    if (*level == 3) {
+        bTutorialStep = 0;
+    }
+    //sprites
+    
     bgNum ++;
     if (bgNum>patterns.size()-1) {
         bgNum = 0;
@@ -79,6 +107,8 @@ void Mode01::reset(){
         }
     }
     
+    //dots
+
     dotPos = xmlPos[*level].pos;
     
     for (int i=0; i< dotPos.size(); i++) {
@@ -92,6 +122,8 @@ void Mode01::reset(){
     
     }
     
+    
+    // items
     for (int i=0; i< dotPos.size(); i++) {
         item tempItem;
         tempItem.coinChance = *coinChance;
@@ -99,6 +131,21 @@ void Mode01::reset(){
         tempItem.dotExtenderChance = *dotExtenderChance;
         tempItem.dotFreezerChance = *dotFreezerChance;
         tempItem.setup(&myDot[i].pos);
+        if (*level  == 0 || *level == 1) {
+            tempItem.myType = NONE;
+        }else if (*level  == 2) {
+            if (i == 0) {
+                tempItem.angle = 180;
+                tempItem.myType = COIN_MAKER;
+            }else if (i == 1) {
+                tempItem.angle = 180;
+                tempItem.myType = DOT_FREEZER;
+            }else if (i == 2){
+                tempItem.angle = 180;
+                tempItem.myType = DOT_EXTENDER;
+            }
+        }
+        
         items.push_back(tempItem);
     }
     
@@ -151,13 +198,17 @@ void Mode01::reset(){
     timeSlowerDuration = 0;
     timeSlowerTimer = ofGetElapsedTimeMillis();
     timeSpeed = 0.5;
-    
     bgOffSetSpeed = 2;
+    
+    for (int i=0; i<3; i++) {
+        myInGameMenu.itemSize[i] = 0;
+    }
+    
+    
 }
 
 //----------------------------------------------------------
 void Mode01::update(){
-    
     
     //real game play
     if(myInGameMenu.bGameStart){
@@ -204,7 +255,7 @@ void Mode01::update(){
             }
         }
     //timer
-        if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bLoseTimerStart && myInGameMenu.bGameStart && bWinTimerStart && !myInGameMenu.bPauseL && !myInGameMenu.bPauseR)
+        if (!myInGameMenu.bLevelDone && !myInGameMenu.bLevelFail && !bLoseTimerStart && myInGameMenu.bGameStart && bWinTimerStart && !myInGameMenu.bPauseL && !myInGameMenu.bPauseR && *level>4)
         {
             
             if (ofGetElapsedTimeMillis() - gameTimerStart >= 100*timeSpeed) {
@@ -265,13 +316,12 @@ void Mode01::draw(){
     //background
     ofPushMatrix();
 
-    ofSetColor(255);
+    ofSetColor(overAllColor);
 
     ofTranslate(512+bgOffSet.x, 384+bgOffSet.y);
     
-    if (!myInGameMenu.bLevelFail && !myInGameMenu.bLevelDone) {
-       
-     
+    if (!myInGameMenu.bLevelDone) {
+
         if (bColorBg) {
             colorBgTimer++;
             float shaker = ofMap(gameTimer, 10, 0, 1, 6);
@@ -291,21 +341,21 @@ void Mode01::draw(){
             }
         }
         else{
-            if (myInGameMenu.bTimeSlower) {
-                ofSetColor(ofMap(timeSlowerDuration, 0, 5, 255, 221,true), ofMap(timeSlowerDuration, 0, 5, 255, 198,true), ofMap(timeSlowerDuration, 0, 5, 255, 167,true));
-            }
+//            if (myInGameMenu.bTimeSlower) {
+//                ofSetColor(ofMap(timeSlowerDuration, 0, 5, 255, 221,true), ofMap(timeSlowerDuration, 0, 5, 255, 198,true), ofMap(timeSlowerDuration, 0, 5, 255, 167,true));
+//            }
             
-            patterns[bgNum].draw(-bgWidth/2,-bgHight-30,bgWidth,bgHight);
+            patterns[bgNum].draw(-bgWidth/2,-bgHight-25,bgWidth,bgHight);
             patterns[bgNum].draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
         }
     }
     
     else{
         
-        if (myInGameMenu.bTimeSlower) {
-            ofSetColor(221, 198, 167,ofMap(timeSlowerDuration, 0, 5, 0, 255));
-        }
-        
+//        if (myInGameMenu.bTimeSlower) {
+//            ofSetColor(221, 198, 167,ofMap(timeSlowerDuration, 0, 5, 0, 255));
+//        }
+//        
         patterns[bgNum].draw(-bgWidth/2*bgScale,-bgHight/2*bgScale,bgWidth*bgScale,bgHight*bgScale);
         
     }
@@ -330,7 +380,7 @@ void Mode01::draw(){
     
     //draw in game menu
     myInGameMenu.draw();
-
+    tutorialDraw();
 }
 
 //-------------------------------------------------------
@@ -341,12 +391,14 @@ void Mode01::subGame(){
         if (items[i].bCoin) {
             *coin +=50;
             items[i].bCoin = false;
+            myInGameMenu.itemSize[0]++;
         }
         //time slower
         else if (items[i].bTimeSlower) {
             items[i].bTimeSlower = false;
             timeSlowerDuration = 5;
             timeSlowerTimer = ofGetElapsedTimeMillis();
+
         }
         //dot extender
         else if (items[i].bDotExtender) {
@@ -357,12 +409,14 @@ void Mode01::subGame(){
                 myDot[i].frezzerGoalRadiusY +=10;
                 myDot[i].bRadiusExtend = true;
             }
+            myInGameMenu.itemSize[1]++;
             items[i].bDotExtender = false;
         }
         //dot freezer
         else if (items[i].bDotFreezer) {
             myDot[i].bFreezed = true;
             items[i].bDotFreezer = false;
+            myInGameMenu.itemSize[2]++;
         }
         
     }
@@ -436,11 +490,23 @@ void Mode01::checkLose(int x, int y, int situation){
             
             if (unFixed == unTouched && !bLoseTimerStart) {
                 bLoseTimerStart = true;
-                *live -= 1;
-                if (*live < 0) {
-                    *live = 0;
+                
+                if (*level <5) {
+                    tryLive -=1;
                     
+                    if (tryLive<1) {
+                        tryLive = 10;
+                    }
+                }else{
+                    *live -=1;
+                    
+                    if (*live < 0) {
+                        *live = 0;
+                    }
                 }
+              
+                
+                
                 loseTimer = 0;
             }
             
@@ -457,11 +523,22 @@ void Mode01::checkLose(int x, int y, int situation){
             
             if (PreCoverNum>coveredNum) {
                 bLoseTimerStart = true;
-                *live -= PreCoverNum-coveredNum;
-
-                if (*live <0) {
-                    *live = 0;
+                
+                if (*level <5) {
+                    tryLive -= PreCoverNum-coveredNum;
+                    
+                    if (tryLive<1) {
+                        tryLive = 10;
+                    }
+                }else{
+                    
+                    *live -= PreCoverNum-coveredNum;                    
+                   
+                    if (*live < 0) {
+                        *live = 0;
+                    }
                 }
+                
                 loseTimer = 0;
             }
             
@@ -480,6 +557,9 @@ void Mode01::checkLose(int x, int y, int situation){
             else if(loseTimer>30)
             {
               
+                if (*level == 3) {
+                    bTutorialStep = 1;
+                }
                 if (*live == 0 ||  gameTimer == 0) {
                     myInGameMenu.bLevelFail = true;
                 }
@@ -501,6 +581,7 @@ void Mode01::touchDown(int x, int y, int touchID){
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchDown(x, y, touchID);
             items[i].touchDown(x, y, touchID);
+
         }
         
         checkLose(x, y, 0);
@@ -546,7 +627,134 @@ void Mode01::touchUp(int x, int y, int touchID){
 
 }
 
+//----------------------------------------------------------
+void Mode01::tutorialDraw(){
 
+    //level 1
+    if (*level == 0 && bWinTimerStart && !bLoseTimerStart) {
+        if(myDot[0].pct == 1){
+            
+            ofSetColor(255);
+            fontSmaill.drawString("Hold the dot to win", 310, 600);
+            arrowOffSet += arrowSpeed;
+            if (arrowOffSet>5) {
+                arrowSpeed*=-1;
+            }else if(arrowOffSet<0){
+                arrowSpeed*=-1;
+            }
+            arrow.draw(478,247+arrowOffSet);
+            
+        }
+    }
+    
+    //level 2
+
+    if (*level == 1 && bWinTimerStart && !myInGameMenu.bLevelFail) {
+        
+        if(myDot[0].pct == 1){
+            
+            ofSetColor(255);
+            fontSmaill.drawString("Hold all dots to win", 310, 600);
+            
+            ofSetColor(255);
+            
+            arrowOffSet += arrowSpeed;
+            if (arrowOffSet>5) {
+                arrowSpeed*=-1;
+            }else if(arrowOffSet<0){
+                arrowSpeed*=-1;
+            }
+            arrow.draw(305,235+arrowOffSet);
+            
+        }
+        
+        if(myDot[1].pct == 1){
+            
+            ofSetColor(255);
+            arrow.draw(666,235+arrowOffSet);
+            
+        }
+    }
+    
+    //level 3
+    if (*level == 2 && bWinTimerStart && !myInGameMenu.bLevelFail) {
+    
+        if(myDot[0].pct == 1){
+            ofSetColor(255);
+            fontReallySmaill.drawString("Hold all dots and try to move your fingers close \nto the items, you will grab the item and get the \ndifferent special reward", 180, 620);
+         
+            arrowOffSet += arrowSpeed;
+            if (arrowOffSet>5) {
+                arrowSpeed*=-1;
+            }else if(arrowOffSet<0){
+                arrowSpeed*=-1;
+            }
+        
+            if (items[0].bCovered) {
+                arrow.draw(290,334+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+            }
+        }
+        
+        if(myDot[1].pct == 1){
+            if (items[1].myType !=NONE) {
+                arrow.draw(625,334+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+            }
+        }
+        
+        
+        if(myDot[2].pct == 1){
+            if (items[2].myType !=NONE) {
+                arrow.draw(446,76+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+            }
+        }
+
+    }
+    
+    
+    //leve 4
+    if (*level == 3 && bWinTimerStart && !myInGameMenu.bLevelFail) {
+        
+        if(myDot[0].pct == 1){
+            ofSetColor(255);
+            arrowOffSet += arrowSpeed;
+            if (arrowOffSet>5) {
+                arrowSpeed*=-1;
+            }else if(arrowOffSet<0){
+                arrowSpeed*=-1;
+            }
+          
+            
+            ofSetColor(255);
+        
+            if(bTutorialStep == 0){
+                arrow.draw(ofGetWidth()/2,ofGetHeight()/2+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+                fontReallySmaill.drawString("Touch Here", ofGetWidth()/2 -fontReallySmaill.stringWidth(ofToString("Touch Here"))/2,ofGetHeight()/2+arrowOffSet-20);
+            }
+            
+           if(bTutorialStep == 1){
+               overAllColor2.set(255);
+               ofPushMatrix();  
+               ofTranslate(219, 83);
+               ofRotateZ(180);
+               arrow.draw(-arrow.getWidth()/4, -arrow.getHeight()/4+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+               ofPopMatrix();
+               
+               fontReallySmaill.drawString("Your lives decrease when you touch outside of the dot \nor remove your finger from a pressed dot. Now, you \nare good to next level.", 30,157);
+
+            }
+            
+        }
+    }
+    
+    if (*level == 4 && bWinTimerStart && !myInGameMenu.bLevelFail) {
+        if(myDot[0].pct == 1){
+            
+            ofSetColor(255);
+            fontReallySmaill.drawString("After this level, you will strat real games, \ngood luck and have fun.", 220, 680);
+        }
+    }
+
+}
 
 
 

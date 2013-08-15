@@ -3,7 +3,6 @@
 #import "AlertViewDelegate.h"
 
 AlertViewDelegate * alertViewDelegate = nil;
-
 //--------------------------------------------------------------
 void testApp::setup(){
     
@@ -12,7 +11,7 @@ void testApp::setup(){
     coins02 = new ofxInAppProduct("com.handshadow.finddle.IAP004");
 
     //    restoreAllPreviousTransactions();
-
+	ofTrueTypeFont::setGlobalDpi(72);
 	ofxAccelerometer.setup();
     ofEnableAlphaBlending();
     ofSetVerticalSync(true);
@@ -78,6 +77,7 @@ void testApp::setup(){
     }
     
     live                = XML.getValue("SETTING:LIVE",0);
+    preLive             = live;
     coin                = XML.getValue("SETTING:COIN",1000);
     level               = XML.getValue("SETTING:LEVEL", 0);
     unLockedLevel       = XML.getValue("SETTING:UNLACKEDLEVEL", 0);
@@ -123,11 +123,18 @@ void testApp::setup(){
     ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
     scenes[2]->setup();
     
+    //sound;
+    soundSetup();
+    
+    //live increase
     live += ofClamp((ofGetUnixTime()- unixTime)/3600, 0, 5);
+    
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
+
+    
     //for mirroring
     if (ofGetFrameNum()<10){
         if (!ofxiOSExternalDisplay::isMirroring()){
@@ -135,6 +142,9 @@ void testApp::update(){
             ofxiOSExternalDisplay::isMirroring();
         }
     }
+    
+    //sound
+    soundUpdate();
     
     //level update
     if (unLockedLevel<level) {
@@ -180,6 +190,7 @@ void testApp::update(){
         ((Mode01*)scenes[2])->bSave = false;
     }
     
+   
 }
 
 //--------------------------------------------------------------
@@ -187,6 +198,7 @@ void testApp::draw(){
     
     scenes[currentScene]->draw();
     preScene = currentScene;
+    preLive = live;
 }
 
 //--------------------------------------------------------------
@@ -199,6 +211,8 @@ void testApp::touchDown(ofTouchEventArgs & touch) {
     
     scenes[currentScene]->touchDown(touch.x, touch.y, touch.id);
     touchNum = touch.numTouches;
+    soundTouchDown();
+    
 }
 
 //--------------------------------------------------------------
@@ -216,15 +230,8 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs & touch){
-    
-}
-
-
-//--------------------------------------------------------------
-void testApp::touchCancelled(ofTouchEventArgs & touch){
-    
-}
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){}
+void testApp::touchCancelled(ofTouchEventArgs & touch){}
 
 //--------------------------------------------------------------
 void testApp::lostFocus(){
@@ -233,14 +240,8 @@ void testApp::lostFocus(){
 }
 
 //--------------------------------------------------------------
-void testApp::gotFocus(){
-    
-}
-
-//--------------------------------------------------------------
-void testApp::gotMemoryWarning(){
-    
-}
+void testApp::gotFocus(){}
+void testApp::gotMemoryWarning(){}
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
@@ -349,9 +350,40 @@ void testApp::popupDismissed(){
     }
     
 }
+//--------------------------------------------------------------
+void testApp::soundSetup(){
+    
+    sDotPressed = [[AVSoundPlayer alloc] init];
+    [sDotPressed loadWithFile:@"assets/sounds/pressDot.wav"]; // uncompressed wav format.
+    [sDotPressed volume:0.9];
+
+    sDead = [[AVSoundPlayer alloc] init];
+    [sDead loadWithFile:@"assets/sounds/error.wav"]; // uncompressed wav format.
+    [sDead volume:0.9];
+}
+
+//--------------------------------------------------------------
+void testApp::soundTouchDown(){
 
 
+    for (int i=0; i<  ((Mode01*)scenes[2])->myDot.size(); i++) {
+        if(((Mode01*)scenes[2])->myDot[i].bSondPlay && !((Mode01*)scenes[2])->myDot[i].bFreezed){
+            [sDotPressed play];
+            ((Mode01*)scenes[2])->myDot[i].bSondPlay = false;
+        }
+    }
+   
+}
 
+//--------------------------------------------------------------
+void testApp::soundUpdate(){
+
+    if (live<preLive) {
+         [sDead play];
+    }
+    
+    
+}
 
 
 
