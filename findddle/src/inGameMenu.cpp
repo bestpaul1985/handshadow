@@ -533,7 +533,7 @@ void inGameMenu::levelDoneDraw(){
 void inGameMenu::scoreUpdate(){
 
     if (bLevelDone) {
-        score = fingerRate*(*fingerSize) + (*coin - preCoin);
+        score = fingerRate*(*fingerSize)+ 50*itemSize[0];
         
     }else if(bLevelFail){
         score = 0;

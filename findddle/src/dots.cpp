@@ -184,17 +184,19 @@ void dots::touchDown(int x, int y, int touchID){
         ofPoint touchPos(x,y);
         if (pos.distance(touchPos) < radius) {
             myId.push_back(touchID);
+            bSondPlay = true;
         }
         
         if (myId.size()>0) {
             bCovered = true;
-            bSondPlay = true;
         }
         
         if (bFreezed) {
             bCovered = true;
         }
     }
+    
+    
     
 }
 
