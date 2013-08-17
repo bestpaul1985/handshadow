@@ -28,8 +28,6 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
     LDBackgroudImg[0].loadImage("assets/images/inGameMenu/bg_success.png");
     LDBackgroudImg[1].loadImage("assets/images/inGameMenu/bg_unsuccess.png");
 
-    coinBag.loadImage("assets/images/inGameMenu/coin_bag.png");
-    coinImg.loadImage("assets/images/inGameMenu/single_coin.png");
     
     for (int i=0; i<6; i++) {
         ofImage temp;
@@ -59,15 +57,22 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
         readyImg.push_back(temp);
     }
     
+    for (int i=0; i<2; i++) {
+        ofImage temp;
+        LDbtttonImg[i].loadImage("assets/images/inGameMenu/bg_button0"+ofToString(i)+".png");
+    }
+    
     homeImgA.loadImage("assets/images/inGameMenu/menu.png");
     homeImgB.loadImage("assets/images/inGameMenu/menu_b.png");
     resumeImgA.loadImage("assets/images/inGameMenu/resume.png");
     resumeImgB.loadImage("assets/images/inGameMenu/resume_b.png");
     
+    
     homeRect.button = &homeImgA;
     homeRect.buttonTouchOver= &homeImgB;
     resumeRect.button = &resumeImgA;
     resumeRect.buttonTouchOver = &resumeImgB;
+    
     
     reset();
         
@@ -103,8 +108,6 @@ void inGameMenu::update(){
             bPauseR = true;
         }
     }
-    
-
     
 }
 
@@ -198,7 +201,12 @@ void inGameMenu::reset(){
         lineColor.push_back(color);
     }
     //game starter
-    bGameStart = false;
+    if (*level<5) {
+        bGameStart = true;
+    }else{
+        bGameStart = false;
+    }
+    
     gameStartCounter = 0;
     gameStartAlpha = 0;
     gameStartSpeed = 90;
@@ -214,7 +222,10 @@ void inGameMenu::reset(){
     LDRadius = 332;
     LDPos.set(ofGetWidth()/2, -LDRadius);
     LDAlpha = 0;
-    
+
+    LDButton[0].button =&LDbtttonImg[0];
+    LDButton[1].button =&LDbtttonImg[1];
+     
     //score
     preCoin = *coin;
     score = 0;
@@ -282,7 +293,7 @@ void inGameMenu::draw(){
         ofSetColor(*overAllColor);
         fingerImg[NUM].draw(166,-5,fingerImg[NUM].getWidth()/4*3,fingerImg[NUM].getHeight()/4*3);
         ofSetColor(30);
-        font.drawString(" x"+ofToString(num), 190, 45);
+        font.drawString("  x"+ofToString(num), 190, 45);
         
         ofSetColor(30);
         font.drawString("lv"+ofToString(*level+1), 930, 42);
@@ -336,8 +347,19 @@ void inGameMenu::touchDown(int x, int y){
             homeRect.bTouchOver = true;
         }
         
+        
     }
     
+    
+    if (bLevelDone || bLevelFail) {
+        if(LDButton[0].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            LDButton[0].bTouchOver = true;
+        }
+        
+        if(LDButton[1].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            LDButton[1].bTouchOver = true;
+        }
+    }
 
 }
 
@@ -358,6 +380,22 @@ void inGameMenu::touchMove(int x, int y){
             homeRect.bTouchOver = false;
         }
         
+     
+        
+    }
+    
+    if (bLevelDone || bLevelFail) {
+        if(LDButton[0].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            LDButton[0].bTouchOver = true;
+        }else{
+            LDButton[0].bTouchOver = false;
+        }
+        
+        if(LDButton[1].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            LDButton[1].bTouchOver = true;
+        }else{
+            LDButton[1].bTouchOver = false;
+        }
     }
 
 }
@@ -382,6 +420,19 @@ void inGameMenu::touchUp(int x, int y){
             bHome = true;
         }
         
+    }
+    
+    if (bLevelDone || bLevelFail) {
+    
+        if(LDButton[0].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            bHome = true;
+            LDButton[0].bTouchOver = false;
+        }
+        
+        if(LDButton[1].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            LDType = ICON_FADE;
+            LDButton[1].bTouchOver = false;
+        }
     }
 
 }
@@ -422,18 +473,6 @@ void inGameMenu::levelDoneDraw(){
                 }
                 
                 
-                if (LDVelocity.y < 0 && LDVelocity.y > -5) {
-                    
-                        timer ++;
-                }
-                
-             
-                if (timer>40) {
-                        LDType = ICON_FADE;
-                        LDVelocity.y = -70;
-                }
-                            
-                
                 ofSetColor(255);
                 ofPushMatrix();
                 ofTranslate(LDPos);
@@ -457,8 +496,13 @@ void inGameMenu::levelDoneDraw(){
                 fontSmall.drawString(ofToString(itemSize[1]), 25, 50);
                 fontSmall.drawString(ofToString(itemSize[2]), 109,50);
                 
+                LDButton[0].pos.set(-42, 100);
+                LDButton[1].pos.set(42, 100);
+        
+                LDButton[0].drawInGameMenu();
+                LDButton[1].drawInGameMenu();
+                
                 ofPopMatrix();
-            
                 
             }break;
             case ICON_FADE:{
@@ -492,6 +536,13 @@ void inGameMenu::levelDoneDraw(){
                 fontSmall.drawString(ofToString(itemSize[0]), -82,50);
                 fontSmall.drawString(ofToString(itemSize[1]), 25, 50);
                 fontSmall.drawString(ofToString(itemSize[2]), 109,50);
+                
+                LDButton[0].pos.set(-42, 100);
+                LDButton[1].pos.set(42, 100);
+                
+                LDButton[0].drawInGameMenu();
+                LDButton[1].drawInGameMenu();
+                
                 ofPopMatrix();
                 
                 

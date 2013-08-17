@@ -31,7 +31,9 @@ public:
     void touchUp(int x, int y, int touchID);
     void tutorialDraw();
     
-    void subGame();
+    void subGameUpdate();
+    void subGameDraw();
+
     void inGameMenuDraw();
     void inGameMenuTouchDown(int x, int y, int touchID);
     void inGameMenuTouchMove(int x, int y, int touchID);
@@ -100,7 +102,13 @@ public:
     float timeSlowerTimer;
     float timeSlowerDuration;
     ofImage dotFreezerIcon;
-    
+    bool bSuperCoin[8];
+    bool bDotExtender[8];
+    bool bDotFreezer[8];
+    float SuperCoinPct[8];
+    float dotExtenderPct[8];
+    float dotFreezerPct[8];
+
     //*******handDetector******
     float *scale;
     

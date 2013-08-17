@@ -155,6 +155,7 @@ public:
        
     ofImage purChaseImglines[3];
     ofImage infoBarImg;
+    ofImage itemExplanation;
     ofImage purchasePlusImg;
     ofRectangle prices01[3];
     ofRectangle prices02[3];

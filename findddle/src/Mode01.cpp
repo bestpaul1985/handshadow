@@ -26,7 +26,7 @@ void Mode01::setup(){
     fontReallySmaill.setLineHeight(36);
     
     itemSpriteRenderer = new ofxSpriteSheetRenderer(1, 10000, 0, 256);
-    itemSpriteRenderer->loadTexture("assets/images/items/iconAnimation.png", 2048, GL_NEAREST);
+    itemSpriteRenderer->loadTexture("assets/images/items/iconAnimation2.png", 2048, GL_NEAREST);
     
     ofImage temImg;
     for (int i=0; i<3; i++) {
@@ -85,7 +85,7 @@ void Mode01::reset(){
         overAllColor.set(255);
     }
 
-    if (*level <5) {
+    if (*level <4) {
         overAllColor2.set(100);
     }else{
         overAllColor2.set(255);
@@ -204,6 +204,16 @@ void Mode01::reset(){
         myInGameMenu.itemSize[i] = 0;
     }
     
+    //subGame;
+    for (int i=0; i<8; i++) {
+        bDotExtender[i] = false;
+        bDotFreezer[i] = false;
+        bSuperCoin[i]=false;
+        dotExtenderPct[i] = 0;
+        dotFreezerPct[i] = 0;
+        SuperCoinPct[i] = 0;
+    }
+    
     
 }
 
@@ -231,7 +241,7 @@ void Mode01::update(){
             
     //subGame
 
-        subGame();
+        subGameUpdate();
         itemSpriteRenderer->clear();
         itemSpriteRenderer->update(ofGetElapsedTimeMillis());
         
@@ -341,27 +351,28 @@ void Mode01::draw(){
             }
         }
         else{
-//            if (myInGameMenu.bTimeSlower) {
-//                ofSetColor(ofMap(timeSlowerDuration, 0, 5, 255, 221,true), ofMap(timeSlowerDuration, 0, 5, 255, 198,true), ofMap(timeSlowerDuration, 0, 5, 255, 167,true));
-//            }
-            
-            patterns[bgNum].draw(-bgWidth/2,-bgHight-25,bgWidth,bgHight);
+
+            float offset;
+            if (bgNum == 0) {
+                offset = 27;
+            }else if(bgNum == 1){
+                offset = 23;
+            }else{
+                offset = 27;
+            }
+            patterns[bgNum].draw(-bgWidth/2,-bgHight-offset,bgWidth,bgHight);
             patterns[bgNum].draw(-bgWidth/2,-bgHight/2,bgWidth,bgHight);
         }
     }
     
     else{
         
-//        if (myInGameMenu.bTimeSlower) {
-//            ofSetColor(221, 198, 167,ofMap(timeSlowerDuration, 0, 5, 0, 255));
-//        }
-//        
         patterns[bgNum].draw(-bgWidth/2*bgScale,-bgHight/2*bgScale,bgWidth*bgScale,bgHight*bgScale);
         
     }
     
     ofPopMatrix();
-
+    
     //draw dots
     if(myInGameMenu.bGameStart){
         
@@ -369,9 +380,8 @@ void Mode01::draw(){
             for (int i=0; i<myDot.size(); i++) {
                 myDot[i].draw();
             }
-            
+            subGameDraw();
             itemSpriteRenderer->draw();
-
         }
 
     }
@@ -384,22 +394,23 @@ void Mode01::draw(){
 }
 
 //-------------------------------------------------------
-void Mode01::subGame(){
+void Mode01::subGameUpdate(){
     
     for (int i=0; i<items.size(); i++) {
         //Coin
         if (items[i].bCoin) {
             *coin +=50;
             items[i].bCoin = false;
+            bSuperCoin[i] = true;
             myInGameMenu.itemSize[0]++;
         }
         //time slower
-        else if (items[i].bTimeSlower) {
-            items[i].bTimeSlower = false;
-            timeSlowerDuration = 5;
-            timeSlowerTimer = ofGetElapsedTimeMillis();
-
-        }
+//        else if (items[i].bTimeSlower) {
+//            items[i].bTimeSlower = false;
+//            timeSlowerDuration = 5;
+//            timeSlowerTimer = ofGetElapsedTimeMillis();
+//
+//        }
         //dot extender
         else if (items[i].bDotExtender) {
             for (int i=0; i<myDot.size(); i++) {
@@ -409,32 +420,94 @@ void Mode01::subGame(){
                 myDot[i].frezzerGoalRadiusY +=10;
                 myDot[i].bRadiusExtend = true;
             }
+            bDotExtender[i] = true;
             myInGameMenu.itemSize[1]++;
             items[i].bDotExtender = false;
         }
         //dot freezer
         else if (items[i].bDotFreezer) {
             myDot[i].bFreezed = true;
+            bDotFreezer[i] = true;
             items[i].bDotFreezer = false;
             myInGameMenu.itemSize[2]++;
         }
         
     }
     
-    //time slower update
-    if (timeSlowerDuration>0) {
-        if (ofGetElapsedTimeMillis() - timeSlowerTimer >= 100) {
-            timeSlowerDuration -= 0.1;
-            timeSlowerTimer = ofGetElapsedTimeMillis();
+//time slower update
+    
+//    if (timeSlowerDuration>0) {
+//        if (ofGetElapsedTimeMillis() - timeSlowerTimer >= 100) {
+//            timeSlowerDuration -= 0.1;
+//            timeSlowerTimer = ofGetElapsedTimeMillis();
+//        }
+//        timeSpeed = 1;
+//        myInGameMenu.bTimeSlower = true;
+//    }else{
+//        timeSpeed = 0.5;
+//        myInGameMenu.bTimeSlower = false;
+//
+//    }
+
+}
+
+//-------------------------------------------------------
+void Mode01::subGameDraw(){
+
+    for (int i=0; i<8; i++) {
+        if (bSuperCoin[i]) {
+            float speed = 0.1f;
+            SuperCoinPct[i]+=speed;
+            if (SuperCoinPct[i]>1) {
+                SuperCoinPct[i]=0;
+                bSuperCoin[i] = false;
+            }
+            float radius0 = SuperCoinPct[i]*1024;
+            float radius1 = SuperCoinPct[i]*512;
+            float radius2 = SuperCoinPct[i]*256;
+            float alpha = (1-SuperCoinPct[i])*100;
+            
+            ofSetColor(243, 226, 0, alpha);
+            ofCircle(items[i].pos, radius0);
+            ofCircle(items[i].pos, radius1);
+            ofCircle(items[i].pos, radius2);
         }
-        timeSpeed = 1;
-        myInGameMenu.bTimeSlower = true;
-    }else{
-        timeSpeed = 0.5;
-        myInGameMenu.bTimeSlower = false;
+        
+        if (bDotExtender[i]) {
+            float speed = 0.1f;
+            dotExtenderPct[i]+=speed;
+            if (dotExtenderPct[i]>1) {
+                dotExtenderPct[i]=0;
+                bDotExtender[i] = false;
+            }
+            float radius0 = dotExtenderPct[i]*1024;
+            float radius1 = dotExtenderPct[i]*512;
+            float radius2 = dotExtenderPct[i]*256;
+            float alpha = (1-dotExtenderPct[i])*100;
+            ofSetColor(247, 90, 146, alpha);
+            ofCircle(items[i].pos, radius0);
+            ofCircle(items[i].pos, radius1);
+            ofCircle(items[i].pos, radius2);
 
+        }
+        
+        if (bDotFreezer[i]) {
+            float speed = 0.1f;
+            dotFreezerPct[i]+=speed;
+            if (dotFreezerPct[i]>1) {
+                dotFreezerPct[i]=0;
+                bDotFreezer[i] = false;
+            }
+            float radius0 = dotFreezerPct[i]*1024;
+            float radius1 = dotFreezerPct[i]*512;
+            float radius2 = dotFreezerPct[i]*256;
+            float alpha = (1-dotFreezerPct[i])*100;
+            ofSetColor(16, 297, 232, alpha);
+            ofCircle(items[i].pos, radius0);
+            ofCircle(items[i].pos, radius1);
+            ofCircle(items[i].pos, radius2);
+        }
     }
-
 }
 
 //-------------------------------------------------------
@@ -631,129 +704,131 @@ void Mode01::touchUp(int x, int y, int touchID){
 void Mode01::tutorialDraw(){
 
     //level 1
-    if (*level == 0 && bWinTimerStart && !bLoseTimerStart) {
-        if(myDot[0].pct == 1){
-            
-            ofSetColor(255);
-            fontSmaill.drawString("Hold the dot to win", 310, 600);
-            arrowOffSet += arrowSpeed;
-            if (arrowOffSet>5) {
-                arrowSpeed*=-1;
-            }else if(arrowOffSet<0){
-                arrowSpeed*=-1;
+    if (!myInGameMenu.bPauseL && !myInGameMenu.bPauseR) {
+        
+        if (*level == 0 && bWinTimerStart && !bLoseTimerStart) {
+            if(myDot[0].pct == 1){
+                
+                ofSetColor(255);
+                fontSmaill.drawString("Hold the dot to win", 310, 600);
+                arrowOffSet += arrowSpeed;
+                if (arrowOffSet>5) {
+                    arrowSpeed*=-1;
+                }else if(arrowOffSet<0){
+                    arrowSpeed*=-1;
+                }
+                arrow.draw(478,247+arrowOffSet);
+                
             }
-            arrow.draw(478,247+arrowOffSet);
-            
         }
-    }
-    
-    //level 2
+        
+        //level 2
 
-    if (*level == 1 && bWinTimerStart && !myInGameMenu.bLevelFail) {
-        
-        if(myDot[0].pct == 1){
+        if (*level == 1 && bWinTimerStart && !myInGameMenu.bLevelFail) {
             
-            ofSetColor(255);
-            fontSmaill.drawString("Hold all dots to win", 310, 600);
-            
-            ofSetColor(255);
-            
-            arrowOffSet += arrowSpeed;
-            if (arrowOffSet>5) {
-                arrowSpeed*=-1;
-            }else if(arrowOffSet<0){
-                arrowSpeed*=-1;
+            if(myDot[0].pct == 1){
+                
+                ofSetColor(255);
+                fontSmaill.drawString("Hold the dots", 370, 630);
+                
+                ofSetColor(255);
+                
+                arrowOffSet += arrowSpeed;
+                if (arrowOffSet>5) {
+                    arrowSpeed*=-1;
+                }else if(arrowOffSet<0){
+                    arrowSpeed*=-1;
+                }
+                arrow.draw(305,235+arrowOffSet);
+                
             }
-            arrow.draw(305,235+arrowOffSet);
             
-        }
-        
-        if(myDot[1].pct == 1){
-            
-            ofSetColor(255);
-            arrow.draw(666,235+arrowOffSet);
-            
-        }
-    }
-    
-    //level 3
-    if (*level == 2 && bWinTimerStart && !myInGameMenu.bLevelFail) {
-    
-        if(myDot[0].pct == 1){
-            ofSetColor(255);
-            fontReallySmaill.drawString("Hold all dots and try to move your fingers close \nto the items, you will grab the item and get the \ndifferent special reward", 180, 620);
-         
-            arrowOffSet += arrowSpeed;
-            if (arrowOffSet>5) {
-                arrowSpeed*=-1;
-            }else if(arrowOffSet<0){
-                arrowSpeed*=-1;
-            }
-        
-            if (items[0].bCovered) {
-                arrow.draw(290,334+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+            if(myDot[1].pct == 1){
+                
+                ofSetColor(255);
+                arrow.draw(666,235+arrowOffSet);
+                
             }
         }
         
-        if(myDot[1].pct == 1){
-            if (items[1].myType !=NONE) {
-                arrow.draw(625,334+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
-            }
-        }
+        //level 3
+        if (*level == 2 && bWinTimerStart && !myInGameMenu.bLevelFail) {
         
-        
-        if(myDot[2].pct == 1){
-            if (items[2].myType !=NONE) {
-                arrow.draw(446,76+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+            if(myDot[0].pct == 1){
+                ofSetColor(255);
+                fontSmaill.drawString("Touch the items to get rewards", 220, 670);
+             
+                arrowOffSet += arrowSpeed;
+                if (arrowOffSet>5) {
+                    arrowSpeed*=-1;
+                }else if(arrowOffSet<0){
+                    arrowSpeed*=-1;
+                }
+            
+                if (!items[0].bCovered) {
+                    arrow.draw(290,334+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+                }
             }
-        }
+            
+            if(myDot[1].pct == 1){
+                if (!items[1].bCovered) {
+                    arrow.draw(625,334+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+                }
+            }
+            
+            
+            if(myDot[2].pct == 1){
+                if (!items[2].bCovered) {
+                    arrow.draw(446,76+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+                }
+            }
 
-    }
-    
-    
-    //leve 4
-    if (*level == 3 && bWinTimerStart && !myInGameMenu.bLevelFail) {
+        }
         
-        if(myDot[0].pct == 1){
-            ofSetColor(255);
-            arrowOffSet += arrowSpeed;
-            if (arrowOffSet>5) {
-                arrowSpeed*=-1;
-            }else if(arrowOffSet<0){
-                arrowSpeed*=-1;
-            }
-          
-            
-            ofSetColor(255);
         
-            if(bTutorialStep == 0){
-                arrow.draw(ofGetWidth()/2,ofGetHeight()/2+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
-                fontReallySmaill.drawString("Touch Here", ofGetWidth()/2 -fontReallySmaill.stringWidth(ofToString("Touch Here"))/2,ofGetHeight()/2+arrowOffSet-20);
-            }
+        //leve 4
+        if (*level == 3 && bWinTimerStart && !myInGameMenu.bLevelFail) {
             
-           if(bTutorialStep == 1){
-               overAllColor2.set(255);
-               ofPushMatrix();  
-               ofTranslate(219, 83);
-               ofRotateZ(180);
-               arrow.draw(-arrow.getWidth()/4, -arrow.getHeight()/4+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
-               ofPopMatrix();
-               
-               fontReallySmaill.drawString("Your lives decrease when you touch outside of the dot \nor remove your finger from a pressed dot. Now, you \nare good to next level.", 30,157);
+            if(myDot[0].pct == 1){
+                ofSetColor(255);
+                arrowOffSet += arrowSpeed;
+                if (arrowOffSet>5) {
+                    arrowSpeed*=-1;
+                }else if(arrowOffSet<0){
+                    arrowSpeed*=-1;
+                }
+              
+                
+                ofSetColor(255);
+            
+                if(bTutorialStep == 0){
+                    arrow.draw(ofGetWidth()/2,ofGetHeight()/2+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+                    fontReallySmaill.drawString("Touch Here", ofGetWidth()/2 -fontReallySmaill.stringWidth(ofToString("Touch Here"))/2,ofGetHeight()/2+arrowOffSet-20);
+                }
+                
+               if(bTutorialStep == 1){
+                   overAllColor2.set(255);
+                   ofPushMatrix();  
+                   ofTranslate(219, 83);
+                   ofRotateZ(180);
+                   arrow.draw(-arrow.getWidth()/4, -arrow.getHeight()/4+arrowOffSet,arrow.getWidth()/2,arrow.getHeight()/2);
+                   ofPopMatrix();
 
+                   fontReallySmaill.drawString("Losing life when touching the backgournd", 30,157);
+
+                }
+                
             }
-            
+        }
+        
+        if (*level == 4 && bWinTimerStart && !myInGameMenu.bLevelFail) {
+            if(myDot[0].pct == 1){
+                
+                ofSetColor(255);
+                fontReallySmaill.drawString("Losing life when removing the finger from the pressed dot", 80, 700);
+            }
         }
     }
-    
-    if (*level == 4 && bWinTimerStart && !myInGameMenu.bLevelFail) {
-        if(myDot[0].pct == 1){
-            
-            ofSetColor(255);
-            fontReallySmaill.drawString("After this level, you will strat real games, \ngood luck and have fun.", 220, 680);
-        }
-    }
-
 }
 
 

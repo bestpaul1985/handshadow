@@ -106,7 +106,11 @@ void handDetector::reset(){
 //---------------------------------------------------
 void handDetector::draw(){
 
-    ofSetColor(255);
+    if (myType == RESULT){
+        ofSetColor(120);
+    }else{
+        ofSetColor(255);
+    }
     bgImg.draw(0, 0);
     
     ofSetColor(253,11, 11);
@@ -127,7 +131,7 @@ void handDetector::draw(){
         
         ofPushMatrix();
         ofTranslate(ofGetWidth()/2-50, ofGetHeight()-80);
-        ofSetColor(30);
+        ofSetColor(255);
         font.drawString(message+ofToString(timerNum),
                         -font.stringWidth(message)/2 -font.stringWidth(ofToString(timerNum))/2,
                         -font.stringHeight(message)/2 -font.stringHeight(ofToString(timerNum))/2);

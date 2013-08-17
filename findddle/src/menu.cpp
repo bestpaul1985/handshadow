@@ -13,14 +13,13 @@ void menu::setup(){
 
     font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 40);
     fontLevel.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30);
-    fontPrice.loadFont("assets/fonts/Comfortaa_Regular.ttf", 21);
+    fontPrice.loadFont("assets/fonts/Comfortaa_Regular.ttf", 24);
     for (int i=0; i<5; i++) {
         fingerTop[i].loadImage("assets/images/mainMenu/f"+ofToString(i+1)+".png");
         fingerBot[i].loadImage("assets/images/mainMenu/f"+ofToString(i+6)+".png");
     }
     
     mainMenuBg.loadImage("assets/images/mainMenu/mainMenuBg.png");
-//    buttonBackground.loadImage("assets/images/mainMenu/bg_for_level.png");
     
     button[0].loadImage("assets/images/mainMenu/Tutorial.png");
     buttonOver[0].loadImage("assets/images/mainMenu/Tutorial_b.png");
@@ -41,6 +40,8 @@ void menu::setup(){
     hidenLogo.loadImage("assets/images/mainMenu/hidenLogo.png");
     imgLockedLevel.loadImage("assets/images/mainMenu/level_locked.png");
     imgUnlockedLevel.loadImage("assets/images/mainMenu/level_normal.png");
+    
+    itemExplanation.loadImage("assets/images/mainMenu/itemExplanation.png");
     
     reset();
     bSave = false;
@@ -497,8 +498,8 @@ void menu::drag(){
     preParticlePos.x = mParticle.pos.x;
     
 }
-//-------------------------------------------------------
 
+//-------------------------------------------------------
 void menu::dragDown(int x, int y, int touchID){
     if (!bSnapIn) {
         touch.set(x, y);
@@ -826,7 +827,7 @@ void menu::purchaseSetup(){
         tempRect.purchaseImg = &purChaseImglives[i];
         tempRect.purchasePlusImg = &purchasePlusImg;
         tempRect.itemNumber = i;
-        tempRect.purchaseAnimationfont = &fontPrice;
+        tempRect.purchaseAnimationfont = &font;
         liveButtons.push_back(tempRect);
     }
     
@@ -848,13 +849,16 @@ void menu::purchaseSetup(){
         tempRect.purchaseImg = &purChaseImgItems[i];
         tempRect.purchasePlusImg = &purchasePlusImg;
         tempRect.itemNumber = 3;
-        tempRect.purchaseAnimationfont = &fontPrice;
+        tempRect.purchaseAnimationfont = &font;
         itemButtons.push_back(tempRect);
     }
     
     for (int i=0; i<3; i++) {
         prices03[i].set(offSetX + 24 + 226*i, 926, 122, 27);
     }
+    
+    
+  
     
    
     
@@ -944,7 +948,7 @@ void menu::purchaseReset(){
         tempRect.purchaseImg = &purChaseImglives[i];
         tempRect.purchasePlusImg = &purchasePlusImg;
         tempRect.itemNumber = i;
-        tempRect.purchaseAnimationfont = &fontPrice;
+        tempRect.purchaseAnimationfont = &font;
         liveButtons.push_back(tempRect);
     }
     
@@ -966,7 +970,7 @@ void menu::purchaseReset(){
         tempRect.purchaseImg = &purChaseImgItems[i];
         tempRect.purchasePlusImg = &purchasePlusImg;
         tempRect.itemNumber = 3;
-        tempRect.purchaseAnimationfont = &fontPrice;
+        tempRect.purchaseAnimationfont = &font;
         itemButtons.push_back(tempRect);
     }
     
@@ -1005,12 +1009,11 @@ void menu::purchaseUpdate(){
                 mParticle.pos.y = 410;
             }
             
-            else if (mParticle.pos.y< -100) {
-                mParticle.pos.y = -100;
+            else if (mParticle.pos.y< -50) {
+                mParticle.pos.y = -50;
             }
             
             float diff = mParticle.pos.y - preParticlePos.y;
-            
             infoRect.position.y +=diff;
             
             for (int i=0; i<coinButtons.size(); i++) {
@@ -1098,7 +1101,7 @@ void menu::purchaseDraw(){
             for (int i=0; i<itemButtons.size(); i++) {
                 itemButtons[i].drawPurchase();
                 ofSetColor(30);
-                fontPrice.drawString("lv"+ofToString(upGradeLevel[i]), itemButtons[i].pos.x +10,itemButtons[i].pos.y+30);
+                font.drawString("Lv"+ofToString(upGradeLevel[i]), itemButtons[i].pos.x +60,itemButtons[i].pos.y+160);
             }
             
             for (int i=0; i<3; i++) {
@@ -1111,29 +1114,22 @@ void menu::purchaseDraw(){
          
             //item prices
             
-            for (int i=0; i<upGradePrices.size(); i++) {
+            for (int i=0; i<3; i++) {
                 ofSetColor(255,1,1);
                 fontPrice.drawString(ofToString(upGradePrices[i].pos[upGradeLevel[i]].x),
                                      prices03[i].position.x+50,
                                      prices03[i].position.y+fontPrice.stringHeight(ofToString(upGradePrices[i].pos[upGradeLevel[i]].x)));
             }
             
-            //purchase window
-
+            //item explaination 
+            for (int i=0; i<3; i++) {
+                ofSetColor(255, 180);
+                ofRect(340 + 228*i, 960+coinOffset.y, 175, 220);
+            }
             
+            ofSetColor(255);
+            itemExplanation.draw(340+15, 960+15 + coinOffset.y);
             
-//            for (int i=0; i< 3; i++) {
-//                ofSetColor(155);
-//                ofRect(prices01[i]);
-//            }
-//            
-//            for (int i=0; i< 3; i++) {
-//                ofSetColor(155);
-//                ofRect(prices02[i]);
-//            }
-            
-            
-           
         }
     }
 }

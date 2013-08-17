@@ -53,7 +53,7 @@ void rectangle::drawPurchase(){
     purchaseImg->draw(buttonRect.getPosition());
     
     if (bTouchOver || !bIsEnoughMoney) {
-        ofSetColor(125);
+        ofSetColor(125,100);
     }else{
         ofSetColor(255);
     }
@@ -73,7 +73,7 @@ void rectangle::drawPurchase(){
         }
         
         float y = (1-purchaseAnimationPct)*purchaseRect.getCenter().y + purchaseAnimationPct*(purchaseRect.getCenter().y-80);
-      
+        float alpha = (1-purchaseAnimationPct)*255;
      
         string message;
         
@@ -90,7 +90,7 @@ void rectangle::drawPurchase(){
             
         }
         
-        ofSetColor(255);
+        ofSetColor(alpha);
         purchaseAnimationfont->drawString(message, purchaseRect.getCenter().x-purchaseAnimationfont->stringWidth(message)/2, y);
     }
     
@@ -123,9 +123,25 @@ void rectangle::drawPause(){
     }
     ofPopMatrix();
 }
+//------------------------------------------------------------------
+void rectangle::drawInGameMenu(){
+    
+    bgRect.setFromCenter(pos, button->getWidth(), button->getHeight());
+    ofPushMatrix();
+    ofTranslate(pos);
+    if (bTouchOver) {
+        ofSetColor(125);
+    }else{
+        ofSetColor(255);
+    }
+    button->draw(-button->getWidth()/2, -button->getHeight()/2);
+    
+    ofPopMatrix();
+    
+}
 
 //------------------------------------------------------------------
-void rectangle::draw() {
+void rectangle::draw(){
     
     int offset = 270;
     

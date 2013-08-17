@@ -89,6 +89,7 @@ public:
     ofPoint gameStartOffset;
     float gameStartScale;
     float gameStartPct;
+    
     //level done
     ofImage LDBackgroudImg[2];
     float LDAlpha;
@@ -113,9 +114,12 @@ public:
     rectangle resumeRect;
     rectangle homeRect;
     float pausePct;
-    
     bool bTimeSlower;
     bool bSmallIconCovered[8];
+    
+    //buttons;
+    ofImage LDbtttonImg[2];
+    rectangle LDButton[2];
     
 };
 

@@ -86,6 +86,8 @@ void dots::setup(float x, float y,ofImage *A, ofImage *B, ofImage *C, ofImage *D
         angle = 0;
     }
 
+    extenderSpeed = 0.1f;
+    effextStep = 0;
 }
 
 //-------------------------------------------------------
@@ -134,16 +136,40 @@ void dots::radiusExtendReset(){
 void dots::radiusExtend(){
     
     if (bRadiusExtend) {
-        float speed = 0.0005f;
-        radiusPctOrg += speed;
-        if (radiusPctOrg >=1) {
-            radiusPctOrg = 1;
-            bRadiusExtend = false;
-        }
-        radiusPct = powf(radiusPctOrg, 0.6);
-        radius = (1-radiusPct)*radius + radiusPct*goalRaduis;
-        frezzerRadiusX = (1-radiusPct)*frezzerRadiusX + radiusPct*frezzerGoalRadiusX;
-        frezzerRadiusY = (1-radiusPct)*frezzerRadiusY + radiusPct*frezzerGoalRadiusY;
+        
+            if (effextStep == 0) {
+    
+            radiusPctOrg += extenderSpeed;
+            radiusPct = powf(radiusPctOrg, 0.6);
+            radius = (1-radiusPct)*radius + radiusPct*(goalRaduis*1.3);
+        
+        
+            frezzerRadiusX = (1-radiusPct)*frezzerRadiusX + radiusPct*frezzerGoalRadiusX;
+            frezzerRadiusY = (1-radiusPct)*frezzerRadiusY + radiusPct*frezzerGoalRadiusY;
+            
+            if (radiusPctOrg >=1) {
+                radiusPctOrg = 0;
+                effextStep = 1;
+            }
+                
+            }else if (effextStep == 1){
+            
+                radiusPctOrg += extenderSpeed/2;
+                radiusPct = powf(radiusPctOrg, 1.5);
+               
+                if (radiusPctOrg >=1) {
+                    radiusPctOrg = 1;
+                    bRadiusExtend = false;
+                    effextStep = 0;
+                }
+
+                radius = (1-radiusPct)*radius + radiusPct*goalRaduis;
+                frezzerRadiusX = (1-radiusPct)*frezzerRadiusX + radiusPct*frezzerGoalRadiusX;
+                frezzerRadiusY = (1-radiusPct)*frezzerRadiusY + radiusPct*frezzerGoalRadiusY;
+
+                
+                
+            }
 
     }
     
@@ -155,12 +181,16 @@ void dots::radiusExtend(){
 void dots::draw(){
     
     if (!bFixed) {
-    
-
+        
         ofPushMatrix();
-        ofSetColor(color);
         ofTranslate(pos.x, pos.y);
-        //        ofRotateZ(angle);
+        if (bRadiusExtend){
+            ofSetColor(247, 90, 146, 50);
+            float tempRadius = radius+1;
+            ofCircle(0, 0, tempRadius);
+        }
+    
+        ofSetColor(color);
         if (bCovered) dot_pressed->draw(-radius, -radius,radius*2,radius*2);
         else dot_normal->draw(-radius, -radius,radius*2,radius*2);
         if (bFreezed) {

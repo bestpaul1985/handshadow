@@ -59,7 +59,8 @@ public:
     float goalRaduis;
     float radiusPct;
     float radiusPctOrg;
-    
+    float extenderSpeed;
+    int effextStep;
     //---sound-----------------
     bool bSondPlay;
     

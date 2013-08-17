@@ -230,18 +230,10 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 }
 
 //--------------------------------------------------------------
-void testApp::touchDoubleTap(ofTouchEventArgs & touch){}
-void testApp::touchCancelled(ofTouchEventArgs & touch){}
-
-//--------------------------------------------------------------
 void testApp::lostFocus(){
     save();
 
 }
-
-//--------------------------------------------------------------
-void testApp::gotFocus(){}
-void testApp::gotMemoryWarning(){}
 
 //--------------------------------------------------------------
 void testApp::deviceOrientationChanged(int newOrientation){
@@ -278,6 +270,7 @@ void testApp::save(){
 	message = "mySettings.xml saved to app documents folder";
     cout<<message<<endl;
 }
+
 //--------------------------------------------------------------
 void testApp::purchase(){
 
@@ -350,6 +343,7 @@ void testApp::popupDismissed(){
     }
     
 }
+
 //--------------------------------------------------------------
 void testApp::soundSetup(){
     
@@ -385,6 +379,11 @@ void testApp::soundUpdate(){
     
 }
 
+//--------------------------------------------------------------
+void testApp::gotFocus(){}
+void testApp::gotMemoryWarning(){}
+void testApp::touchDoubleTap(ofTouchEventArgs & touch){}
+void testApp::touchCancelled(ofTouchEventArgs & touch){}
 
 
 
