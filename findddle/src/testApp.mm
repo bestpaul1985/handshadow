@@ -6,9 +6,9 @@ AlertViewDelegate * alertViewDelegate = nil;
 //--------------------------------------------------------------
 void testApp::setup(){
     
-    coins00 = new ofxInAppProduct("com.handshadow.finddle.IAP002");
-    coins01 = new ofxInAppProduct("com.handshadow.finddle.IAP003");
-    coins02 = new ofxInAppProduct("com.handshadow.finddle.IAP004");
+    coins00 = new ofxInAppProduct("com.handshadow.finddle.IAP005");
+    coins01 = new ofxInAppProduct("com.handshadow.finddle.IAP006");
+    coins02 = new ofxInAppProduct("com.handshadow.finddle.IAP007");
 
     //    restoreAllPreviousTransactions();
 	ofTrueTypeFont::setGlobalDpi(72);
@@ -128,7 +128,7 @@ void testApp::setup(){
     
     //live increase
     live += ofClamp((ofGetUnixTime()- unixTime)/3600, 0, 5);
-    
+    cout<<ofClamp((ofGetUnixTime()- unixTime)/3600, 0, 5)<<" "<<ofGetUnixTime()- unixTime<<endl;
 }
 
 //--------------------------------------------------------------
@@ -190,6 +190,10 @@ void testApp::update(){
         ((Mode01*)scenes[2])->bSave = false;
     }
     
+    if (((Mode01*)scenes[2])->bGameOver) {
+        gameoverPopup();
+        ((Mode01*)scenes[2])->bGameOver = false;
+    }
    
 }
 
@@ -335,6 +339,20 @@ void testApp::purchasePopup(){
 }
 
 //--------------------------------------------------------------
+void testApp::gameoverPopup(){
+
+    UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"Congratulations!!"
+                                                      message:@"You have reached to the end of Findddle season one, more levels are coming soon, thank you for playing."
+                                                     delegate:nil
+                                            cancelButtonTitle:@"OK"
+                                            otherButtonTitles:nil] retain];
+    [alert show];
+    [alert release];
+
+
+}
+
+//--------------------------------------------------------------
 void testApp::popupDismissed(){
 
     if(alertViewDelegate){
@@ -347,36 +365,161 @@ void testApp::popupDismissed(){
 //--------------------------------------------------------------
 void testApp::soundSetup(){
     
+    sSoundSwich = [[AVSoundPlayer alloc] init];
+    [sSoundSwich loadWithFile:@"assets/sounds/Swichsound.wav"]; // uncompressed wav format.
+    [sSoundSwich volume:0.9];
+    
     sDotPressed = [[AVSoundPlayer alloc] init];
     [sDotPressed loadWithFile:@"assets/sounds/pressDot.wav"]; // uncompressed wav format.
-    [sDotPressed volume:0.9];
+    [sDotPressed volume:0.5];
 
     sDead = [[AVSoundPlayer alloc] init];
     [sDead loadWithFile:@"assets/sounds/error.wav"]; // uncompressed wav format.
-    [sDead volume:0.9];
+    [sDead volume: 0.8];
+    
+    sLose = [[AVSoundPlayer alloc] init];
+    [sLose loadWithFile:@"assets/sounds/loseSound.wav"]; // uncompressed wav format.
+    [sLose volume:0.9];
+    
+    sItem = [[AVSoundPlayer alloc] init];
+    [sItem loadWithFile:@"assets/sounds/itemSound.wav"]; // uncompressed wav format.
+    [sItem volume:0.9];
+    
+    sBuySound = [[AVSoundPlayer alloc] init];
+    [sBuySound loadWithFile:@"assets/sounds/buySound.wav"]; // uncompressed wav format.
+    [sBuySound volume:0.9];
+    
+    sNormalButton = [[AVSoundPlayer alloc] init];
+    [sNormalButton loadWithFile:@"assets/sounds/normalButtonSound.wav"]; // uncompressed wav format.
+    [sNormalButton volume: 1.1];
+    
+    sScanner = [[AVSoundPlayer alloc] init];
+    [sScanner loadWithFile:@"assets/sounds/scanDone.wav"]; // uncompressed wav format.
+    [sScanner volume:0.9];
+    
+    sWin = [[AVSoundPlayer alloc] init];
+    [sWin loadWithFile:@"assets/sounds/winSound.wav"]; // uncompressed wav format.
+    [sWin volume:0.3];
+    
+    sCounterDown = [[AVSoundPlayer alloc] init];
+    [sCounterDown loadWithFile:@"assets/sounds/countingdown.wav"]; // uncompressed wav format.
+    [sCounterDown volume:0.9];
+    
+    sFinger = [[AVSoundPlayer alloc] init];
+    [sFinger loadWithFile:@"assets/sounds/fingerSound.wav"]; // uncompressed wav format.
+    [sFinger volume:0.5];
+    
+    
+    sCheckForWin = [[AVSoundPlayer alloc] init];
+    [sCheckForWin loadWithFile:@"assets/sounds/checkForWin.wav"]; // uncompressed wav format.
+    [sCheckForWin volume:0.5];
+    
+    
+    s321 = [[AVSoundPlayer alloc] init];
+    [s321 loadWithFile:@"assets/sounds/321.wav"]; // uncompressed wav format.
+    [s321 volume:0.9];
 }
 
 //--------------------------------------------------------------
 void testApp::soundTouchDown(){
 
-
-    for (int i=0; i<  ((Mode01*)scenes[2])->myDot.size(); i++) {
-        if(((Mode01*)scenes[2])->myDot[i].bSondPlay && !((Mode01*)scenes[2])->myDot[i].bFreezed){
-            [sDotPressed play];
-            ((Mode01*)scenes[2])->myDot[i].bSondPlay = false;
+     if (((menu*)scenes[0])->bSound == false) {
+        for (int i=0; i<  ((Mode01*)scenes[2])->myDot.size(); i++) {
+            if(((Mode01*)scenes[2])->myDot[i].bSondPlay && !((Mode01*)scenes[2])->myDot[i].bFreezed){
+                [sDotPressed play];
+                ((Mode01*)scenes[2])->myDot[i].bSondPlay = false;
+            }
         }
-    }
-   
+     }
 }
 
 //--------------------------------------------------------------
 void testApp::soundUpdate(){
+    if (((menu*)scenes[0])->bSound == false) {
+        
+        if (live<preLive) {
+             [sDead play];
+        }
 
-    if (live<preLive) {
-         [sDead play];
+        if (((Mode01*)scenes[2])->bLoseSound) {
+            [sLose play];
+            ((Mode01*)scenes[2])->bLoseSound = false;
+        }
+
+        for (int i=0; i<3; i++) {
+            if (((Mode01*)scenes[2])->bItemSound[i]) {
+                [sItem play];
+                ((Mode01*)scenes[2])->bItemSound[i] = false;
+            }
+        }
+
+        if (((menu*)scenes[0])->bSwichSound) {
+            [sSoundSwich play];
+            ((menu*)scenes[0])->bSwichSound = false;
+        }
+
+        if (((menu*)scenes[0])->bBuySound) {
+            [sBuySound play];
+            ((menu*)scenes[0])->bBuySound = false;
+        }
+
+        if (((menu*)scenes[0])->bButtonSound) {
+            [sNormalButton play];
+            ((menu*)scenes[0])->bButtonSound = false;
+        }
+
+        if (((Mode01*)scenes[2])->myInGameMenu.bButtonSound) {
+            [sNormalButton play];
+            ((Mode01*)scenes[2])->myInGameMenu.bButtonSound = false;
+        }
+
+        //scaner
+        if (((handDetector*)scenes[1])->bScannerDone) {
+            [sScanner play];
+            ((handDetector*)scenes[1])->bScannerDone = false;
+        }
+
+        //win
+        if (((Mode01*)scenes[2])->bWinSound) {
+            [sWin play];
+            ((Mode01*)scenes[2])->bWinSound = false;
+        }
+
+        //counter down
+
+        if (((Mode01*)scenes[2])->bCountDown  && [sCounterDown isPlaying] == false) {
+            [sCounterDown play];
+        }
+
+        if(((Mode01*)scenes[2])->bCountDown == false && [sCounterDown isPlaying]){
+            [sCounterDown stop];
+        }
+
+
+
+        //finger
+        for (int i=0; i<  ((Mode01*)scenes[2])->myDot.size(); i++) {
+            if(((Mode01*)scenes[2])->myDot[i].bFingerSound){
+                [sFinger play];
+                ((Mode01*)scenes[2])->myDot[i].bFingerSound = false;
+            }
+        }
+
+        //check for win
+        if (((Mode01*)scenes[2])->bCheckWinSound && ((Mode01*)scenes[2])->winTimer > 0 && [sCheckForWin isPlaying] == false) {
+            [sCheckForWin play];
+        }
+
+        if (((Mode01*)scenes[2])->winTimer == 0 && [sCheckForWin isPlaying]){
+            [sCheckForWin stop];
+        }
+
+        //321 GO!!
+        if (((Mode01*)scenes[2])->myInGameMenu.b321GO){
+            [s321 play];
+            ((Mode01*)scenes[2])->myInGameMenu.b321GO = false;
+        }
     }
-    
-    
 }
 
 //--------------------------------------------------------------

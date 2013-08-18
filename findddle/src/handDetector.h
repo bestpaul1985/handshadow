@@ -57,6 +57,8 @@ public:
     float timer;
     int timerNum;
     
+    bool bScannerDone;
+    
 };
 
 #endif /* defined(__handShadow__handDetector__) */

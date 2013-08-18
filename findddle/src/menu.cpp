@@ -45,7 +45,7 @@ void menu::setup(){
     
     reset();
     bSave = false;
-    bSound = true;
+    bSound = false;
     bLevelChosen = false;
     bPurchaseWithCoin = false;
     bPurchaseWithMoney = false;
@@ -146,8 +146,11 @@ void menu::reset(){
     subMenuNum = -1;
     subStep = 0;
     timer =0;
-    
+  
     mainMenuBgPos.set(0, 0);
+    
+    bSwichSound = false;
+    bButtonSound = false;
 
 }
 
@@ -239,6 +242,9 @@ void menu::touchUp(int x, int y, int touchID){
     for (int i=0; i<MAIN_MENU_BUTTON; i++) {
         if (mainMenuRect[i].buttonRect.inside(x, y)) {
             mainMenuRect[i].bTouchOver = false;
+            if (i!=1) {
+                bButtonSound = true;
+            }
         }
     }
     
@@ -691,7 +697,10 @@ void menu::levelDown(int x, int y, int touchID){
             
             for (int i=0; i<levelRect.size(); i++) {
                 if (levelRect[i].buttonRect.inside(x, y)) {
-                    levelRect[i].bTouchOver = true;
+                    if (i<= *unLockedLevel) {
+                        levelRect[i].bTouchOver = true;
+
+                    }
                 }
             }
             
@@ -733,7 +742,10 @@ void menu::levelMove(int x, int y, int touchID){
             
             for (int i=0; i<levelRect.size(); i++) {
                 if (levelRect[i].buttonRect.inside(x, y)) {
-                    levelRect[i].bTouchOver = true;
+                    if (i<= *unLockedLevel) {
+                        
+                        levelRect[i].bTouchOver = true;
+                    }
                 }else{
                     levelRect[i].bTouchOver = false;
                 }
@@ -760,6 +772,7 @@ void menu::levelUp(int x, int y, int touchID){
                         levelReset();
                         reset();
                         bLevelChosen = true;
+                        bButtonSound = true;
                     }
                 }
             }
@@ -1122,10 +1135,10 @@ void menu::purchaseDraw(){
             }
             
             //item explaination 
-            for (int i=0; i<3; i++) {
-                ofSetColor(255, 180);
-                ofRect(340 + 228*i, 960+coinOffset.y, 175, 220);
-            }
+//            for (int i=0; i<3; i++) {
+//                ofSetColor(255, 180);
+//                ofRect(340 + 228*i, 960+coinOffset.y, 175, 220);
+//            }
             
             ofSetColor(255);
             itemExplanation.draw(340+15, 960+15 + coinOffset.y);
@@ -1257,6 +1270,7 @@ void menu::purchaseTouchUp(int x, int y){
                         liveButtons[i].purchaseAnimationPct = 0;
                         bPurchaseWithCoin = true;
                         bPurchaseLive[i] = true;
+                        bBuySound = true;
                     }
                 }
                 
@@ -1267,6 +1281,8 @@ void menu::purchaseTouchUp(int x, int y){
                         itemButtons[i].purchaseAnimationPct = 0;
                         bPurchaseWithCoin = true;
                         bPurchaseItem[i] = true;
+                        bBuySound = true;
+
                     }
                 }
 
@@ -1276,7 +1292,6 @@ void menu::purchaseTouchUp(int x, int y){
                     *coin -= livePrice[0];
                     bPurchaseWithCoin = false;
                     bPurchaseLive[0] = false;
-                    
                 }else if (bPurchaseLive[1]) {
                     *live +=3;
                     *coin -= livePrice[1];
@@ -1333,8 +1348,8 @@ void menu::setSetup(){
     for (int i=0; i<2; i++) {
         rectangle tempRect;
         tempRect.pos.set(430 + 220*i, 120);
-        tempRect.rectW = 200;
-        tempRect.rectH = 200;
+        tempRect.rectW = 175;
+        tempRect.rectH = 225;
         tempRect.setImg = &setImgs[i];
         settingButton.push_back(tempRect);
     }
@@ -1349,8 +1364,8 @@ void menu::setReset(){
     for (int i=0; i<2; i++) {
         rectangle tempRect;
         tempRect.pos.set(430 + 220*i, 120);
-        tempRect.rectW = 200;
-        tempRect.rectH = 200;
+        tempRect.rectW = 175;
+        tempRect.rectH = 225;
         tempRect.setImg = &setImgs[i];
         settingButton.push_back(tempRect);
     }
@@ -1427,11 +1442,15 @@ void menu::setTouchUp(int x, int y){
                 settingButton[0].bTouchOver = false;
                 *scene = 1;
                 *firstPlay = 1;
+                bButtonSound = true;
             }
             
             if (settingButton[1].buttonRect.inside(x,y)) {
                 settingButton[1].bTouchOver = false;
                 bSound = !bSound;
+                if (!bSound) {
+                    bButtonSound = true;
+                }
             }
             
         }

@@ -171,20 +171,25 @@ void inGameMenu::starter(){
         ofPopMatrix();
     }
     
+    if (gameStartCounter != preGameStartCounter) {
+        b321GO = true;
+    }
     
+    preGameStartCounter = gameStartCounter;
 }
 
 //-----------------------------------------------------------------------
 void inGameMenu::reset(){
 
     LDType = BG_FADE;
-
+    bButtonSound = false;
     bLevelDone = false;
     bNextLevel = false;
     bTryAgin   = false;
     bHome      = false;
     bLevelFail = false;
     bTimeSlower = false;
+    b321GO = false;
     angle      = 0;
     preAngle   = 0;
     
@@ -208,6 +213,7 @@ void inGameMenu::reset(){
     }
     
     gameStartCounter = 0;
+    preGameStartCounter = -1;
     gameStartAlpha = 0;
     gameStartSpeed = 90;
     gameStartOffset.set(0, 0);
@@ -293,10 +299,10 @@ void inGameMenu::draw(){
         ofSetColor(*overAllColor);
         fingerImg[NUM].draw(166,-5,fingerImg[NUM].getWidth()/4*3,fingerImg[NUM].getHeight()/4*3);
         ofSetColor(30);
-        font.drawString("  x"+ofToString(num), 190, 45);
+        font.drawString("  x "+ofToString(num), 190, 40);
         
         ofSetColor(30);
-        font.drawString("lv"+ofToString(*level+1), 930, 42);
+        font.drawString("lv"+ofToString(*level+1), 930, 37);
         
         ofPushMatrix();
         ofTranslate(56, 27);
@@ -310,7 +316,7 @@ void inGameMenu::draw(){
         clockOutLine.draw(56-clockOutLine.getWidth()/2, 27-clockOutLine.getHeight()/2);
         
         
-        for (int i=0; i<9; i++) {
+        for (int i=0; i<8; i++) {
            
             if (bSmallIconCovered[i]) {
                 ofSetColor(100);
@@ -410,6 +416,7 @@ void inGameMenu::touchUp(int x, int y){
             bPauseL = false;
             bPauseR = false;
             pausePct = 0;
+            bButtonSound = true;
         }
         
         if (homeRect.bgRect.inside(x, y)) {
@@ -418,6 +425,7 @@ void inGameMenu::touchUp(int x, int y){
             bPauseR = false;
             pausePct = 0;
             bHome = true;
+            bButtonSound = true;
         }
         
     }
@@ -426,12 +434,18 @@ void inGameMenu::touchUp(int x, int y){
     
         if(LDButton[0].bgRect.inside(x-LDPos.x, y-LDPos.y)){
             bHome = true;
+            if (bLevelDone) {
+                *level+=1;
+            }
             LDButton[0].bTouchOver = false;
+            bButtonSound = true;
+
         }
         
         if(LDButton[1].bgRect.inside(x-LDPos.x, y-LDPos.y)){
             LDType = ICON_FADE;
             LDButton[1].bTouchOver = false;
+            bButtonSound = true;
         }
     }
 

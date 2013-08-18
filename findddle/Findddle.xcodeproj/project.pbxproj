@@ -531,6 +531,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
 				INFOPLIST_FILE = "ofxiOS-Info.plist";
@@ -540,6 +542,8 @@
 					"\"$(SRCROOT)/src/TestFlightSDK1.2.6\"",
 				);
 				PRODUCT_NAME = Findddle;
+				PROVISIONING_PROFILE = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv6 armv7";
 			};
@@ -548,6 +552,8 @@
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
 				INFOPLIST_FILE = "ofxiOS-Info.plist";
@@ -557,6 +563,8 @@
 					"\"$(SRCROOT)/src/TestFlightSDK1.2.6\"",
 				);
 				PRODUCT_NAME = Findddle;
+				PROVISIONING_PROFILE = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv6 armv7";
 			};
@@ -568,8 +576,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Peng Cheng (52L28ASJVE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Peng Cheng (52L28ASJVE)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
 				COMPRESS_PNG_FILES = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -586,8 +594,8 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE = "6935C5C4-4251-429B-8B62-79E6A753D6D9";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6935C5C4-4251-429B-8B62-79E6A753D6D9";
+				PROVISIONING_PROFILE = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 				WARNING_LDFLAGS = "-no_arch_warnings";
@@ -600,8 +608,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Peng Cheng (52L28ASJVE)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Peng Cheng (52L28ASJVE)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
 				COMPRESS_PNG_FILES = NO;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = YES;
@@ -617,8 +625,8 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 3.1;
 				ONLY_ACTIVE_ARCH = NO;
-				PROVISIONING_PROFILE = "6935C5C4-4251-429B-8B62-79E6A753D6D9";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6935C5C4-4251-429B-8B62-79E6A753D6D9";
+				PROVISIONING_PROFILE = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
 				WARNING_LDFLAGS = "-no_arch_warnings";

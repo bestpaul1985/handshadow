@@ -18,7 +18,7 @@ void handDetector::setup(){
     skipImg[1].loadImage("assets/images/handDetector/skip_pressed.png");
     reset();
     bSave = false;
-
+    bScannerDone = false;
 }
 
 //---------------------------------------------------
@@ -32,7 +32,7 @@ void handDetector::update(){
             float speed = 1;
             linePos.x -=speed;
             if (linePos.x<0) {
-                
+                bScannerDone = true;
                 for (int i=0; i<touchs.size(); i++) {
                     max.x = MAX(max.x, touchs[i].x);
                     if (i==0) {
@@ -137,10 +137,11 @@ void handDetector::draw(){
                         -font.stringHeight(message)/2 -font.stringHeight(ofToString(timerNum))/2);
         ofPopMatrix();
         
-        ofSetColor(255);
         if (bButtonCoverd) {
+            ofSetColor(255);
             reScanImg[1].draw(button);
         }else{
+            ofSetColor(255);
             reScanImg[0].draw(button);
         }
 

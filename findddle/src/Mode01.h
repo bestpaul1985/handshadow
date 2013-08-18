@@ -120,7 +120,14 @@ public:
     float arrowOffSet;
     float arrowSpeed;
     
-    
+    //*****sound***********
+    bool bLoseSound;
+    bool bWinSound;
+    bool bItemSound[3];
+    bool bCountDown;
+    bool bFingerSound;
+    bool bCheckWinSound;
+    bool bGameOver;
 };
 
 

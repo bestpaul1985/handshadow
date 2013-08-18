@@ -83,6 +83,8 @@ public:
     bool bGameStart;
     int gameStartTimer;
     int gameStartCounter;
+    int preGameStartCounter;
+
     float gameStartAlpha;
     float gameStartSpeed;
     vector<ofImage> readyImg;
@@ -121,6 +123,10 @@ public:
     ofImage LDbtttonImg[2];
     rectangle LDButton[2];
     
+    
+    //sound
+    bool bButtonSound;
+    bool b321GO;
 };
 
 #endif /* defined(__handShadow__inGameMenu__) */

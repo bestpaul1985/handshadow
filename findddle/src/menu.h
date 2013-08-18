@@ -187,6 +187,10 @@ public:
     ofPoint tutorialTouch;
     ofPoint tutorialPreTouch;
     
+    //---sound----------------------
+    bool bSwichSound;
+    bool bBuySound;
+    bool bButtonSound;
 };
 
 #endif /* defined(__handShadow__menu__) */

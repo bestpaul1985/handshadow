@@ -24,6 +24,7 @@ public:
     void save();
     void purchase();
     void purchasePopup();
+    void gameoverPopup();
     void popupDismissed();
     void soundSetup();
     void soundTouchDown();
@@ -80,7 +81,6 @@ public:
     float scale;
     int touchNum;
     
-    
     //----purchase------------------------------
     ofxInAppProduct * coins00;
     ofxInAppProduct * coins01;
@@ -89,8 +89,18 @@ public:
     //----sound---------------------------------
     AVSoundPlayer * sDotPressed;
     AVSoundPlayer * sDead;
+    AVSoundPlayer * sItem;
+    AVSoundPlayer * sLose;
+    AVSoundPlayer * sWin;
+    AVSoundPlayer * sSoundSwich;
+    AVSoundPlayer * sBuySound;
+    AVSoundPlayer * sNormalButton;
+    AVSoundPlayer * sScanner;
+    AVSoundPlayer * sCounterDown;
+    AVSoundPlayer * sFinger;
+    AVSoundPlayer * sCheckForWin;
+    AVSoundPlayer * s321;
 
-
-
+    
 };
 

@@ -10,7 +10,8 @@ void dots::setup(float x, float y,ofImage *A, ofImage *B, ofImage *C, ofImage *D
     ofPoint tempPos;
     
     bSondPlay=false;
-
+    bFingerSound = false;
+    bFingerStart = true;
     if (x<512 && y<384) {
         //top Left
         tempPos.set(0, 0);
@@ -106,12 +107,20 @@ void dots::update(){
         }
 
         fingerPct+=fingerSpeed;
+      
+        if (bFingerStart) {
+            bFingerSound = true;
+            bFingerStart = false;
+        }
+        
         if (fingerPct>1) {
             fingerSpeed = 0.03;
             fingerSpeed*=-1;
         }else if(fingerPct<0){
             fingerPct=0;
+            fingerSpeed = 0;
         }
+        
     }
     
     float myPct = powf(pct, 0.6);
@@ -166,8 +175,6 @@ void dots::radiusExtend(){
                 radius = (1-radiusPct)*radius + radiusPct*goalRaduis;
                 frezzerRadiusX = (1-radiusPct)*frezzerRadiusX + radiusPct*frezzerGoalRadiusX;
                 frezzerRadiusY = (1-radiusPct)*frezzerRadiusY + radiusPct*frezzerGoalRadiusY;
-
-                
                 
             }
 

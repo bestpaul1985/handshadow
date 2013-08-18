@@ -63,7 +63,8 @@ public:
     int effextStep;
     //---sound-----------------
     bool bSondPlay;
-    
+    bool bFingerSound;
+    bool bFingerStart;
 };
 
 
