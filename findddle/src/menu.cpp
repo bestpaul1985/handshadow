@@ -725,12 +725,12 @@ void menu::levelMove(int x, int y, int touchID){
             float diff = levelTouch.y - levelPreTouch.y;
             float speed;
             
-            if (diff >1 ) {
-                speed = ofMap(diff, 1, 50, 5, 6,true);
+            if (diff >1) {
+                speed = ofMap(diff, 1, 50, 20, 100,true);
                 frc.y = speed;
             }
             else if (diff < -1){
-                speed = ofMap(diff, -1, -50, -5, -6,true);
+                speed = ofMap(diff, -1, -50, -20, -100,true);
                 frc.y = speed;
                 
             }else{
@@ -760,6 +760,7 @@ void menu::levelMove(int x, int y, int touchID){
 void menu::levelUp(int x, int y, int touchID){
     if (subStep == 2) {
         if (subMenuNum == 2) {
+            frc.y = 0;
             for (int i=0; i<levelRect.size(); i++) {
                 if (levelRect[i].buttonRect.inside(x, y)) {
                     levelRect[i].bTouchOver = false;

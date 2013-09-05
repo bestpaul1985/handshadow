@@ -119,7 +119,7 @@ public:
     int bTutorialStep;
     float arrowOffSet;
     float arrowSpeed;
-    
+    bool bTouchBg;
     //*****sound***********
     bool bLoseSound;
     bool bWinSound;

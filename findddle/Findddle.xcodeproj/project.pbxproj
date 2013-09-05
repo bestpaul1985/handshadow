@@ -531,8 +531,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Peng Cheng (52L28ASJVE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Peng Cheng (52L28ASJVE)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
 				INFOPLIST_FILE = "ofxiOS-Info.plist";
@@ -542,8 +542,8 @@
 					"\"$(SRCROOT)/src/TestFlightSDK1.2.6\"",
 				);
 				PRODUCT_NAME = Findddle;
-				PROVISIONING_PROFILE = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
+				PROVISIONING_PROFILE = "30DFE6A0-A37C-4485-BBBD-E4A42E9B53BB";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "30DFE6A0-A37C-4485-BBBD-E4A42E9B53BB";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv6 armv7";
 			};
@@ -552,8 +552,8 @@
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Peng Cheng (M3MD7P6TQV)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Peng Cheng (52L28ASJVE)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Peng Cheng (52L28ASJVE)";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ofxiOS_Prefix.pch;
 				INFOPLIST_FILE = "ofxiOS-Info.plist";
@@ -563,8 +563,8 @@
 					"\"$(SRCROOT)/src/TestFlightSDK1.2.6\"",
 				);
 				PRODUCT_NAME = Findddle;
-				PROVISIONING_PROFILE = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "CE6E04EC-F620-429D-AE84-F45DC60E0471";
+				PROVISIONING_PROFILE = "30DFE6A0-A37C-4485-BBBD-E4A42E9B53BB";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "30DFE6A0-A37C-4485-BBBD-E4A42E9B53BB";
 				TARGETED_DEVICE_FAMILY = 2;
 				VALID_ARCHS = "armv6 armv7";
 			};

@@ -127,13 +127,36 @@ void testApp::setup(){
     soundSetup();
     
     //live increase
-    live += ofClamp((ofGetUnixTime()- unixTime)/3600, 0, 5);
-    cout<<ofClamp((ofGetUnixTime()- unixTime)/3600, 0, 5)<<" "<<ofGetUnixTime()- unixTime<<endl;
+    
+    
+    int liveAdder = 0;
+    liveAdder = (int)(ofGetUnixTime() - unixTime)/600;
+    live+=liveAdder;
+    if (live>10) {
+        live = 10;
+    }
+    if (liveAdder>0) {
+        preLive = live;
+        unixTime = ofGetUnixTime();
+    }
+    
 }
 
 //--------------------------------------------------------------
 void testApp::update(){
 
+    //live add
+    if (ofGetUnixTime()-unixTime>600) {
+        if (live <10) {
+            live += 1;
+            preLive = live;
+            unixTime = ofGetUnixTime();
+        }else{
+            unixTime = ofGetUnixTime();
+        }
+    }
+    
+//    cout<< ofGetUnixTime() <<"     "<<ofGetUnixTime() - unixTime <<endl;
     
     //for mirroring
     if (ofGetFrameNum()<10){
@@ -151,9 +174,6 @@ void testApp::update(){
         unLockedLevel = level;
     }
     
-    
-    //update time
-    unixTime = ofGetUnixTime();
     
     //reset gamePlay
     if (((menu*)scenes[0])->bLevelChosen) {
@@ -194,6 +214,7 @@ void testApp::update(){
         gameoverPopup();
         ((Mode01*)scenes[2])->bGameOver = false;
     }
+    
    
 }
 
@@ -203,6 +224,7 @@ void testApp::draw(){
     scenes[currentScene]->draw();
     preScene = currentScene;
     preLive = live;
+    
 }
 
 //--------------------------------------------------------------
@@ -236,7 +258,22 @@ void testApp::touchUp(ofTouchEventArgs & touch){
 //--------------------------------------------------------------
 void testApp::lostFocus(){
     save();
+}
 
+//--------------------------------------------------------------
+void testApp::gotFocus(){
+    
+    int liveAdder = 0;
+    liveAdder = (int)(ofGetUnixTime()- unixTime)/600;
+    live+=liveAdder;
+    if (live>10) {
+        live = 10;
+    }
+    if (liveAdder>0) {
+        preLive = live;
+        unixTime = ofGetUnixTime();
+    }
+    
 }
 
 //--------------------------------------------------------------
@@ -265,10 +302,7 @@ void testApp::save(){
     XML.setValue("SETTING:DOTEXTENDER", dotExtenderChance);
     XML.setValue("SETTING:FREEZERCHANCE", dotFreezerChance);
     XML.setValue("SETTING:FIRST", firstPlay);
-    
-    int time = (int)ofGetUnixTime()-(ofGetUnixTime()-unixTime);
-    XML.setValue("SETTING:TIME", time);
-
+    XML.setValue("SETTING:TIME", (int)unixTime);
     XML.saveFile( ofxiOSGetDocumentsDirectory() + "mySettings.xml" );
     
 	message = "mySettings.xml saved to app documents folder";
@@ -328,8 +362,8 @@ void testApp::purchase(){
 //--------------------------------------------------------------
 void testApp::purchasePopup(){
 
-    UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"You need more live"
-                                                      message:@"Go to store to purchase\nmore lives. Live will be increased \none per hours, maximum 5"
+    UIAlertView * alert = [[[UIAlertView alloc] initWithTitle:@"You don't have lives"
+                                                      message:@"Go to store to purchase more lives. Life will be increased one per 10 mins, maximum 10"
                                                      delegate:nil
                                             cancelButtonTitle:@"OK"
                                             otherButtonTitles:nil] retain];
@@ -437,7 +471,7 @@ void testApp::soundTouchDown(){
 void testApp::soundUpdate(){
     if (((menu*)scenes[0])->bSound == false) {
         
-        if (live<preLive) {
+        if (live<preLive && currentScene == 2) {
              [sDead play];
         }
 
@@ -523,7 +557,6 @@ void testApp::soundUpdate(){
 }
 
 //--------------------------------------------------------------
-void testApp::gotFocus(){}
 void testApp::gotMemoryWarning(){}
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){}
 void testApp::touchCancelled(ofTouchEventArgs & touch){}

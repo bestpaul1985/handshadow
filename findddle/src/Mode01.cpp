@@ -71,6 +71,7 @@ void Mode01::setup(){
 
 //----------------------------------------------------------
 void Mode01::reset(){
+    
     //defult
     bgWidth = ofGetWidth();
     bgHight = ofGetHeight();
@@ -79,6 +80,13 @@ void Mode01::reset(){
     myDot.clear();
     items.clear();
     tryLive = 10;
+    if (*level == 3) {
+        bTouchBg = false;
+
+    }else{
+        bTouchBg = true;
+    }
+    
     //sound
     bWinSound = false;
     bLoseSound = false;
@@ -222,7 +230,6 @@ void Mode01::reset(){
         SuperCoinPct[i] = 0;
     }
     
-    
 }
 
 //----------------------------------------------------------
@@ -287,6 +294,12 @@ void Mode01::update(){
             
         }
         
+    if (gameTimer<0) {
+            gameTimer = 0;
+            *live -=1;
+            bLoseTimerStart = true;
+        }
+        
     //check winning situation
         checkLose(0, 0, 2);
         checkWin();
@@ -318,11 +331,7 @@ void Mode01::update(){
     }
     
     
-    //timer
-    if (gameTimer<0) {
-        gameTimer = 0;
-        bLoseTimerStart = true;
-    }
+   
     
 }
 
@@ -402,6 +411,7 @@ void Mode01::draw(){
     //draw in game menu
     myInGameMenu.draw();
     tutorialDraw();
+    
 }
 
 //-------------------------------------------------------
@@ -536,18 +546,53 @@ void Mode01::checkWin(){
         }
     }
     
+
+  
+    
     if(counter == myDot.size() && bWinTimerStart){
-        winTimer ++;
-    }else{
+        
+        if (*level == 2) {
+            
+            int itemNum = 0;
+            for (int i=0; i<sprites.size(); i++) {
+                if (sprites[i]->animation.frame == 8) {
+                    itemNum ++;
+                }
+            }
+            
+            if (itemNum == 3) {
+                winTimer ++; 
+            }else{
+                bgOffSet.y = 0;
+                winTimer =0;
+            }
+        
+        }else if(*level == 3){
+        
+            if (bTouchBg) {
+                winTimer ++;
+            }else{
+                bgOffSet.y = 0;
+                winTimer =0;
+            }
+        
+            }else{
+            
+            winTimer ++;
+
+            }
+        }
+        else{
+            
         bgOffSet.y = 0;
         winTimer =0;
     }
-    
-    
+
     if (winTimer>0&&winTimer<150){
         bgOffSet.y +=bgOffSetSpeed;
         bCheckWinSound = true;
     }
+    
     else if(winTimer>=150){
         bWinSound = true;
         bCheckWinSound = false;
@@ -580,23 +625,24 @@ void Mode01::checkLose(int x, int y, int situation){
             
             if (unFixed == unTouched && !bLoseTimerStart) {
                 bLoseTimerStart = true;
+               
+                if (*level == 3) {
+                    bTouchBg = true;
+                    bTutorialStep = 1;
+                }
                 
                 if (*level <5) {
                     tryLive -=1;
-                    
                     if (tryLive<1) {
                         tryLive = 10;
                     }
                 }else{
                     *live -=1;
-                    
                     if (*live < 0) {
                         *live = 0;
                     }
                 }
               
-                
-                
                 loseTimer = 0;
             }
             
@@ -620,10 +666,11 @@ void Mode01::checkLose(int x, int y, int situation){
                     if (tryLive<1) {
                         tryLive = 10;
                     }
+                    
                 }else{
                     
                     *live -= PreCoverNum-coveredNum;                    
-                   
+                  
                     if (*live < 0) {
                         *live = 0;
                     }
@@ -647,10 +694,8 @@ void Mode01::checkLose(int x, int y, int situation){
             else if(loseTimer>30)
             {
               
-                if (*level == 3) {
-                    bTutorialStep = 1;
-                }
-                if (*live == 0 ||  gameTimer == 0) {
+                if (*live == 0 ||  gameTimer == 0)
+                {
                     myInGameMenu.bLevelFail = true;
                     bLoseSound = true;
                 }
@@ -712,7 +757,14 @@ void Mode01::touchUp(int x, int y, int touchID){
         for (int i=0; i<myDot.size(); i++) {
             myDot[i].touchUp(x, y, touchID);
         }
-        checkLose(x, y, 1);
+        
+        if (*level == 3) {
+            if (bTouchBg) {
+                checkLose(x, y, 1);
+            }
+        }else{
+            checkLose(x, y, 1);
+        }
     }
     
     myInGameMenu.touchUp(x, y);
@@ -775,8 +827,19 @@ void Mode01::tutorialDraw(){
         
             if(myDot[0].pct == 1){
                 ofSetColor(255);
-                fontSmaill.drawString("Touch the items to get rewards", 220, 670);
-             
+                int itemNum = 0;
+                for (int i=0; i<sprites.size(); i++) {
+                    if (sprites[i]->animation.frame == 8) {
+                        itemNum ++;
+                    }
+                }
+                
+                if (itemNum == 3) {
+                    fontSmaill.drawString("Hold left and top dots to win", 220, 670);
+                }else{
+                    fontSmaill.drawString("Touch items to explore rewards", 220, 670);
+                }
+
                 arrowOffSet += arrowSpeed;
                 if (arrowOffSet>5) {
                     arrowSpeed*=-1;
@@ -833,7 +896,7 @@ void Mode01::tutorialDraw(){
                    arrow.draw(-arrow.getWidth()/4, -arrow.getHeight()+arrowOffSet + 20,arrow.getWidth(),arrow.getHeight());
                    ofPopMatrix();
 
-                   fontReallySmaill.drawString("Losing life when touching the backgournd", 30,190);
+                   fontReallySmaill.drawString("Losing life when touching the backgournd \nIf you don't have any life, you can't play the game. ", 30,190);
 
                 }
                 
