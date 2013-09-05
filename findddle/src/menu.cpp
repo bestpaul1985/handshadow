@@ -363,8 +363,6 @@ void menu::subMenu(int num){
                 
             }
             
-            
-            
             subMenuNum = -1;
             
         }
@@ -1145,6 +1143,19 @@ void menu::purchaseDraw(){
             itemExplanation.draw(340+15, 960+15 + coinOffset.y);
             
         }
+    }
+}
+
+//-------------------------------------------------------
+void menu::purChaseGo(){
+    
+    bSubMenu = true;
+    subMenuNum = 3;
+    mainMenuRect[3].bTouchOver = false;
+    tempRectPos.clear();
+    for (int i=0; i<MAIN_MENU_BUTTON; i++){
+        float temp = mainMenuRect[i].pos.x;
+        tempRectPos.push_back(temp);
     }
 }
 

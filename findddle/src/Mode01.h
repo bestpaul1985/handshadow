@@ -54,6 +54,7 @@ public:
     vector<ofImage> dotImgB;
     vector<ofImage> dotFinger;
     int *scene;
+    bool *bStore;
     int *level;
     int tryLive;
     int fingerSize;
@@ -67,7 +68,7 @@ public:
     ofTrueTypeFont fontReallySmaill;
 
     ofPoint *accFrc;
-    
+    int *unixTime;
     //*******game timer********
     float gameTimerStart;
     float gameTimer;

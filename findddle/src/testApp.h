@@ -22,6 +22,8 @@ public:
     void draw();
     void exit();
     void save();
+    void liveSetup();
+    void liveUpdate();
     void purchase();
     void purchasePopup();
     void gameoverPopup();
@@ -76,7 +78,7 @@ public:
     int dotFreezerChance;
     int coinChance;
     int coin;
-    
+    bool bStore;
     //---handDetector--------------------------
     float scale;
     int touchNum;
@@ -101,6 +103,5 @@ public:
     AVSoundPlayer * sCheckForWin;
     AVSoundPlayer * s321;
 
-    
 };
 

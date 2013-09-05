@@ -24,7 +24,7 @@ void testApp::setup(){
     scale = 0.0f;
     accFrc = &ofxAccelerometer.getForce();
     touchNum = 0;
-    
+    bStore = false;
     //****XML******************************************
     if( XML.loadFile(ofxiPhoneGetDocumentsDirectory() + "mySettings.xml") ){
 		message = "mySettings.xml loaded from documents folder!";
@@ -102,6 +102,7 @@ void testApp::setup(){
     ((menu*)scenes[0])->dotExtenderChance = &dotExtenderChance;
     ((menu*)scenes[0])->dotFreezerChance = &dotFreezerChance;
     ((menu*)scenes[0])->firstPlay = &firstPlay;
+    
     scenes[0]->setup();
     
     scenes[1] = new handDetector();
@@ -121,24 +122,18 @@ void testApp::setup(){
     ((Mode01*)scenes[2])->timeSlowerChance = &timeSlowerChance;
     ((Mode01*)scenes[2])->dotExtenderChance = &dotExtenderChance;
     ((Mode01*)scenes[2])->dotFreezerChance = &dotFreezerChance;
+    ((Mode01*)scenes[2])->unixTime = &unixTime;
+    ((Mode01*)scenes[2])->bStore = &bStore;
+
     scenes[2]->setup();
     
     //sound;
     soundSetup();
     
     //live increase
+  
+    liveSetup();
     
-    
-    int liveAdder = 0;
-    liveAdder = (int)(ofGetUnixTime() - unixTime)/600;
-    live+=liveAdder;
-    if (live>10) {
-        live = 10;
-    }
-    if (liveAdder>0) {
-        preLive = live;
-        unixTime = ofGetUnixTime();
-    }
     
 }
 
@@ -146,17 +141,15 @@ void testApp::setup(){
 void testApp::update(){
 
     //live add
-    if (ofGetUnixTime()-unixTime>600) {
-        if (live <10) {
-            live += 1;
-            preLive = live;
-            unixTime = ofGetUnixTime();
-        }else{
-            unixTime = ofGetUnixTime();
+    liveUpdate();
+    
+    //go store
+    if (bStore) {
+        if (!((menu*)scenes[0])->bSnapIn) {
+            ((menu*)scenes[0])->purChaseGo();
+             bStore = false;
         }
     }
-    
-//    cout<< ofGetUnixTime() <<"     "<<ofGetUnixTime() - unixTime <<endl;
     
     //for mirroring
     if (ofGetFrameNum()<10){
@@ -557,6 +550,43 @@ void testApp::soundUpdate(){
 }
 
 //--------------------------------------------------------------
+void testApp::liveSetup(){
+    
+    int liveAdder = 0;
+    liveAdder = (int)(ofGetUnixTime() - unixTime)/600;
+    live+=liveAdder;
+    if (live>10) {
+        live = 10;
+    }
+    if (liveAdder>0) {
+        preLive = live;
+        unixTime = ofGetUnixTime();
+    }
+    
+}
+
+//--------------------------------------------------------------
+void testApp::liveUpdate(){
+   
+    if (live < 10) {
+    
+        if (ofGetUnixTime()-unixTime>600){
+            live += 1;
+            preLive = live;
+            unixTime = ofGetUnixTime();
+        }
+        
+    }
+    else{
+    
+        unixTime = ofGetUnixTime();
+
+    }
+    
+}
+
+//--------------------------------------------------------------
+
 void testApp::gotMemoryWarning(){}
 void testApp::touchDoubleTap(ofTouchEventArgs & touch){}
 void testApp::touchCancelled(ofTouchEventArgs & touch){}

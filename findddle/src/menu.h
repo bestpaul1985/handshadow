@@ -55,7 +55,7 @@ public:
     void purchaseTouchDown(int x, int y);
     void purchaseTouchMove(int x, int y);
     void purchaseTouchUp(int x, int y);
-
+    void purChaseGo();
     
     void setSetup();
     void setUpdate();

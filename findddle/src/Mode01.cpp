@@ -58,7 +58,7 @@ void Mode01::setup(){
     bgNum = -1;
     reset();
     myInGameMenu.overAllColor = &overAllColor2;
-    myInGameMenu.setup(coin,level, gameTimer, fingerSize, bgScale, accFrc);
+    myInGameMenu.setup(coin,level, gameTimer, fingerSize, bgScale, accFrc, unixTime);
     myInGameMenu.live = live;
     myInGameMenu.TryLive = &tryLive;
 
@@ -330,9 +330,13 @@ void Mode01::update(){
         *scene = 0;
     }
     
-    
-   
-    
+   else if(myInGameMenu.bStore){
+       reset();
+       myInGameMenu.reset();
+       *scene = 0;
+       *bStore = true;
+   }
+
 }
 
 //----------------------------------------------------------
@@ -690,7 +694,9 @@ void Mode01::checkLose(int x, int y, int situation){
             
             if(loseTimer<=30&&loseTimer>0){
                 translate.set(ofRandom(-10,10), ofRandom(-10,10));
+                overAllColor.set((int)ofRandom(180,255));
             }
+            
             else if(loseTimer>30)
             {
               
@@ -699,6 +705,8 @@ void Mode01::checkLose(int x, int y, int situation){
                     myInGameMenu.bLevelFail = true;
                     bLoseSound = true;
                 }
+                
+                overAllColor.set(255);
                 
                 translate.set(0, 0);
                 loseTimer = 0;

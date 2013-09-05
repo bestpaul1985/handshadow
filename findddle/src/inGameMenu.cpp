@@ -8,7 +8,7 @@
 
 #include "inGameMenu.h"
 
-void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSize, float &BGScale,  ofPoint *AccFrc){
+void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSize, float &BGScale,  ofPoint *AccFrc, int *UnixTime){
     
     coin = Coin;
     level = Level;
@@ -16,10 +16,11 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
     fingerSize = &FingerSize;
     bgScale = &BGScale;
     accFrc = AccFrc;
-    
+    unixTime = UnixTime;
     font.loadFont("assets/fonts/Comfortaa_Regular.ttf", 30,true, true);
     fontBig.loadFont("assets/fonts/Comfortaa_Regular.ttf", 60,true, true);
-    fontSmall.loadFont("assets/fonts/Comfortaa_Regular.ttf", 28,true, true);
+    fontSmall.loadFont("assets/fonts/Comfortaa_Regular.ttf", 26,true, true);
+    fontSmall2.loadFont("assets/fonts/Comfortaa_Regular.ttf", 20,true, true);
     
     superCoin.loadImage("assets/images/inGameMenu/item00.png");
     bgImg.loadImage("assets/images/inGameMenu/bg.png");
@@ -57,7 +58,7 @@ void inGameMenu::setup(int *Coin , int *Level , float &GameTimer, int &FingerSiz
         readyImg.push_back(temp);
     }
     
-    for (int i=0; i<2; i++) {
+    for (int i=0; i<3; i++) {
         ofImage temp;
         LDbtttonImg[i].loadImage("assets/images/inGameMenu/bg_button0"+ofToString(i)+".png");
     }
@@ -187,6 +188,7 @@ void inGameMenu::reset(){
     bNextLevel = false;
     bTryAgin   = false;
     bHome      = false;
+    bStore     = false;
     bLevelFail = false;
     bTimeSlower = false;
     b321GO = false;
@@ -231,7 +233,8 @@ void inGameMenu::reset(){
 
     LDButton[0].button =&LDbtttonImg[0];
     LDButton[1].button =&LDbtttonImg[1];
-     
+    LDButton[2].button =&LDbtttonImg[2];
+  
     //score
     preCoin = *coin;
     score = 0;
@@ -297,9 +300,11 @@ void inGameMenu::draw(){
         
         
         ofSetColor(*overAllColor);
-        fingerImg[NUM].draw(166,-5,fingerImg[NUM].getWidth()/4*3,fingerImg[NUM].getHeight()/4*3);
+        fingerImg[NUM].draw(140,-5,fingerImg[NUM].getWidth()/4*3,fingerImg[NUM].getHeight()/4*3);
         ofSetColor(30);
-        font.drawString("  x "+ofToString(num), 190, 40);
+        font.drawString("  x "+ofToString(num), 165, 40);
+        
+        liveCounter(260, 40, 0);
         
         ofSetColor(30);
         font.drawString("lv"+ofToString(*level+1), 930, 37);
@@ -325,9 +330,9 @@ void inGameMenu::draw(){
             }
             
             if (i<*fingerSize) {
-                iconImg[i].draw(345+50*i,10);
+                iconImg[i].draw(405+50*i,10);
             }else{
-                iconImg[8].draw(345+50*i,10);
+                iconImg[8].draw(405+50*i,10);
             }
         }
     }
@@ -402,6 +407,12 @@ void inGameMenu::touchMove(int x, int y){
         }else{
             LDButton[1].bTouchOver = false;
         }
+        
+        if(LDButton[2].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            LDButton[2].bTouchOver = true;
+        }else{
+            LDButton[2].bTouchOver = false;
+        }
     }
 
 }
@@ -447,6 +458,16 @@ void inGameMenu::touchUp(int x, int y){
             LDButton[1].bTouchOver = false;
             bButtonSound = true;
         }
+        
+        if(LDButton[2].bgRect.inside(x-LDPos.x, y-LDPos.y)){
+            bStore = true;
+            if (bLevelDone) {
+                *level+=1;
+            }
+            LDButton[2].bTouchOver = false;
+            bButtonSound = true;
+        }
+        
     }
 
 }
@@ -510,15 +531,21 @@ void inGameMenu::levelDoneDraw(){
                 fontSmall.drawString(ofToString(itemSize[1]), 25, 50);
                 fontSmall.drawString(ofToString(itemSize[2]), 109,50);
                 
-                LDButton[0].pos.set(-42, 100);
-                LDButton[1].pos.set(42, 100);
-        
+                
+                LDButton[0].pos.set(0, 115);
+                LDButton[1].pos.set(62, 115);
+                LDButton[2].pos.set(-62, 115);
+
                 LDButton[0].drawInGameMenu();
                 LDButton[1].drawInGameMenu();
-                
+                LDButton[2].drawInGameMenu();
+
+                liveCounter(-80,90, 1);
+
                 ofPopMatrix();
                 
             }break;
+                
             case ICON_FADE:{
                 
                 ofSetColor(0, 0, 0,LDAlpha);
@@ -550,15 +577,18 @@ void inGameMenu::levelDoneDraw(){
                 fontSmall.drawString(ofToString(itemSize[0]), -82,50);
                 fontSmall.drawString(ofToString(itemSize[1]), 25, 50);
                 fontSmall.drawString(ofToString(itemSize[2]), 109,50);
-                
-                LDButton[0].pos.set(-42, 100);
-                LDButton[1].pos.set(42, 100);
+                                
+                LDButton[0].pos.set(0, 115);
+                LDButton[1].pos.set(62, 115);
+                LDButton[2].pos.set(-62, 115);
                 
                 LDButton[0].drawInGameMenu();
                 LDButton[1].drawInGameMenu();
+                LDButton[2].drawInGameMenu();
+                
+                liveCounter(-80,90, 1);
                 
                 ofPopMatrix();
-                
                 
                 if (LDPos.y > ofGetHeight()+LDRadius) {
                     LDType = BG_BACK;
@@ -588,8 +618,7 @@ void inGameMenu::levelDoneDraw(){
                 ofRect(0, 0, ofGetWidth(), ofGetHeight());
                 
             }break;
-                
-          
+            
         }
     }
 }
@@ -647,5 +676,42 @@ void inGameMenu::pause(){
     
 //    cout<<accFrc->y<<" "<<bPauseL<<" "<<bPauseR<<" "<<pausePct<<" "<<homeRect.pos<<" "<<resumeRect.pos<<endl;
 
+
+}
+
+//-----------------------------------------------------------------------
+void inGameMenu::liveCounter(int x, int y, int num){
+  
+    if (*live < 10) {
+        
+        string message;
+        int time = 600 - (ofGetUnixTime() - *unixTime);
+        int min = 0;
+        int sec = 0;
+        
+        if (time > 60) {
+            min = (int)(time/60);
+            sec = time - 60*min;
+        }else{
+            sec = time;
+        }
+        
+        message = ofToString(min)+":"+ ofToString(sec);
+        
+        ofSetColor(30);
+      
+        if (num == 0) {
+            
+            fontSmall.drawString("in", x, y);
+            
+            font.drawString(message, x+30, y);
+            
+        }else if(num == 1){
+                    
+            fontSmall.drawString(message, x, y);
+
+        }
+        
+    }
 
 }
