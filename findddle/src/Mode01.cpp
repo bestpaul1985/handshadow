@@ -706,7 +706,12 @@ void Mode01::checkLose(int x, int y, int situation){
                     bLoseSound = true;
                 }
                 
-                overAllColor.set(255);
+                
+                if (*level<5) {
+                    overAllColor.set(100);
+                }else{
+                    overAllColor.set(255);
+                }
                 
                 translate.set(0, 0);
                 loseTimer = 0;

@@ -15,7 +15,7 @@
 #include "particle.h"
 #include "xmlPointer.h"
 
-#define MAIN_MENU_BUTTON 5
+#define MAIN_MENU_BUTTON 4
 
 
 class menu : public baseScene{
@@ -65,12 +65,12 @@ public:
     void setTouchMove(int x, int y);
     void setTouchUp(int x, int y);
     
-    void tutorialSetup();
-    void tutorialUpdate();
-    void tutorialReset();
-    void tutorialDraw();
-    void tutorialTouchDown(int x, int y);
-    void tutorialTouchMove(int x, int y);
+//    void tutorialSetup();
+//    void tutorialUpdate();
+//    void tutorialReset();
+//    void tutorialDraw();
+//    void tutorialTouchDown(int x, int y);
+//    void tutorialTouchMove(int x, int y);
     
     vector<xmlPointer> upGradePrices;
     
@@ -92,7 +92,6 @@ public:
     ofImage buttonOver[MAIN_MENU_BUTTON];
     ofImage fingerTop[MAIN_MENU_BUTTON];
     ofImage fingerBot[MAIN_MENU_BUTTON];
-    ofImage buttonBackground;
     ofImage hidenLogo;
     ofImage mainMenuBg;
     ofPoint mainMenuBgPos;
